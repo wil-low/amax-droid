@@ -5,7 +5,6 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
-import java.util.TimeZone;
 
 /**
  * <p>Title: Astromaximum</p>
@@ -21,16 +20,8 @@ import java.util.TimeZone;
  * @noinspection CastToConcreteClass
  */
 final public class LocationsDataFile extends DataFile {
-    private static final int EF_DATE = 0x1; // contains 2nd date - 4b
-    private static final int EF_PLANET1 = 0x2; // contains 1nd planet - 1b
-    private static final int EF_PLANET2 = 0x4; // contains 2nd planet - 1b
-    private static final int EF_DEGREE = 0x8; // contains degree or angle - 2b
-    private static final int EF_CUMUL_DATE_B = 0x10; // date are cumulative from 1st 4b - 1b
-    private static final int EF_CUMUL_DATE_W = 0x20; // date are cumulative from 1st 4b - 2b
-    private static final int EF_SHORT_DEGREE = 0x40; // contains angle 0..180 - 1b
-    private static final int EF_NEXT_DATE2 = 0x80; // 2nd date is 1st in next event
     public static final long MSECINDAY = 86400 * 1000;
-    private long mStartJD, mFinalJD, mCurrentTimeZoneId;
+    private long mCurrentTimeZoneId;
     private int mDayCount;
     //  private final Vector cache=new Vector();
     private byte[] mBuffer;
