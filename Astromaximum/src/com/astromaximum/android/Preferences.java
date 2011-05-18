@@ -72,7 +72,12 @@ public class Preferences extends PreferenceActivity {
 		super.onResume();
 		Log.d(TAG, "OnResume");
 		String locationId = Long.toString(PreferenceUtils.getLocationId(this));
-		setCurrentCity(mLocationsPreference, locationId);
-		mLocationsPreference.setValue(locationId);
+		try {
+			setCurrentCity(mLocationsPreference, locationId);
+			mLocationsPreference.setValue(locationId);
+		}
+		catch (ArrayIndexOutOfBoundsException ex) {
+			Log.d(TAG, "locationId " + locationId + " is out of bounds");
+		}
 	}
 }
