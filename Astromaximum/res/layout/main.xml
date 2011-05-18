@@ -7,8 +7,8 @@
 		android:layout_height="wrap_content" android:orientation="horizontal">
 		<Button android:layout_height="wrap_content" android:text="Button01"
 			android:id="@+id/Button01" android:layout_width="wrap_content" />
-		<Button android:layout_height="wrap_content" android:text="Button01"
-			android:id="@+id/Button02" android:layout_width="wrap_content" />
+		<Button android:layout_height="wrap_content" android:text="Button01" 
+			android:id="@+id/CurrentLocationButton" android:layout_width="wrap_content" />
 	</LinearLayout>
 	<ListView android:id="@+id/ListViewEvents"
 		android:layout_width="fill_parent" android:layout_height="wrap_content" />

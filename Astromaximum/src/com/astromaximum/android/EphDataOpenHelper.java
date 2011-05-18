@@ -10,7 +10,6 @@ import com.astromaximum.util.LocationsDataFile;
 import java.io.IOException;
 import java.io.InputStream;
 
-import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -19,6 +18,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 public class EphDataOpenHelper extends SQLiteOpenHelper implements EventConsumer {
+	private static EphDataOpenHelper mInstance = null;
     private static final String DATABASE_NAME = "ephdata.db";
     private static final int DATABASE_VERSION = 1;
     
@@ -96,13 +96,18 @@ public class EphDataOpenHelper extends SQLiteOpenHelper implements EventConsumer
 
     private static final String TABLE_RECORD_COUNT_QUERY =
     	"SELECT COUNT(*) FROM ";
+    
+	private static final String SELECT_TIMEZONE_QUERY =
+		"SELECT T." + KEY_ID + ", " + KEY_YEAR + ", " +
+		KEY_LOCATION_ID + ", " + KEY_TZ_OFFSET + ", " + 
+		KEY_IS_SOUTHERN + ", " + KEY_DST_START + ", " +
+		KEY_DST_END + ", " + KEY_NAME + " FROM " +
+		TIMEZONES_TABLE_NAME + " T, " + LOCATIONS_TABLE_NAME + " L " +
+		" WHERE " + KEY_YEAR + "=? AND " + KEY_LOCATION_ID + "=? AND L." + KEY_ID + "=" + KEY_LOCATION_ID;
    
     private SQLiteDatabase mDB = null;
-    private boolean mIsCommon = true;
     private String TAG = "EphDataOpenHelper";
-    private ProgressDialog mProgressDialog = null;
-    
-	EphDataOpenHelper(Context context) {
+    EphDataOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -141,7 +146,6 @@ public class EphDataOpenHelper extends SQLiteOpenHelper implements EventConsumer
 	
 	void convertDataFile(InputStream stream, boolean isCommon) throws IOException {
 		Log.i(TAG, "converting DB");
-		mIsCommon = isCommon;
 		mDB = getWritableDatabase();
 		DataFile datafile;
 		if (isCommon)
@@ -164,7 +168,6 @@ public class EphDataOpenHelper extends SQLiteOpenHelper implements EventConsumer
 		}
 		mDB.close();
 		mDB = null;
-		mProgressDialog = null;
 		isEmpty (isCommon);
 		Log.i(TAG, "converting DB done");
 	}
@@ -226,16 +229,52 @@ public class EphDataOpenHelper extends SQLiteOpenHelper implements EventConsumer
 		mDB.insertOrThrow(LOCATION_EVENTS_TABLE_NAME, null, values);
 	}
 	
-	public Cursor getEventsOnPeriod(long startPeriod, long endPeriod, long locationId) {
+	public Cursor getEventsOnPeriod(long startPeriod, long endPeriod, long timeZoneId) {
 		// two pairs of args because of union 
 		String[] args = {
 				Long.toString(startPeriod), 
 				Long.toString(endPeriod),
 				Long.toString(startPeriod), 
 				Long.toString(endPeriod),
-				Long.toString(locationId)
+				Long.toString(timeZoneId)
 				};
 		Log.d(TAG, "getEvents: " + args[0] + " - " + args[1]);
 		return getReadableDatabase().rawQuery(SELECT_EVENTS_QUERY, args);
+	}
+
+	public Cursor getLocations() {
+		Log.d(TAG, "getLocations: ");
+		return getReadableDatabase().query(LOCATIONS_TABLE_NAME, 
+			new String[] {KEY_ID, KEY_NAME}, null, null, null, null, KEY_NAME);
+	}
+
+	public Location getLocation(int year, long locationId) {
+		Log.d(TAG, "Location: " + year + " - " + locationId);
+		String[] args = {Integer.toString(year), Long.toString(locationId)};
+		Cursor cursor = getReadableDatabase().rawQuery(SELECT_TIMEZONE_QUERY, args);
+		Location location = null;
+		if (cursor.moveToFirst()) {
+			location = new Location();
+			location.mTimeZoneId = cursor.getInt(0);
+			location.mYear = cursor.getShort(1);
+			location.mLocationId = cursor.getInt(2);
+			location.mTzOffset = cursor.getInt(3);
+			location.mIsSouthern = cursor.getInt(4) != 0;
+			location.mDstStart = cursor.getInt(5);
+			location.mDstEnd = cursor.getInt(6);
+			location.mName = cursor.getString(7);
+		}
+		cursor.close();
+		return location;
+	}
+	
+	public static EphDataOpenHelper getInstance(Context context) {
+		if (mInstance == null && context != null)
+			mInstance = new EphDataOpenHelper(context);
+		return mInstance;
+	}
+
+	public static EphDataOpenHelper getInstance() {
+		return mInstance;
 	}
 }

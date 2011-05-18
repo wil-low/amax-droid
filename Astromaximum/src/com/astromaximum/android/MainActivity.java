@@ -5,11 +5,14 @@ import java.io.InputStream;
 import java.util.Calendar;
 
 import com.astromaximum.util.DataFile;
+import com.astromaximum.util.Location;
+
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -18,6 +21,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CursorAdapter;
@@ -40,7 +46,8 @@ public class MainActivity extends Activity {
 	private int mYear;
 	private int mMonth;
 	private int mDay;
-	private Cursor mEventCursor;
+    private Location mCurrentLocation = null;
+    private Cursor mEventCursor;
 
 	private ProgressDialog progressDialog = null;
 	private ProgressThread progressThread = null;
@@ -51,6 +58,7 @@ public class MainActivity extends Activity {
 	
 	private final String FILENAME_COMMON = "common.dat";
 	private final String FILENAME_LOCATIONS = "locations.dat";
+	private Button mCurrentLocationButton;
 	
     /** Called when the activity is first created. */
     @Override
@@ -64,7 +72,7 @@ public class MainActivity extends Activity {
         }
         Log.d(TAG, "OnCreate");
         mContext = getApplicationContext();
-        mDbHelper = new EphDataOpenHelper(mContext);
+        mDbHelper = EphDataOpenHelper.getInstance(mContext);
         setContentView(R.layout.main);
         mDateButton = (Button) findViewById(R.id.Button01);
         mDateButton.setOnClickListener(new View.OnClickListener() {
@@ -73,6 +81,8 @@ public class MainActivity extends Activity {
             }
         });
         
+        mCurrentLocationButton = (Button) findViewById(R.id.CurrentLocationButton);
+
         if (mDbHelper.isEmpty(true)) {
             //showDialog(CONVERT_DB_DIALOG_ID);
 	        try {
@@ -124,7 +134,6 @@ public class MainActivity extends Activity {
 			}
         });
         mEventList.setAdapter(adapter);
-//        updateDisplay();
     }
 
     // Define the Handler that receives messages from the thread and update the progress
@@ -151,6 +160,27 @@ public class MainActivity extends Activity {
                 }
             };
     
+
+    @Override
+    public boolean onCreateOptionsMenu (Menu menu) {
+    	super.onCreateOptionsMenu(menu);
+    	MenuInflater inflater = getMenuInflater();
+    	inflater.inflate(R.menu.main, menu);
+		return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	super.onOptionsItemSelected(item);
+    	switch (item.getItemId()) {
+    	case R.id.menu_options:
+    		Intent intent = new Intent(this, Preferences.class);
+    		startActivityForResult(intent, PreferenceUtils.ID_PREFERENCE);
+    		break;
+    	}
+    	return true;
+    }
+
     @Override
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
@@ -181,8 +211,10 @@ public class MainActivity extends Activity {
 	protected void onPause() {
 		super.onPause();
         Log.d(TAG, "OnPause");
-		if (!mEventCursor.isClosed())
+		if (mEventCursor != null && !mEventCursor.isClosed()) {
 			mEventCursor.close();
+			mEventCursor = null;
+		}
 		mDbHelper.close();
 	}
     
@@ -190,6 +222,7 @@ public class MainActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
         Log.d(TAG, "OnResume");
+        setCurrentLocation();
 		updateDisplay();
 	}
 
@@ -226,16 +259,22 @@ public class MainActivity extends Activity {
                     .append(mDay).append(" "));
      	DataFile.calendar.set(mYear, mMonth, mDay, 0, 0, 0);
      	DataFile.calendar.set(Calendar.MILLISECOND, 0);
-    	mEventCursor = mDbHelper.getEventsOnPeriod(
-    			DataFile.calendar.getTimeInMillis(),
-    			DataFile.calendar.getTimeInMillis() + DataFile.MSECINDAY,
-    			1);
-    	if (!mEventCursor.moveToFirst())
-    		Log.e(TAG, "No events");
-    	else {
-	    	CursorAdapter cursorAdapter = (CursorAdapter) mEventList.getAdapter();
-			cursorAdapter.changeCursor(mEventCursor);
-    	}
+     	if (mCurrentLocation != null) { 
+     		mCurrentLocationButton.setText(mCurrentLocation.mName);
+	    	mEventCursor = mDbHelper.getEventsOnPeriod(
+	    			DataFile.calendar.getTimeInMillis(),
+	    			DataFile.calendar.getTimeInMillis() + DataFile.MSECINDAY,
+	    			mCurrentLocation.mTimeZoneId);
+	    	if (!mEventCursor.moveToFirst())
+	    		Log.e(TAG, "No events");
+	    	else {
+		    	CursorAdapter cursorAdapter = (CursorAdapter) mEventList.getAdapter();
+				cursorAdapter.changeCursor(mEventCursor);
+	    	}
+     	}
+     	else {
+     		Log.e(TAG, "No current location");
+     	}
     }
     
 	private class ProgressThread extends Thread {
@@ -273,4 +312,21 @@ public class MainActivity extends Activity {
             mState = state;
         }
     }
+	
+	@Override 
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Log.d(TAG, "onActivityResult " + requestCode + "=>" + resultCode);
+		super.onActivityResult(requestCode, resultCode, data);
+		switch (requestCode) {
+		case PreferenceUtils.ID_PREFERENCE:
+			setCurrentLocation();
+			break;
+		}
+	}
+	
+	private void setCurrentLocation() {
+        final long locationId = PreferenceUtils.getLocationId(this);
+        mCurrentLocation = mDbHelper.getLocation(mYear, locationId);
+		Log.d(TAG, "Received locationId " + locationId);
+	}
 }
