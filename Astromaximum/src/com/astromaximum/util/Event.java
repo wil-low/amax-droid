@@ -79,10 +79,19 @@ final public class Event {
     long mDate0, mDate1;
     short mDegree = 127;
 
-    /**
+    String mCaption = null;
+
+    public String getCaption() {
+		return mCaption;
+	}
+
+	public void setCaption(String caption) {
+		mCaption = caption;
+	}
+
+	/**
      * @param dat
      * @param planet
-     * @noinspection NestedAssignment
      */
     Event(long dat, int planet) {
         mPlanet0 = (byte) planet;

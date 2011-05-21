@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.Calendar;
 
 import com.astromaximum.util.DataFile;
+import com.astromaximum.util.DataProvider;
 import com.astromaximum.util.Location;
 
 import android.app.Activity;
@@ -43,36 +44,24 @@ public class MainActivity extends Activity {
 	private final String TAG = "MainActivity";
 	private ListView mEventList = null;
 	private Button mDateButton;
-	private int mYear;
-	private int mMonth;
-	private int mDay;
-    private Location mCurrentLocation = null;
-    private Cursor mEventCursor;
 
 	private ProgressDialog progressDialog = null;
 	private ProgressThread progressThread = null;
 	
-	private final String STATE_KEY_YEAR = "Year";
-	private final String STATE_KEY_MONTH = "Month";
-	private final String STATE_KEY_DAY = "Day";
-	
 	private final String FILENAME_COMMON = "common.dat";
 	private final String FILENAME_LOCATIONS = "locations.dat";
 	private Button mCurrentLocationButton;
+	private DataProvider mEventProvider;
 	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState == null) { // use today
-        	Calendar c = DataFile.getUtcCalendar();
-            mYear = c.get(Calendar.YEAR);
-            mMonth = c.get(Calendar.MONTH);
-            mDay = c.get(Calendar.DAY_OF_MONTH);
-        }
         Log.d(TAG, "OnCreate");
         mContext = getApplicationContext();
         mDbHelper = EphDataOpenHelper.getInstance(mContext);
+        mEventProvider = DataProvider.getInstance();
+       
         setContentView(R.layout.main);
         mDateButton = (Button) findViewById(R.id.Button01);
         mDateButton.setOnClickListener(new View.OnClickListener() {
@@ -153,9 +142,7 @@ public class MainActivity extends Activity {
             new DatePickerDialog.OnDateSetListener() {
     			public void onDateSet(DatePicker view, int year, 
                                       int monthOfYear, int dayOfMonth) {
-                    mYear = year;
-                    mMonth = monthOfYear;
-                    mDay = dayOfMonth;
+    				DataProvider.getInstance().setDate (year, monthOfYear, dayOfMonth);
                     updateDisplay();
                 }
             };
@@ -173,10 +160,14 @@ public class MainActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
     	super.onOptionsItemSelected(item);
     	switch (item.getItemId()) {
-    	case R.id.menu_options:
+    	case R.id.menu_today: {
+    		Intent intent = new Intent(this, SummaryActivity.class);
+    		startActivity(intent);
+    		break; }
+    	case R.id.menu_options: {
     		Intent intent = new Intent(this, Preferences.class);
     		startActivityForResult(intent, PreferenceUtils.ID_PREFERENCE);
-    		break;
+    		break; }
     	}
     	return true;
     }
@@ -187,7 +178,7 @@ public class MainActivity extends Activity {
         case DATE_DIALOG_ID:
             return new DatePickerDialog(this,
                         mDateSetListener,
-                        mYear, mMonth, mDay);
+                        mEventProvider.getYear(), mEventProvider.getMonth(), mEventProvider.getDay());
 		case CONVERT_DB_DIALOG_ID:
 	    	ProgressDialog convertDbDialog;
 	    	convertDbDialog = new ProgressDialog(mContext);
@@ -211,10 +202,6 @@ public class MainActivity extends Activity {
 	protected void onPause() {
 		super.onPause();
         Log.d(TAG, "OnPause");
-		if (mEventCursor != null && !mEventCursor.isClosed()) {
-			mEventCursor.close();
-			mEventCursor = null;
-		}
 		mDbHelper.close();
 	}
     
@@ -236,22 +223,18 @@ public class MainActivity extends Activity {
     protected void onSaveInstanceState (Bundle outState) {
     	super.onSaveInstanceState(outState);
     	Log.d(TAG, "onSaveInstanceState");
-    	outState.putInt(STATE_KEY_YEAR, mYear);
-    	outState.putInt(STATE_KEY_MONTH, mMonth);
-    	outState.putInt(STATE_KEY_DAY, mDay);
+    	mEventProvider.saveState(outState);
     }
     
     @Override
     protected void onRestoreInstanceState (Bundle savedInstanceState) {
     	super.onRestoreInstanceState(savedInstanceState);
     	Log.d(TAG, "onRestoreInstanceState");
-    	Calendar c = DataFile.getUtcCalendar();
-    	mYear = savedInstanceState.getInt(STATE_KEY_YEAR, c.get(Calendar.YEAR));
-    	mMonth = savedInstanceState.getInt(STATE_KEY_MONTH, c.get(Calendar.MONTH));
-    	mDay = savedInstanceState.getInt(STATE_KEY_DAY, c.get(Calendar.DAY_OF_MONTH));
+    	mEventProvider.restoreState(savedInstanceState);
     }
 
     private void updateDisplay() {
+/*    	
      	mDateButton.setText (new StringBuilder()
                     .append(mYear).append("-")
                     // Month is 0 based so add 1
@@ -275,6 +258,7 @@ public class MainActivity extends Activity {
      	else {
      		Log.e(TAG, "No current location");
      	}
+     	*/
     }
     
 	private class ProgressThread extends Thread {
@@ -326,7 +310,7 @@ public class MainActivity extends Activity {
 	
 	private void setCurrentLocation() {
         final long locationId = PreferenceUtils.getLocationId(this);
-        mCurrentLocation = mDbHelper.getLocation(mYear, locationId);
+        //mCurrentLocation = mDbHelper.getLocation(mYear, locationId);
 		Log.d(TAG, "Received locationId " + locationId);
 	}
 }
