@@ -35,7 +35,7 @@ public abstract class DataFile {
     protected byte[] mCustomData;
     public static final Calendar calendar = getUtcCalendar();
 
-    public int readEvents(DataInputStream is, EventConsumer consumer) {
+    public int readEvents(DataInputStream is, DataFileEventConsumer consumer) {
         int eventsCount=0;
         int flag;
         Event last = new Event(0, 0);
@@ -123,8 +123,8 @@ public abstract class DataFile {
         return eventsCount;
     }
 
-    public abstract int readSubData(EventConsumer consumer) throws IOException;
-    protected abstract void addEvent(EventConsumer consumer, Event last);
+    public abstract int readSubData(DataFileEventConsumer consumer) throws IOException;
+    protected abstract void addEvent(DataFileEventConsumer consumer, Event last);
 
 /* 
     int getEvents(int evtype, int planet, long dayStart, long dayEnd) {

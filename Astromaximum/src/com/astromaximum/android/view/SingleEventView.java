@@ -5,7 +5,7 @@ import com.astromaximum.util.Event;
 import android.content.Context;
 import android.util.AttributeSet;
 
-public class SingleEventView extends EventView implements EventHolder {
+public class SingleEventView extends EventView{
 	protected Event event = null;
 	
 	public SingleEventView(Context context) {
@@ -23,18 +23,22 @@ public class SingleEventView extends EventView implements EventHolder {
 		// TODO Auto-generated constructor stub
 	}
 
+	@Override
 	public void clearEvents() {
 		event = null;
 	}
 
+	@Override
 	public void addEvent(Event event) {
 		this.event = event;
 	}
 
+	@Override
 	public Event getEvent() {
 		return event;
 	}
 
+	@Override
 	public Event getEvent(int index) {
 		return event;
 	}

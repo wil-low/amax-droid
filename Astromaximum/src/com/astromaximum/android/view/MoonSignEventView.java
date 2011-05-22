@@ -9,19 +9,19 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 
-public class VocEventView extends SingleEventView {
+public class MoonSignEventView extends SingleEventView {
 
-	public VocEventView(Context context) {
+	public MoonSignEventView(Context context) {
 		super(context);
 		// TODO Auto-generated constructor stub
 	}
 
-	public VocEventView(Context context, AttributeSet attrs, int defStyle) {
+	public MoonSignEventView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		// TODO Auto-generated constructor stub
 	}
 
-	public VocEventView(Context context, AttributeSet attrs) {
+	public MoonSignEventView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		// TODO Auto-generated constructor stub
 	}
@@ -36,7 +36,7 @@ public class VocEventView extends SingleEventView {
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 		Event event = getEvent();
-		String captionStr = (event == null) ? "VOC?" : event.getCaption(); 
+		String captionStr = (event == null) ? "MoonSign?" : event.getCaption(); 
 		Paint paint = new Paint();
 		paint.setColor(Color.LTGRAY);
 		Rect bounds = new Rect();

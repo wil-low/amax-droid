@@ -57,7 +57,7 @@ final public class CommonDataFile extends DataFile {
     }
 
     @Override
-    public int readSubData(EventConsumer consumer) throws IOException {
+    public int readSubData(DataFileEventConsumer consumer) throws IOException {
     	final DataInputStream is = new DataInputStream(new ByteArrayInputStream(mBuffer));
     	int eventCount = 0;
     	eventCount += super.readEvents(is, consumer);
@@ -66,7 +66,7 @@ final public class CommonDataFile extends DataFile {
     }
 
 	@Override
-    protected void addEvent(EventConsumer consumer, Event last) {
+    protected void addEvent(DataFileEventConsumer consumer, Event last) {
 		consumer.addEvent(mStartYear, last);
 	}
 }

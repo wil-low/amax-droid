@@ -53,7 +53,7 @@ final public class LocationsDataFile extends DataFile {
     }
 
     @Override
-    public int readSubData(EventConsumer consumer) throws IOException {
+    public int readSubData(DataFileEventConsumer consumer) throws IOException {
     	int eventCount = 0;
         for (int i = 0; i < mRecordCount; ++i) {
         	final DataInputStream is = new DataInputStream(new ByteArrayInputStream(extractLocation(i)));
@@ -109,7 +109,7 @@ final public class LocationsDataFile extends DataFile {
     }
 
 	@Override
-    protected void addEvent(EventConsumer consumer, Event last) {
+    protected void addEvent(DataFileEventConsumer consumer, Event last) {
 		consumer.addEvent(mStartYear, last, mCurrentTimeZoneId);
 	}
 	

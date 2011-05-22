@@ -2,8 +2,8 @@ package com.astromaximum.android;
 
 import com.astromaximum.util.CommonDataFile;
 import com.astromaximum.util.DataFile;
+import com.astromaximum.util.DataFileEventConsumer;
 import com.astromaximum.util.Event;
-import com.astromaximum.util.EventConsumer;
 import com.astromaximum.util.Location;
 import com.astromaximum.util.LocationsDataFile;
 
@@ -17,7 +17,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-public class EphDataOpenHelper extends SQLiteOpenHelper implements EventConsumer {
+public class EphDataOpenHelper extends SQLiteOpenHelper implements DataFileEventConsumer {
 	private static EphDataOpenHelper mInstance = null;
     private static final String DATABASE_NAME = "ephdata.db";
     private static final int DATABASE_VERSION = 1;
@@ -80,19 +80,6 @@ public class EphDataOpenHelper extends SQLiteOpenHelper implements EventConsumer
         	KEY_DEGREE + " INTEGER, " +
         	KEY_PLANET0 + " INTEGER, " +
         	KEY_PLANET1 + " INTEGER)";
-
-    private static final String SELECT_EVENTS_QUERY =
-		"SELECT " + KEY_ID + ", " + KEY_EVENT_TYPE + ", " + 
-		KEY_DATE0 + ", " + KEY_DATE1 + ", " + KEY_PLANET0 + ", " + 
-		KEY_PLANET1 +  ", " + KEY_DEGREE + " FROM " + 
-		COMMON_EVENTS_TABLE_NAME + " WHERE " + KEY_DATE0 + " BETWEEN ? and ? " + 
-		"UNION ALL " + 
-		"SELECT " + KEY_ID + ", " + KEY_EVENT_TYPE + ", " + 
-		KEY_DATE0 + ", " + KEY_DATE1 + ", " + KEY_PLANET0 + ", " + 
-		KEY_PLANET1 +  ", " + KEY_DEGREE + " FROM " + 
-		LOCATION_EVENTS_TABLE_NAME + " WHERE " + KEY_DATE0 + " BETWEEN ? and ? " +
-		"AND " + KEY_TIMEZONE_ID + "=? " +
-		"ORDER BY " + KEY_DATE0;
 
     private static final String TABLE_RECORD_COUNT_QUERY =
     	"SELECT COUNT(*) FROM ";
@@ -228,8 +215,34 @@ public class EphDataOpenHelper extends SQLiteOpenHelper implements EventConsumer
 		values.put(KEY_PLANET1, event.getPlanet1());
 		mDB.insertOrThrow(LOCATION_EVENTS_TABLE_NAME, null, values);
 	}
-	
-	public Cursor getEventsOnPeriod(long startPeriod, long endPeriod, long timeZoneId) {
+
+//======================
+    private static final String SELECT_EVENTS_QUERY =
+		"SELECT " + KEY_ID + ", " + KEY_EVENT_TYPE + ", " + 
+		KEY_DATE0 + ", " + KEY_DATE1 + ", " + KEY_PLANET0 + ", " + 
+		KEY_PLANET1 +  ", " + KEY_DEGREE + " FROM " + 
+		COMMON_EVENTS_TABLE_NAME + " WHERE " + KEY_DATE0 + " BETWEEN ? and ? " + 
+		"UNION ALL " + 
+		"SELECT " + KEY_ID + ", " + KEY_EVENT_TYPE + ", " + 
+		KEY_DATE0 + ", " + KEY_DATE1 + ", " + KEY_PLANET0 + ", " + 
+		KEY_PLANET1 +  ", " + KEY_DEGREE + " FROM " + 
+		LOCATION_EVENTS_TABLE_NAME + " WHERE " + KEY_DATE0 + " BETWEEN ? and ? " +
+		"AND " + KEY_TIMEZONE_ID + "=? " +
+		"ORDER BY " + KEY_DATE0;
+
+	public static Event createEventFromCursor(Cursor cursor) {
+		Event event = new Event(
+				cursor.getInt(1),  // KEY_EVENT_TYPE
+				cursor.getLong(2), // KEY_DATE0
+				cursor.getLong(3), // KEY_DATE1
+				cursor.getInt(4),  // KEY_PLANET0
+				cursor.getInt(5),  // KEY_PLANET1
+				cursor.getInt(6)   // KEY_DEGREE
+				);
+		return event;
+	}
+
+	public Cursor getEventsOnPeriod(long startPeriod, long endPeriod, long timeZoneId, int rangeType) {
 		// two pairs of args because of union 
 		String[] args = {
 				Long.toString(startPeriod), 
@@ -241,7 +254,8 @@ public class EphDataOpenHelper extends SQLiteOpenHelper implements EventConsumer
 		Log.d(TAG, "getEvents: " + args[0] + " - " + args[1]);
 		return getReadableDatabase().rawQuery(SELECT_EVENTS_QUERY, args);
 	}
-
+//======================
+	
 	public Cursor getLocations() {
 		Log.d(TAG, "getLocations: ");
 		return getReadableDatabase().query(LOCATIONS_TABLE_NAME, 

@@ -2,12 +2,7 @@ package com.astromaximum.android;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Calendar;
-
-import com.astromaximum.util.DataFile;
 import com.astromaximum.util.DataProvider;
-import com.astromaximum.util.Location;
-
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -27,7 +22,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CursorAdapter;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -60,7 +54,7 @@ public class MainActivity extends Activity {
         Log.d(TAG, "OnCreate");
         mContext = getApplicationContext();
         mDbHelper = EphDataOpenHelper.getInstance(mContext);
-        mEventProvider = DataProvider.getInstance();
+        mEventProvider = DataProvider.getInstance(mContext);
        
         setContentView(R.layout.main);
         mDateButton = (Button) findViewById(R.id.Button01);
@@ -203,13 +197,14 @@ public class MainActivity extends Activity {
 		super.onPause();
         Log.d(TAG, "OnPause");
 		mDbHelper.close();
+        mEventProvider.saveState();
 	}
     
     @Override
 	protected void onResume() {
 		super.onResume();
         Log.d(TAG, "OnResume");
-        setCurrentLocation();
+        mEventProvider.restoreState();
 		updateDisplay();
 	}
 
@@ -219,21 +214,9 @@ public class MainActivity extends Activity {
         Log.d(TAG, "OnRestart");
 	}
     
-    @Override
-    protected void onSaveInstanceState (Bundle outState) {
-    	super.onSaveInstanceState(outState);
-    	Log.d(TAG, "onSaveInstanceState");
-    	mEventProvider.saveState(outState);
-    }
-    
-    @Override
-    protected void onRestoreInstanceState (Bundle savedInstanceState) {
-    	super.onRestoreInstanceState(savedInstanceState);
-    	Log.d(TAG, "onRestoreInstanceState");
-    	mEventProvider.restoreState(savedInstanceState);
-    }
-
     private void updateDisplay() {
+    	mEventProvider.setDate(2011, 5, 22);
+    	mEventProvider.gatherEvents(DataProvider.RANGE_DAY);
 /*    	
      	mDateButton.setText (new StringBuilder()
                     .append(mYear).append("-")
@@ -303,14 +286,8 @@ public class MainActivity extends Activity {
 		super.onActivityResult(requestCode, resultCode, data);
 		switch (requestCode) {
 		case PreferenceUtils.ID_PREFERENCE:
-			setCurrentLocation();
 			break;
 		}
 	}
 	
-	private void setCurrentLocation() {
-        final long locationId = PreferenceUtils.getLocationId(this);
-        //mCurrentLocation = mDbHelper.getLocation(mYear, locationId);
-		Log.d(TAG, "Received locationId " + locationId);
-	}
 }
