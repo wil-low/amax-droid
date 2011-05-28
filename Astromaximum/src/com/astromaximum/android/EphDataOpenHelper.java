@@ -217,7 +217,20 @@ public class EphDataOpenHelper extends SQLiteOpenHelper implements DataFileEvent
 	}
 
 //======================
-    private static final String SELECT_EVENTS_QUERY =
+/*
+ * 	SELECT KEY_ID, KEY_EVENT_TYPE 
+		KEY_DATE0, KEY_DATE1, KEY_PLANET0, 
+		KEY_PLANET1, KEY_DEGREE FROM 
+		COMMON_EVENTS WHERE KEY_DATE0 + " BETWEEN ? and ? 
+		UNION ALL 
+		SELECT KEY_ID KEY_EVENT_TYPE 
+		KEY_DATE0 KEY_DATE1 KEY_PLANET0 
+		KEY_PLANET1, KEY_DEGREE FROM 
+		LOCATION_EVENTS WHERE KEY_DATE0 BETWEEN ? and ? " +
+		AND KEY_TIMEZONE_ID=? ORDER BY KEY_DATE0;
+
+ */
+	private static final String SELECT_EVENTS_QUERY =
 		"SELECT " + KEY_ID + ", " + KEY_EVENT_TYPE + ", " + 
 		KEY_DATE0 + ", " + KEY_DATE1 + ", " + KEY_PLANET0 + ", " + 
 		KEY_PLANET1 +  ", " + KEY_DEGREE + " FROM " + 
