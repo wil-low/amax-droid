@@ -1,7 +1,6 @@
 package com.astromaximum.android;
 
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -10,7 +9,6 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class Preferences extends PreferenceActivity {
-	private EphDataOpenHelper mDbHelper;
 	private final String TAG = "Preferences";
 	private ListPreference mLocationsPreference;
 
@@ -36,22 +34,6 @@ public class Preferences extends PreferenceActivity {
 	}
 
 	private void populateCitiesList() {
-		mDbHelper = EphDataOpenHelper.getInstance();
-		Cursor cursor = mDbHelper.getLocations();
-		int rowCount = cursor.getCount();
-		CharSequence[] locationArray = new CharSequence[rowCount];
-		CharSequence[] entryValues = new CharSequence[rowCount];
-		if (cursor.moveToFirst()) {
-			int index = 0;
-			do {
-				entryValues[index] = cursor.getString(0);
-				locationArray[index] = cursor.getString(1);
-				++index;
-			} while (cursor.moveToNext());
-		}
-		cursor.close();
-		mLocationsPreference.setEntries(locationArray);
-		mLocationsPreference.setEntryValues(entryValues);
 	}
 
 	private void setCurrentCity(ListPreference preference, String value) {

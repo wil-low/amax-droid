@@ -1,18 +1,11 @@
 package com.astromaximum.android;
 
-import java.io.IOException;
-import java.io.InputStream;
-import com.astromaximum.util.DataProvider;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.AssetManager;
-import android.content.res.Resources;
-import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -23,10 +16,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
+
+import com.astromaximum.util.DataProvider;
 
 public class MainActivity extends Activity {
 	static final int DATE_DIALOG_ID = 0;
@@ -34,7 +26,6 @@ public class MainActivity extends Activity {
 	static final int PROGRESS_DIALOG_ID = 2;
 
 	private Context mContext = null;
-	private EphDataOpenHelper mDbHelper = null;
 	private final String TAG = "MainActivity";
 	private ListView mEventList = null;
 	private Button mDateButton;
@@ -53,7 +44,6 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "OnCreate");
         mContext = getApplicationContext();
-        mDbHelper = EphDataOpenHelper.getInstance(mContext);
         mEventProvider = DataProvider.getInstance(mContext);
        
         setContentView(R.layout.main);
@@ -66,57 +56,7 @@ public class MainActivity extends Activity {
         
         mCurrentLocationButton = (Button) findViewById(R.id.CurrentLocationButton);
 
-        if (mDbHelper.isEmpty(true)) {
-            //showDialog(CONVERT_DB_DIALOG_ID);
-	        try {
-	        	AssetManager manager = getAssets();
-	        	InputStream is = manager.open(FILENAME_COMMON);
-				mDbHelper.convertDataFile(is, true);
-			} catch (IOException e) {
-				Log.e(TAG, e.getMessage());
-				e.printStackTrace();
-			}
-            //dismissDialog(CONVERT_DB_DIALOG_ID);
-        }
-        if (mDbHelper.isEmpty(false)) {
-            //showDialog(CONVERT_DB_DIALOG_ID);
-	        try {
-	        	AssetManager manager = getAssets();
-	        	InputStream is = manager.open(FILENAME_LOCATIONS);
-				mDbHelper.convertDataFile(is, false);
-			} catch (IOException e) {
-				Log.e(TAG, e.getMessage());
-				e.printStackTrace();
-			}
-            //dismissDialog(CONVERT_DB_DIALOG_ID);
-        }
         mEventList  = (ListView)findViewById(R.id.ListViewEvents);
-		final String[] columns = {EphDataOpenHelper.KEY_EVENT_TYPE,
-				EphDataOpenHelper.KEY_DATE0, EphDataOpenHelper.KEY_DATE1, EphDataOpenHelper.KEY_PLANET0, EphDataOpenHelper.KEY_PLANET1};
-        SimpleCursorAdapter adapter = new SimpleCursorAdapter(mContext, R.layout.event_list_item, null, 
-        		columns, new int[]{R.id.EventListItemType, R.id.EventListItemText, R.id.EventListItemText2, R.id.EventListItemPlanet0, R.id.EventListItemPlanet1});
-        adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
-			public boolean setViewValue(View view, Cursor cursor,
-					int columnIndex) {
-				switch (columnIndex) {
-					case 4:
-					case 5:
-						int planet = cursor.getInt(columnIndex);
-						if (planet >= 0) {
-							ImageView image = (ImageView)view;
-							Resources res = getResources();
-							Drawable drawable = res.getDrawable(R.drawable.p00 + planet);
-							image.setImageDrawable(drawable);
-						}
-						break;
-					default:
-						TextView text2 = (TextView)view;
-						text2.setText(cursor.getString(columnIndex));
-				}
-				return true;
-			}
-        });
-        mEventList.setAdapter(adapter);
     }
 
     // Define the Handler that receives messages from the thread and update the progress
@@ -196,7 +136,6 @@ public class MainActivity extends Activity {
 	protected void onPause() {
 		super.onPause();
         Log.d(TAG, "OnPause");
-		mDbHelper.close();
         mEventProvider.saveState();
 	}
     
@@ -217,31 +156,6 @@ public class MainActivity extends Activity {
     private void updateDisplay() {
     	mEventProvider.setDate(2011, 5, 22);
     	mEventProvider.gatherEvents(DataProvider.RANGE_DAY);
-/*    	
-     	mDateButton.setText (new StringBuilder()
-                    .append(mYear).append("-")
-                    // Month is 0 based so add 1
-                    .append(mMonth + 1).append("-")
-                    .append(mDay).append(" "));
-     	DataFile.calendar.set(mYear, mMonth, mDay, 0, 0, 0);
-     	DataFile.calendar.set(Calendar.MILLISECOND, 0);
-     	if (mCurrentLocation != null) { 
-     		mCurrentLocationButton.setText(mCurrentLocation.mName);
-	    	mEventCursor = mDbHelper.getEventsOnPeriod(
-	    			DataFile.calendar.getTimeInMillis(),
-	    			DataFile.calendar.getTimeInMillis() + DataFile.MSECINDAY,
-	    			mCurrentLocation.mTimeZoneId);
-	    	if (!mEventCursor.moveToFirst())
-	    		Log.e(TAG, "No events");
-	    	else {
-		    	CursorAdapter cursorAdapter = (CursorAdapter) mEventList.getAdapter();
-				cursorAdapter.changeCursor(mEventCursor);
-	    	}
-     	}
-     	else {
-     		Log.e(TAG, "No current location");
-     	}
-     	*/
     }
     
 	private class ProgressThread extends Thread {

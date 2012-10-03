@@ -4,12 +4,10 @@ import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import com.astromaximum.android.EphDataOpenHelper;
 import com.astromaximum.android.PreferenceUtils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -32,12 +30,10 @@ public class DataProvider {
     private Location mCurrentLocation = null;
 	
 	private Vector<Vector<Event>> mEventCache;
-	private EphDataOpenHelper mDbHelper;
 	private Context mContext;
 	
 	private DataProvider(Context context) {
 		mContext = context;
-		mDbHelper = EphDataOpenHelper.getInstance(mContext);
 		mEventCache = new Vector<Vector<Event>>();
 		for (int i = 0; i < RANGE_LAST; ++i)
 			mEventCache.add(new Vector<Event>());
@@ -71,6 +67,7 @@ public class DataProvider {
 	    editor.putInt(STATE_KEY_YEAR, mYear);
 	    editor.putInt(STATE_KEY_MONTH, mMonth);
 	    editor.putInt(STATE_KEY_DAY, mDay);
+	    editor.commit();
     }
     
     public void restoreState() {
@@ -81,7 +78,6 @@ public class DataProvider {
     	mMonth = sharedPref.getInt(STATE_KEY_MONTH, c.get(Calendar.MONTH));
     	mDay = sharedPref.getInt(STATE_KEY_DAY, c.get(Calendar.DAY_OF_MONTH));
     	final long locationId = sharedPref.getLong(PreferenceUtils.KEY_LOCATION_ID, 0);
-    	mCurrentLocation = mDbHelper.getLocation(mYear, locationId);
 		Log.d(TAG, "Received locationId " + locationId + ": " + mYear);
     }
 
@@ -104,29 +100,6 @@ public class DataProvider {
 	}
 
 	private void readEvents(TimeRange timeRange, Vector<Event> events, int rangeType, String tag) {
- 		events.clear();
-     	if (mCurrentLocation != null) { 
-	    	Cursor cursor = mDbHelper.getEventsOnPeriod(
-	    			timeRange.getStartTimeMillis(),
-	    			timeRange.getEndTimeMillis(),
-	    			mCurrentLocation.mTimeZoneId, rangeType);
-	    	if (!cursor.moveToFirst()) {
-	    		Log.e(TAG, tag + ": No events");
-	    	}
-	    	else {
-	    		Log.d(TAG, "gather " + tag + ": " + mCurrentLocation.mTimeZoneId +
-	    				", count " + cursor.getCount());
-	    		do {
-	    			Event event = EphDataOpenHelper.createEventFromCursor(cursor);
-	    			System.out.println(event.toString());
-	    			events.add(event);
-	    		} while (cursor.moveToNext());
-	    	}
-	    	cursor.close();
-     	}
-     	else {
-     		Log.e(TAG, tag + ": No current location");
-     	}
 	}
 	
 	public void dispatchEvents(int rangeType, EventConsumer consumer) {
