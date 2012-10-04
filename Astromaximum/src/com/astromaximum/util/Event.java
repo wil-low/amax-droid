@@ -17,6 +17,10 @@ final public class Event {
     public static final byte SE_MEAN_APOG = 11;
     public static final byte SE_WHITE_MOON = 12;
 
+    private static final String[] PLANET_STR = {
+    	"??", "SO", "MO", "ME", "VE", "MA", "JU", "SA", "UR", "NE", "PL", "TN", "AP", "WM"
+    };
+
     public static final int EV_VOC = 0; // void of course
     public static final int EV_SIGN_ENTER = 1; // enter into sign
     public static final int EV_ASP_EXACT = 2; // exact aspect
@@ -72,7 +76,7 @@ final public class Event {
     public static final int EV_TATTVAS = 52;
     public static final int EV_LAST = 53;  // last - do not use
 
-    private static final String[] evTypeStr = {
+    private static final String[] EVENT_TYPE_STR = {
         "EV_VOC", // 0; // void of course
         "EV_SIGN_ENTER", // 1; // enter into sign
         "EV_ASP_EXACT", // 2; // exact aspect
@@ -138,8 +142,6 @@ final public class Event {
     short mDegree = 127;
 
     String mCaption = null;
-    
-    static GregorianCalendar mCalendar;
 
     public String getCaption() {
 		return mCaption;
@@ -202,26 +204,30 @@ final public class Event {
     }
 
     public String toString() {
-		return "Event: (" + mEvtype + " " + getEvTypeStr() + ", '" + 
-				long2String(mDate0, 0, false) + "', '" + long2String(mDate1, 0, false) + 
-				"', " + mPlanet0 + ", " + mPlanet1 + ", " + mDegree + ")";
+		return "Event: (" + mEvtype + " " + getEvTypeStr() + " " + 
+				long2String(mDate0, 0, false) + " - " + long2String(mDate1, 0, false) + 
+				" " + getPlanetName(mPlanet0) + "-" + getPlanetName(mPlanet1) + " d " + mDegree + ")";
 	}
 
-    public static String long2String(long date0, int hoursOnly, boolean h24) {
-    	mCalendar.setTimeInMillis(date0);
+    private String getPlanetName(byte planet) {
+		return PLANET_STR[planet + 1];
+	}
+
+	public static String long2String(long date0, int hoursOnly, boolean h24) {
+    	DataProvider.mCalendar.setTimeInMillis(date0);
         final StringBuffer s = new StringBuffer();
         if (hoursOnly == 0) {
-            s.append(Integer.toString(mCalendar.get(Calendar.YEAR)))
+            s.append(Integer.toString(DataProvider.mCalendar.get(Calendar.YEAR)))
                     .append("-")
-            		.append(to2String(mCalendar.get(Calendar.MONTH) + 1))
+            		.append(to2String(DataProvider.mCalendar.get(Calendar.MONTH) + 1))
                     .append("-")
-                    .append(to2String(mCalendar.get(Calendar.DAY_OF_MONTH)));
+                    .append(to2String(DataProvider.mCalendar.get(Calendar.DAY_OF_MONTH)));
             s.append(" ");
         }
         int hh = 0, mm = 0;
         try {
-            hh = mCalendar.get(Calendar.HOUR_OF_DAY);
-            mm = mCalendar.get(Calendar.MINUTE);
+            hh = DataProvider.mCalendar.get(Calendar.HOUR_OF_DAY);
+            mm = DataProvider.mCalendar.get(Calendar.MINUTE);
         }
         catch (Exception e) {
             System.out.println("Ex: long2String(" + Long.toString(date0) + ", "
@@ -288,7 +294,7 @@ final public class Event {
 	}
 	
 	public String getEvTypeStr() {
-		return evTypeStr[mEvtype];
+		return EVENT_TYPE_STR[mEvtype];
 	}
 
     boolean isInPeriod(long start, long end, boolean special) {

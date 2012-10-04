@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Calendar;
 
 /**
  * <p>Title: Astromaximum</p>
@@ -27,21 +26,13 @@ final public class CommonDataFile {
 	int mDayCount;
 	DataInputStream mData;
 
-	public CommonDataFile(InputStream stream, Calendar calendar) {
+	public CommonDataFile(InputStream stream) {
         try {
             DataInputStream is = new DataInputStream(stream);
             mStartYear = is.readShort();
             mStartMonth = is.readUnsignedByte();
             mStartDay = is.readUnsignedByte();
             
-            calendar.set(Calendar.YEAR, mStartYear);
-            calendar.set(Calendar.MONTH, mStartMonth - 1);
-            calendar.set(Calendar.DAY_OF_MONTH, mStartDay);
-            calendar.set(Calendar.HOUR_OF_DAY, 0);
-            calendar.set(Calendar.MINUTE, 0);
-            calendar.set(Calendar.SECOND, 0);
-            calendar.set(Calendar.MILLISECOND, 0);
-
             int customDataLen = is.readUnsignedShort(); // customData length
             mDayCount = is.readShort();
             if (customDataLen > 0) {

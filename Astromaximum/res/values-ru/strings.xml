@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="pref_current_city">Текущий город</string>
+    <string name="prefs_title">Настройки</string>
+    <string name="today_title">Сегодня</string>
+    <string name="help_title">Помощь</string>
     <string name="pref_show_all_texts">Показывать все тексты</string>
-<string name="pref_current_city">Текущий город</string>
+    <string name="app_name">Astromaximum</string>
 </resources>

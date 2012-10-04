@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
-  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:amaxdroid="http://schemas.android.com/apk/res/com.astromaximum">
-<!-- com.astromaximum.ImageListPreference
-android:key="imageList"
-android:title="Title"
-android:summary="Summary"
-android:entries="@array/cities"
-android:entryValues="@array/cities"
-amaxdroid:entryImages="@array/cities"/-->
-<ListPreference android:summary="OK" android:key="locations" android:persistent="false" android:title="@string/pref_current_city"></ListPreference>
-<CheckBoxPreference android:title="@string/pref_show_all_texts"></CheckBoxPreference>
-<!-- ListPreference android:key="topic"></ListPreference-->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:amaxdroid="http://schemas.android.com/apk/res/com.astromaximum" >
+
+	<ListPreference
+        android:key="current_location_id"
+        android:persistent="false"
+        android:summary="OK"
+        android:title="@string/pref_current_city" >
+    </ListPreference>
+
+    <CheckBoxPreference android:title="@string/pref_show_all_texts" >
+    </CheckBoxPreference>
+
+
 </PreferenceScreen>

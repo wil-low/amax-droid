@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 import java.util.Vector;
@@ -23,13 +24,10 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.astromaximum.android.Preferences;
+import com.astromaximum.android.PreferenceUtils;
 
 public class DataProvider {
 	private static DataProvider mInstance;
-	private final String STATE_KEY_YEAR = "Year";
-	private final String STATE_KEY_MONTH = "Month";
-	private final String STATE_KEY_DAY = "Day";
 	private final String TAG = "DataProvider";
 
 	public static final int RANGE_DAY = 0;
@@ -67,7 +65,8 @@ public class DataProvider {
 	public static final long MSECINDAY = 86400 * 1000;
 	protected long mStartJD, mFinalJD;
 	protected int mDayCount;
-	public static final Calendar mCalendar = getUtcCalendar();
+	public static Calendar mCalendar = Calendar.getInstance(TimeZone
+			.getTimeZone("UTC"));
 	private static final int STREAM_BUFFER_SIZE = 10000;
 
 	boolean mExternalStorageAvailable = false;
@@ -79,12 +78,12 @@ public class DataProvider {
 		mEventCache = new Vector<Vector<Event>>();
 		for (int i = 0; i < RANGE_LAST; ++i)
 			mEventCache.add(new Vector<Event>());
-		
+
 		AssetManager manager = mContext.getAssets();
 		InputStream is;
 		try {
 			is = manager.open("common.dat");
-			mCommonDatafile = new CommonDataFile(is, mCalendar);
+			mCommonDatafile = new CommonDataFile(is);
 			checkStorage();
 			if (mExternalStorageAvailable) {
 				File cacheDir = Environment.getExternalStorageDirectory();
@@ -92,12 +91,11 @@ public class DataProvider {
 						+ "/Android/data/com.astromaximum.android/cache";
 				cacheDir = new File(mLocationDir);
 				cacheDir.mkdirs();
-			}	
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Event.mCalendar = (GregorianCalendar)mCalendar;
 	}
 
 	void checkStorage() {
@@ -272,10 +270,6 @@ public class DataProvider {
 		return mDayCount;
 	}
 
-	public static Calendar getUtcCalendar() {
-		return Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-	}
-
 	public static DataProvider getInstance(Context context) {
 		if (mInstance == null)
 			mInstance = new DataProvider(context);
@@ -302,70 +296,81 @@ public class DataProvider {
 		Log.d(TAG, "saveInstanceState");
 		SharedPreferences.Editor editor = PreferenceManager
 				.getDefaultSharedPreferences(mContext).edit();
-		editor.putInt(STATE_KEY_YEAR, mYear);
-		editor.putInt(STATE_KEY_MONTH, mMonth);
-		editor.putInt(STATE_KEY_DAY, mDay);
+		editor.putLong(PreferenceUtils.KEY_START_TIME, mStartTime);
 		editor.commit();
 	}
 
 	public void restoreState() {
 		Log.d(TAG, "restoreInstanceState");
-		Calendar c = getUtcCalendar();
 		SharedPreferences sharedPref = PreferenceManager
 				.getDefaultSharedPreferences(mContext);
-		mYear = sharedPref.getInt(STATE_KEY_YEAR, c.get(Calendar.YEAR));
-		mMonth = sharedPref.getInt(STATE_KEY_MONTH, c.get(Calendar.MONTH));
-		mDay = sharedPref.getInt(STATE_KEY_DAY, c.get(Calendar.DAY_OF_MONTH));
-		int locationId = sharedPref.getInt(Preferences.KEY_LOCATION_ID, 0);
+		String locationId = sharedPref.getString(
+				PreferenceUtils.KEY_LOCATION_ID, "");
 		Log.i(TAG, "Received locationId " + locationId + ": " + mYear);
-		if (locationId == 0) { // no default location, unbundle from asset
+		if (locationId.equals("")) { // no default location, unbundle from asset
 			if (mExternalStorageWriteable)
-				locationId = unbundleLocationAsset(sharedPref);
+				locationId = unbundleLocationAsset();
 		}
 		loadLocation(locationId, sharedPref);
-		Log.i(TAG, "Received locationId " + locationId + ": " + mYear + " " + mLocationDatafile.mCity);
+		Log.i(TAG, "Received locationId " + locationId + ": " + mYear + " "
+				+ mLocationDatafile.mCity);
+		mStartTime = sharedPref.getLong(PreferenceUtils.KEY_START_TIME,
+				mCalendar.getTimeInMillis());
+		mCalendar.setTimeInMillis(mStartTime);
+		setDateFromCalendar();
 	}
 
-	private void loadLocation(int locationId, SharedPreferences sharedPref) {
-		String hexId = Integer.toHexString(locationId);
-		File locFile = new File(mLocationDir, hexId + ".dat");
+	private void loadLocation(String locationId, SharedPreferences sharedPref) {
+		BufferedInputStream is = null;
+		File locFile = new File(mLocationDir, locationId + ".dat");
 		try {
-			BufferedInputStream is = new BufferedInputStream(new FileInputStream(locFile), STREAM_BUFFER_SIZE);
+			is = new BufferedInputStream(new FileInputStream(locFile),
+					STREAM_BUFFER_SIZE);
 			mLocationDatafile = new LocationsDataFile(is);
-			SharedPreferences.Editor editor = sharedPref.edit();
-			editor.putInt(Preferences.KEY_LOCATION_ID, locationId);
-			editor.commit();
-			Event.mCalendar = new GregorianCalendar(TimeZone.getTimeZone(mLocationDatafile.mTimezone));
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			locationId = PreferenceUtils.getSortedLocations(mContext)
+					.firstKey();
+			locFile = new File(mLocationDir, locationId + ".dat");
+			try {
+				is = new BufferedInputStream(new FileInputStream(locFile),
+						STREAM_BUFFER_SIZE);
+				mLocationDatafile = new LocationsDataFile(is);
+			} catch (FileNotFoundException e2) {
+				e2.printStackTrace();
+			}
 		}
+		SharedPreferences.Editor editor = sharedPref.edit();
+		editor.putString(PreferenceUtils.KEY_LOCATION_ID, locationId);
+		editor.commit();
+		mCalendar = new GregorianCalendar(
+				TimeZone.getTimeZone(mLocationDatafile.mTimezone));
 	}
-	
-	private int unbundleLocationAsset(SharedPreferences sharedPref) {
-		int lastLocationId = 0;
+
+	private String unbundleLocationAsset() {
+		String lastLocationId = "";
 		AssetManager manager = mContext.getAssets();
 		try {
 			InputStream is = manager.open("locations.dat");
 			LocationBundle locBundle = new LocationBundle(is);
 			int index = 0;
 			byte[] buffer = null;
+			SharedPreferences sharedPref = mContext.getSharedPreferences(
+					PreferenceUtils.PREF_LOCATION_LIST, 0);
 			SharedPreferences.Editor editor = sharedPref.edit();
 			for (int i = 0; i < locBundle.mRecordCount; ++i) {
 				buffer = locBundle.extractLocation(index);
 				LocationsDataFile datafile = new LocationsDataFile(
 						new ByteArrayInputStream(buffer));
-				lastLocationId = datafile.mCityId;
-				String hexId = Integer.toHexString(datafile.mCityId);
-				Log.i(TAG, index + ": " + hexId + " " + datafile.mCity);
-				File locFile = new File(mLocationDir, hexId + ".dat");
+				lastLocationId = Integer.toHexString(datafile.mCityId);
+				Log.i(TAG, index + ": " + lastLocationId + " " + datafile.mCity);
+				File locFile = new File(mLocationDir, lastLocationId + ".dat");
 				OutputStream out = null;
 				try {
-					out = new BufferedOutputStream(new FileOutputStream(locFile), STREAM_BUFFER_SIZE);
+					out = new BufferedOutputStream(
+							new FileOutputStream(locFile), STREAM_BUFFER_SIZE);
 					out.write(buffer);
-					editor.putString(Preferences.STATE_KEY_LOC_PREFIX + index, hexId);
-				}
-				finally {
+					editor.putString(lastLocationId, datafile.mCity);
+				} finally {
 					if (out != null)
 						out.close();
 				}
@@ -378,10 +383,22 @@ public class DataProvider {
 		return lastLocationId;
 	}
 
+	public void changeDate(int deltaDays) {
+		mStartTime += MSECINDAY * deltaDays;
+		mCalendar.setTime(new Date(mStartTime));
+		setDateFromCalendar();
+	}
+
 	public void setDate(int year, int month, int day) {
 		mYear = year;
 		mMonth = month;
 		mDay = day;
+	}
+
+	public void setDateFromCalendar() {
+		mYear = mCalendar.get(Calendar.YEAR);
+		mMonth = mCalendar.get(Calendar.MONTH);
+		mDay = mCalendar.get(Calendar.DAY_OF_MONTH);
 	}
 
 	public void gatherEvents(int rangeType) {
@@ -391,17 +408,39 @@ public class DataProvider {
 			mCalendar.set(mYear, mMonth, mDay, 0, 0, 0);
 			mCalendar.set(Calendar.MILLISECOND, 0);
 			mStartTime = mCalendar.getTimeInMillis();
-			mEndTime = mStartTime + +MSECINDAY;
-			final Vector<Event> tithi = new Vector<Event>();
-			getEventsOnPeriod(tithi, Event.EV_TITHI, Event.SE_MOON, false,
+			mEndTime = mStartTime + MSECINDAY;
+
+			Event dummy = new Event(mStartTime, Event.SE_PLUTO);
+			dummy.setDate1(mEndTime);
+			mEventCache.get(rangeType).add(dummy);
+
+			Vector<Event> tmpVector = new Vector<Event>();
+			getEventsOnPeriod(tmpVector, Event.EV_VOC, Event.SE_MOON, false,
 					mStartTime, mEndTime, 0);
-			mEventCache.get(rangeType).addAll(tithi);
+			getEventsOnPeriod(tmpVector, Event.EV_TITHI, Event.SE_MOON, false,
+					mStartTime, mEndTime, 0);
+			getEventsOnPeriod(tmpVector, Event.EV_ASTRORISE, Event.SE_SUN,
+					false, mStartTime, mEndTime, 0);
+			getEventsOnPeriod(tmpVector, Event.EV_ASTRORISE, Event.SE_MOON,
+					false, mStartTime, mEndTime, 0);
+			getEventsOnPeriod(tmpVector, Event.EV_ASTRORISE, Event.SE_MERCURY,
+					false, mStartTime, mEndTime, 0);
+			getEventsOnPeriod(tmpVector, Event.EV_ASTRORISE, Event.SE_VENUS,
+					false, mStartTime, mEndTime, 0);
+			getEventsOnPeriod(tmpVector, Event.EV_ASTRORISE, Event.SE_MARS,
+					false, mStartTime, mEndTime, 0);
+			mEventCache.get(rangeType).addAll(tmpVector);
 			break;
 		}
 	}
 
 	public Object[] get(int rangeType) {
 		return mEventCache.get(rangeType).toArray();
+	}
+
+	public void setTodayDate() {
+		mCalendar = Calendar.getInstance(mCalendar.getTimeZone());
+		setDateFromCalendar();
 	}
 
 	// mStartJD = calendar.getTime().getTime();
