@@ -17,57 +17,45 @@ import java.util.Calendar;
  *
  * @author Andrei Ivushkin
  * @version 1.0
- * @noinspection CastToConcreteClass
  */
-final public class CommonDataFile extends DataFile {
+final public class CommonDataFile {
 
-	private short mStartYear;
+	int mStartYear;
+	int mStartMonth;
+	int mStartDay;
+	byte[] mCustomData;
+	int mDayCount;
+	DataInputStream mData;
 
-	/**
-     * DataFile
-     */
-    public CommonDataFile(InputStream stream) {
+	public CommonDataFile(InputStream stream, Calendar calendar) {
         try {
             DataInputStream is = new DataInputStream(stream);
             mStartYear = is.readShort();
+            mStartMonth = is.readUnsignedByte();
+            mStartDay = is.readUnsignedByte();
+            
             calendar.set(Calendar.YEAR, mStartYear);
-            calendar.set(Calendar.MONTH, is.readUnsignedByte() - 1);
-            calendar.set(Calendar.DAY_OF_MONTH, is.readUnsignedByte());
+            calendar.set(Calendar.MONTH, mStartMonth - 1);
+            calendar.set(Calendar.DAY_OF_MONTH, mStartDay);
             calendar.set(Calendar.HOUR_OF_DAY, 0);
             calendar.set(Calendar.MINUTE, 0);
             calendar.set(Calendar.SECOND, 0);
             calendar.set(Calendar.MILLISECOND, 0);
-            mCustomData = null;
 
-            int count = is.readUnsignedShort(); // customData length
-            mStartJD = calendar.getTime().getTime();
+            int customDataLen = is.readUnsignedShort(); // customData length
             mDayCount = is.readShort();
-            mFinalJD = mStartJD + mDayCount * MSECINDAY;
-            if (count > 0) {
-                mCustomData = new byte[count];
+            if (customDataLen > 0) {
+                mCustomData = new byte[customDataLen];
                 is.read(mCustomData);
             }
-            mBuffer = new byte[is.available()];
-            is.read(mBuffer);
+            byte[] buffer = new byte[is.available()];
+            is.read(buffer);
             is.close();
+            mData = new DataInputStream(new ByteArrayInputStream(buffer));
         }
         catch (IOException e) {
         	e.printStackTrace();
         }
     }
-
-    @Override
-    public int readSubData(DataFileEventConsumer consumer) throws IOException {
-    	final DataInputStream is = new DataInputStream(new ByteArrayInputStream(mBuffer));
-    	int eventCount = 0;
-    	eventCount += super.readEvents(is, consumer);
-    	is.close();
-    	return eventCount;
-    }
-
-	@Override
-    protected void addEvent(DataFileEventConsumer consumer, Event last) {
-		consumer.addEvent(mStartYear, last);
-	}
 }
 

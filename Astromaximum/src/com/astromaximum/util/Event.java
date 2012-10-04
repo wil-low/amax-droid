@@ -16,6 +16,7 @@ final public class Event {
     public static final byte SE_TRUE_NODE = 10;
     public static final byte SE_MEAN_APOG = 11;
     public static final byte SE_WHITE_MOON = 12;
+
     public static final int EV_VOC = 0; // void of course
     public static final int EV_SIGN_ENTER = 1; // enter into sign
     public static final int EV_ASP_EXACT = 2; // exact aspect
@@ -129,6 +130,7 @@ final public class Event {
     };
     // Any changes above must be synched with %eventType in tools.pm
     // and EventType in mutter2/events.h !!!
+    static final long ROUNDING_MSEC = 60 * 1000;
 
     int mEvtype = 0;
     byte mPlanet0, mPlanet1 = -1;
@@ -136,6 +138,8 @@ final public class Event {
     short mDegree = 127;
 
     String mCaption = null;
+    
+    static GregorianCalendar mCalendar;
 
     public String getCaption() {
 		return mCaption;
@@ -194,41 +198,30 @@ final public class Event {
         mDate0 = event.mDate0;
         mDate1 = event.mDate1;
         mDegree = event.mDegree;
+        mEvtype = event.mEvtype;
     }
 
-	public void toSQL() {
-		System.out.println("INSERT INTO common_events (evtype, date0, date1, degree, planet0, planet1) VALUES ("
-				+ mEvtype + ", julianday('" + long2String(mDate0, 0, false) + "', 'utc'), julianday('"
-				+ long2String(mDate1, 0, false) + "', 'utc') , " + mDegree + ", " + mPlanet0 + ", " + mPlanet1 + ");");
-	}
-
-	public String toString() {
+    public String toString() {
 		return "Event: (" + mEvtype + " " + getEvTypeStr() + ", '" + 
 				long2String(mDate0, 0, false) + "', '" + long2String(mDate1, 0, false) + 
 				"', " + mPlanet0 + ", " + mPlanet1 + ", " + mDegree + ")";
 	}
 
-	public String date2Sql (long date)
-	{
-		return "julianday('" + long2String(mDate0, 0, false) + "', 'utc')";
-	}
-	
     public static String long2String(long date0, int hoursOnly, boolean h24) {
-//        date0 += localOffset(date0);
-        DataFile.calendar.setTime(new Date(date0));
+    	mCalendar.setTimeInMillis(date0);
         final StringBuffer s = new StringBuffer();
         if (hoursOnly == 0) {
-            s.append(Integer.toString(DataFile.calendar.get(Calendar.YEAR)))
+            s.append(Integer.toString(mCalendar.get(Calendar.YEAR)))
                     .append("-")
-            		.append(to2String(DataFile.calendar.get(Calendar.MONTH) + 1))
+            		.append(to2String(mCalendar.get(Calendar.MONTH) + 1))
                     .append("-")
-                    .append(to2String(DataFile.calendar.get(Calendar.DAY_OF_MONTH)));
+                    .append(to2String(mCalendar.get(Calendar.DAY_OF_MONTH)));
             s.append(" ");
         }
         int hh = 0, mm = 0;
         try {
-            hh = DataFile.calendar.get(Calendar.HOUR_OF_DAY);
-            mm = DataFile.calendar.get(Calendar.MINUTE);
+            hh = mCalendar.get(Calendar.HOUR_OF_DAY);
+            mm = mCalendar.get(Calendar.MINUTE);
         }
         catch (Exception e) {
             System.out.println("Ex: long2String(" + Long.toString(date0) + ", "
@@ -243,7 +236,7 @@ final public class Event {
 //      s.append("/");
 
 //    s+=to2String(date0[index])+":"+to2String(date0[index]);
-        return s.toString();//s;
+        return s.toString();
     }
 
 	public int getEvtype() {
@@ -297,5 +290,36 @@ final public class Event {
 	public String getEvTypeStr() {
 		return evTypeStr[mEvtype];
 	}
+
+    boolean isInPeriod(long start, long end, boolean special) {
+        if (mDate0 == 0) {
+            return false;
+        }
+        final int f = dateBetween(mDate0, start, end) + dateBetween(mDate1, start, end);
+        if ((f == 2) || (f == -2)) {
+            return false;
+        }
+        if (special) {
+            if (f == -1) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    static int dateBetween(long date0, long start, long end) {
+        if (date0 < start) {
+            return -1;
+        }
+        if (date0 >= end) {
+            return 1;
+        }
+        return 0;
+    }
+
+    boolean isDateBetween(int index, long start, long end) {
+        long dat = (index > 0) ? mDate1 : mDate0;
+        return start <= dat && dat < end;
+    }
 }
 

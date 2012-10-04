@@ -1,12 +1,11 @@
 package com.astromaximum.android;
 
-import com.astromaximum.android.view.EventView;
-import com.astromaximum.util.DataProvider;
-import com.astromaximum.util.Event;
-import com.astromaximum.util.EventConsumer;
-
 import android.os.Bundle;
 import android.util.Log;
+
+import com.astromaximum.android.view.EventView;
+import com.astromaximum.util.Event;
+import com.astromaximum.util.EventConsumer;
 
 public class SummaryActivity extends EventActivity implements EventConsumer {
 	private final String TAG = "SummaryActivity";
@@ -26,7 +25,6 @@ public class SummaryActivity extends EventActivity implements EventConsumer {
 	}
 
 	private void updateDisplay() {
-		DataProvider.getInstance().dispatchEvents(DataProvider.RANGE_DAY, this);
 	}
 
 	public void addEvent(Event event) {
