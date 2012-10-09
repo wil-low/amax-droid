@@ -14,6 +14,7 @@ import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.TimeZone;
 import java.util.Vector;
 
@@ -34,7 +35,17 @@ public class DataProvider {
 	public static final int RANGE_WEEK = 1;
 	public static final int RANGE_MONTH = 2;
 	public static final int RANGE_LAST = 3;
-
+	
+	// constants used in event map
+	private static final String KEY_VOC = "VOC";
+	private static final String KEY_VC = "VC";
+	private static final String KEY_SUN_DEGREE = "SUN_DEGREE";
+	private static final String KEY_MOON_SIGN = "MOON_SIGN";
+	private static final String KEY_TITHI = "TITHI";
+	private static final String KEY_PLANET_HOUR = "PLANET_HOUR";
+	private static final String KEY_ASPECTS = "ASPECTS";
+	private static final String KEY_MOON_MOVE = "MOON_MOVE";
+	
 	private int mYear;
 	private int mMonth;
 	private int mDay;
@@ -226,9 +237,10 @@ public class DataProvider {
 		return eventsCount;
 	}
 
-	void getEventsOnPeriod(Vector<Event> v, int evtype, int planet,
+	Vector<Event> getEventsOnPeriod(int evtype, int planet,
 			boolean special, long dayStart, long dayEnd, int value) {
 		boolean flag = false;
+		Vector<Event> result = new Vector<Event>();
 		int cnt = getEvents(evtype, planet, dayStart, dayEnd);
 		for (int i = 0; i < cnt; i++) {
 			final Event ev = mEvents[i];
@@ -237,11 +249,12 @@ public class DataProvider {
 				if (value > 0) {
 					ev.mDegree = (short) value;
 				}
-				v.addElement(ev);
+				result.addElement(ev);
 			} else if (flag) {
 				break;
 			}
 		}
+		return result;
 	}
 
 	int getEvents(int evtype, int planet, long dayStart, long dayEnd) {
@@ -410,28 +423,37 @@ public class DataProvider {
 			mStartTime = mCalendar.getTimeInMillis();
 			mEndTime = mStartTime + MSECINDAY;
 
-			Event dummy = new Event(mStartTime, Event.SE_PLUTO);
-			dummy.setDate1(mEndTime);
-			mEventCache.get(rangeType).add(dummy);
-
-			Vector<Event> tmpVector = new Vector<Event>();
-			getEventsOnPeriod(tmpVector, Event.EV_VOC, Event.SE_MOON, false,
-					mStartTime, mEndTime, 0);
-			getEventsOnPeriod(tmpVector, Event.EV_TITHI, Event.SE_MOON, false,
-					mStartTime, mEndTime, 0);
-			getEventsOnPeriod(tmpVector, Event.EV_ASTRORISE, Event.SE_SUN,
+			HashMap<String, Vector<Event>> eventMap = new HashMap<String, Vector<Event>>();
+			eventMap.put(KEY_VOC, getVOCs());
+			eventMap.put(KEY_VC, selectSingleEvent(getVC()));
+/*			
+			getEventsOnPeriod(tmpVector, Event.EV_DEGREE_PASS, Event.SE_SUN,
 					false, mStartTime, mEndTime, 0);
-			getEventsOnPeriod(tmpVector, Event.EV_ASTRORISE, Event.SE_MOON,
+			getEventsOnPeriod(tmpVector, Event.EV_SIGN_ENTER, Event.SE_MOON,
 					false, mStartTime, mEndTime, 0);
-			getEventsOnPeriod(tmpVector, Event.EV_ASTRORISE, Event.SE_MERCURY,
+			getEventsOnPeriod(tmpVector, Event.EV_TITHI, Event.SE_MOON,
 					false, mStartTime, mEndTime, 0);
-			getEventsOnPeriod(tmpVector, Event.EV_ASTRORISE, Event.SE_VENUS,
+			getEventsOnPeriod(tmpVector, Event.EV_PLANET_HOUR, -1,
 					false, mStartTime, mEndTime, 0);
-			getEventsOnPeriod(tmpVector, Event.EV_ASTRORISE, Event.SE_MARS,
+			getEventsOnPeriod(tmpVector, Event.EV_ASP_EXACT, -1,
 					false, mStartTime, mEndTime, 0);
 			mEventCache.get(rangeType).addAll(tmpVector);
+*/
 			break;
 		}
+	}
+
+	private Vector<Event> selectSingleEvent(Vector<Event> vc) {
+		Vector<Event> result = new Vector<Event>();
+		return result;
+	}
+
+	private Vector<Event> getVOCs() {
+		return getEventsOnPeriod(Event.EV_VOC, Event.SE_MOON, false, mStartTime, mEndTime, 0);
+	}
+
+	private Vector<Event> getVC() {
+		return getEventsOnPeriod(Event.EV_VIA_COMBUSTA, Event.SE_MOON, false, mStartTime, mEndTime, 0);
 	}
 
 	public Object[] get(int rangeType) {
