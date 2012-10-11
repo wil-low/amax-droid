@@ -14,7 +14,6 @@ import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.TimeZone;
 import java.util.Vector;
 
@@ -36,9 +35,9 @@ public class DataProvider {
 	public static final int RANGE_WEEK = 1;
 	public static final int RANGE_MONTH = 2;
 	public static final int RANGE_LAST = 3;
-	
+
 	// constants used in event map
-	
+
 	public static final String KEY_VOC = "VOC";
 	public static final String KEY_VC = "VC";
 	public static final String KEY_SUN_DEGREE = "SUN_DEGREE";
@@ -48,7 +47,7 @@ public class DataProvider {
 	public static final String KEY_ASPECTS = "ASPECTS";
 	public static final String KEY_MOON_MOVE = "MOON_MOVE";
 	public static final String KEY_RETROGRADE = "RETROGRADE";
-	
+
 	private int mYear;
 	private int mMonth;
 	private int mDay;
@@ -240,8 +239,8 @@ public class DataProvider {
 		return eventsCount;
 	}
 
-	Vector<Event> getEventsOnPeriod(int evtype, int planet,
-			boolean special, long dayStart, long dayEnd, int value) {
+	Vector<Event> getEventsOnPeriod(int evtype, int planet, boolean special,
+			long dayStart, long dayEnd, int value) {
 		boolean flag = false;
 		Vector<Event> result = new Vector<Event>();
 		int cnt = getEvents(evtype, planet, dayStart, dayEnd);
@@ -428,31 +427,27 @@ public class DataProvider {
 
 			Vector<SummaryItem> v = new Vector<SummaryItem>();
 			v.add(new SummaryItem(KEY_VOC, getVOCs()));
-
-			v.add(new SummaryItem(KEY_VOC, getVOCs()));
-			v.add(new SummaryItem(KEY_VC, selectSingleEvent(getVC())));
-			v.add(new SummaryItem(KEY_SUN_DEGREE, selectSingleEvent(getSunDegree())));
-			v.add(new SummaryItem(KEY_MOON_SIGN, selectSingleEvent(getMoonSign())));
-			v.add(new SummaryItem(KEY_TITHI, selectSingleEvent(getTithis())));
-			v.add(new SummaryItem(KEY_PLANET_HOUR, selectSingleEvent(getPlanetaryHours())));
-			v.add(new SummaryItem(KEY_ASPECTS, selectSingleEvent(getAspects())));
-			v.add(new SummaryItem(KEY_MOON_MOVE, selectSingleEvent(getMoonMove())));
-			v.add(new SummaryItem(KEY_RETROGRADE, selectSingleEvent(getRetrogrades())));
+			v.add(new SummaryItem(KEY_VC, getVC()));
+			v.add(new SummaryItem(KEY_SUN_DEGREE, getSunDegree()));
+			v.add(new SummaryItem(KEY_MOON_SIGN, getMoonSign()));
+			v.add(new SummaryItem(KEY_TITHI, getTithis()));
+			v.add(new SummaryItem(KEY_PLANET_HOUR, getPlanetaryHours()));
+			v.add(new SummaryItem(KEY_ASPECTS, getAspects()));
+			v.add(new SummaryItem(KEY_MOON_MOVE, getMoonMove()));
+			v.add(new SummaryItem(KEY_RETROGRADE, getRetrogrades()));
 			mEventCache.set(rangeType, v);
-/*			
-			getEventsOnPeriod(tmpVector, Event.EV_DEGREE_PASS, Event.SE_SUN,
-					false, mStartTime, mEndTime, 0);
-			getEventsOnPeriod(tmpVector, Event.EV_SIGN_ENTER, Event.SE_MOON,
-					false, mStartTime, mEndTime, 0);
-			getEventsOnPeriod(tmpVector, Event.EV_TITHI, Event.SE_MOON,
-					false, mStartTime, mEndTime, 0);
-			getEventsOnPeriod(tmpVector, Event.EV_PLANET_HOUR, -1,
-					false, mStartTime, mEndTime, 0);
-			getEventsOnPeriod(tmpVector, Event.EV_ASP_EXACT, -1,
-					false, mStartTime, mEndTime, 0);
-			mEventCache.get(rangeType).addAll(tmpVector);
-*/
-			
+			/*
+			 * getEventsOnPeriod(tmpVector, Event.EV_DEGREE_PASS, Event.SE_SUN,
+			 * false, mStartTime, mEndTime, 0); getEventsOnPeriod(tmpVector,
+			 * Event.EV_SIGN_ENTER, Event.SE_MOON, false, mStartTime, mEndTime,
+			 * 0); getEventsOnPeriod(tmpVector, Event.EV_TITHI, Event.SE_MOON,
+			 * false, mStartTime, mEndTime, 0); getEventsOnPeriod(tmpVector,
+			 * Event.EV_PLANET_HOUR, -1, false, mStartTime, mEndTime, 0);
+			 * getEventsOnPeriod(tmpVector, Event.EV_ASP_EXACT, -1, false,
+			 * mStartTime, mEndTime, 0);
+			 * mEventCache.get(rangeType).addAll(tmpVector);
+			 */
+
 			break;
 		}
 	}
@@ -466,39 +461,54 @@ public class DataProvider {
 	}
 
 	private Vector<Event> getVOCs() {
-		return getEventsOnPeriod(Event.EV_VOC, Event.SE_MOON, false, mStartTime, mEndTime, 0);
+		return getEventsOnPeriod(Event.EV_VOC, Event.SE_MOON, false,
+				mStartTime, mEndTime, 0);
 	}
 
 	private Vector<Event> getVC() {
-		return getEventsOnPeriod(Event.EV_VIA_COMBUSTA, Event.SE_MOON, false, mStartTime, mEndTime, 0);
+		return getEventsOnPeriod(Event.EV_VIA_COMBUSTA, Event.SE_MOON, false,
+				mStartTime, mEndTime, 0);
 	}
 
 	private Vector<Event> getSunDegree() {
-		return getEventsOnPeriod(Event.EV_DEGREE_PASS, Event.SE_SUN, false, mStartTime, mEndTime, 0);
+		return getEventsOnPeriod(Event.EV_DEGREE_PASS, Event.SE_SUN, false,
+				mStartTime, mEndTime, 0);
 	}
 
 	private Vector<Event> getMoonSign() {
-		return getEventsOnPeriod(Event.EV_SIGN_ENTER, Event.SE_MOON, false, mStartTime, mEndTime, 0);
+		return getEventsOnPeriod(Event.EV_SIGN_ENTER, Event.SE_MOON, false,
+				mStartTime, mEndTime, 0);
 	}
 
 	private Vector<Event> getTithis() {
-		return getEventsOnPeriod(Event.EV_TITHI, Event.SE_MOON, false, mStartTime, mEndTime, 0);
+		return getEventsOnPeriod(Event.EV_TITHI, Event.SE_MOON, false,
+				mStartTime, mEndTime, 0);
 	}
 
 	private Vector<Event> getPlanetaryHours() {
-		return getEventsOnPeriod(Event.EV_TITHI, Event.SE_MOON, false, mStartTime, mEndTime, 0);
+		return getEventsOnPeriod(Event.EV_TITHI, Event.SE_MOON, false,
+				mStartTime, mEndTime, 0);
 	}
 
 	private Vector<Event> getAspects() {
-		return getEventsOnPeriod(Event.EV_TITHI, Event.SE_MOON, false, mStartTime, mEndTime, 0);
+		return getEventsOnPeriod(Event.EV_TITHI, Event.SE_MOON, false,
+				mStartTime, mEndTime, 0);
 	}
 
 	private Vector<Event> getMoonMove() {
-		return getEventsOnPeriod(Event.EV_TITHI, Event.SE_MOON, false, mStartTime, mEndTime, 0);
+		return getEventsOnPeriod(Event.EV_TITHI, Event.SE_MOON, false,
+				mStartTime, mEndTime, 0);
 	}
 
 	private Vector<Event> getRetrogrades() {
-		return getEventsOnPeriod(Event.EV_TITHI, Event.SE_MOON, false, mStartTime, mEndTime, 0);
+		Vector<Event> result = new Vector<Event>();
+		for (int planet = Event.SE_SUN; planet <= Event.SE_PLUTO; ++planet) {
+			Vector<Event> v = getEventsOnPeriod(Event.EV_RETROGRADE, planet,
+					false, mStartTime, mEndTime, 0);
+			if (!v.isEmpty())
+				result.addAll(v);
+		}
+		return result;
 	}
 
 	public Vector<SummaryItem> get(int rangeType) {

@@ -76,7 +76,7 @@ final public class Event {
     public static final int EV_TATTVAS = 52;
     public static final int EV_LAST = 53;  // last - do not use
 
-    private static final String[] EVENT_TYPE_STR = {
+    public static final String[] EVENT_TYPE_STR = {
         "EV_VOC", // 0; // void of course
         "EV_SIGN_ENTER", // 1; // enter into sign
         "EV_ASP_EXACT", // 2; // exact aspect
