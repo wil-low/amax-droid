@@ -26,6 +26,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.astromaximum.android.PreferenceUtils;
+import com.astromaximum.android.view.SummaryItem;
 
 public class DataProvider {
 	private static DataProvider mInstance;
@@ -37,14 +38,16 @@ public class DataProvider {
 	public static final int RANGE_LAST = 3;
 	
 	// constants used in event map
-	private static final String KEY_VOC = "VOC";
-	private static final String KEY_VC = "VC";
-	private static final String KEY_SUN_DEGREE = "SUN_DEGREE";
-	private static final String KEY_MOON_SIGN = "MOON_SIGN";
-	private static final String KEY_TITHI = "TITHI";
-	private static final String KEY_PLANET_HOUR = "PLANET_HOUR";
-	private static final String KEY_ASPECTS = "ASPECTS";
-	private static final String KEY_MOON_MOVE = "MOON_MOVE";
+	
+	public static final String KEY_VOC = "VOC";
+	public static final String KEY_VC = "VC";
+	public static final String KEY_SUN_DEGREE = "SUN_DEGREE";
+	public static final String KEY_MOON_SIGN = "MOON_SIGN";
+	public static final String KEY_TITHI = "TITHI";
+	public static final String KEY_PLANET_HOUR = "PLANET_HOUR";
+	public static final String KEY_ASPECTS = "ASPECTS";
+	public static final String KEY_MOON_MOVE = "MOON_MOVE";
+	public static final String KEY_RETROGRADE = "RETROGRADE";
 	
 	private int mYear;
 	private int mMonth;
@@ -52,7 +55,7 @@ public class DataProvider {
 	private long mStartTime;
 	private long mEndTime;
 
-	private Vector<Vector<Event>> mEventCache;
+	private Vector<Vector<SummaryItem>> mEventCache;
 
 	private CommonDataFile mCommonDatafile;
 	private LocationsDataFile mLocationDatafile;
@@ -86,9 +89,9 @@ public class DataProvider {
 
 	private DataProvider(Context context) {
 		mContext = context;
-		mEventCache = new Vector<Vector<Event>>();
+		mEventCache = new Vector<Vector<SummaryItem>>();
 		for (int i = 0; i < RANGE_LAST; ++i)
-			mEventCache.add(new Vector<Event>());
+			mEventCache.add(new Vector<SummaryItem>());
 
 		AssetManager manager = mContext.getAssets();
 		InputStream is;
@@ -423,9 +426,19 @@ public class DataProvider {
 			mStartTime = mCalendar.getTimeInMillis();
 			mEndTime = mStartTime + MSECINDAY;
 
-			HashMap<String, Vector<Event>> eventMap = new HashMap<String, Vector<Event>>();
-			eventMap.put(KEY_VOC, getVOCs());
-			eventMap.put(KEY_VC, selectSingleEvent(getVC()));
+			Vector<SummaryItem> v = new Vector<SummaryItem>();
+			v.add(new SummaryItem(KEY_VOC, getVOCs()));
+
+			v.add(new SummaryItem(KEY_VOC, getVOCs()));
+			v.add(new SummaryItem(KEY_VC, selectSingleEvent(getVC())));
+			v.add(new SummaryItem(KEY_SUN_DEGREE, selectSingleEvent(getSunDegree())));
+			v.add(new SummaryItem(KEY_MOON_SIGN, selectSingleEvent(getMoonSign())));
+			v.add(new SummaryItem(KEY_TITHI, selectSingleEvent(getTithis())));
+			v.add(new SummaryItem(KEY_PLANET_HOUR, selectSingleEvent(getPlanetaryHours())));
+			v.add(new SummaryItem(KEY_ASPECTS, selectSingleEvent(getAspects())));
+			v.add(new SummaryItem(KEY_MOON_MOVE, selectSingleEvent(getMoonMove())));
+			v.add(new SummaryItem(KEY_RETROGRADE, selectSingleEvent(getRetrogrades())));
+			mEventCache.set(rangeType, v);
 /*			
 			getEventsOnPeriod(tmpVector, Event.EV_DEGREE_PASS, Event.SE_SUN,
 					false, mStartTime, mEndTime, 0);
@@ -439,12 +452,16 @@ public class DataProvider {
 					false, mStartTime, mEndTime, 0);
 			mEventCache.get(rangeType).addAll(tmpVector);
 */
+			
 			break;
 		}
 	}
 
 	private Vector<Event> selectSingleEvent(Vector<Event> vc) {
+		if (vc.isEmpty())
+			return vc;
 		Vector<Event> result = new Vector<Event>();
+		result.add(vc.get(0));
 		return result;
 	}
 
@@ -456,8 +473,36 @@ public class DataProvider {
 		return getEventsOnPeriod(Event.EV_VIA_COMBUSTA, Event.SE_MOON, false, mStartTime, mEndTime, 0);
 	}
 
-	public Object[] get(int rangeType) {
-		return mEventCache.get(rangeType).toArray();
+	private Vector<Event> getSunDegree() {
+		return getEventsOnPeriod(Event.EV_DEGREE_PASS, Event.SE_SUN, false, mStartTime, mEndTime, 0);
+	}
+
+	private Vector<Event> getMoonSign() {
+		return getEventsOnPeriod(Event.EV_SIGN_ENTER, Event.SE_MOON, false, mStartTime, mEndTime, 0);
+	}
+
+	private Vector<Event> getTithis() {
+		return getEventsOnPeriod(Event.EV_TITHI, Event.SE_MOON, false, mStartTime, mEndTime, 0);
+	}
+
+	private Vector<Event> getPlanetaryHours() {
+		return getEventsOnPeriod(Event.EV_TITHI, Event.SE_MOON, false, mStartTime, mEndTime, 0);
+	}
+
+	private Vector<Event> getAspects() {
+		return getEventsOnPeriod(Event.EV_TITHI, Event.SE_MOON, false, mStartTime, mEndTime, 0);
+	}
+
+	private Vector<Event> getMoonMove() {
+		return getEventsOnPeriod(Event.EV_TITHI, Event.SE_MOON, false, mStartTime, mEndTime, 0);
+	}
+
+	private Vector<Event> getRetrogrades() {
+		return getEventsOnPeriod(Event.EV_TITHI, Event.SE_MOON, false, mStartTime, mEndTime, 0);
+	}
+
+	public Vector<SummaryItem> get(int rangeType) {
+		return mEventCache.get(rangeType);
 	}
 
 	public void setTodayDate() {

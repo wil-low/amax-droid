@@ -1,5 +1,7 @@
 package com.astromaximum.android;
 
+import java.util.Vector;
+
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -18,6 +20,8 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ListView;
 
+import com.astromaximum.android.view.SummaryAdapter;
+import com.astromaximum.android.view.SummaryItem;
 import com.astromaximum.util.DataProvider;
 
 public class MainActivity extends Activity {
@@ -29,6 +33,10 @@ public class MainActivity extends Activity {
 	private Button mDateButton;
 
 	private DataProvider mDataProvider;
+
+	private final String[] ITEMS = new String[] { DataProvider.KEY_VOC,
+			DataProvider.KEY_VC, DataProvider.KEY_SUN_DEGREE,
+			DataProvider.KEY_MOON_SIGN, };
 
 	/** Called when the activity is first created. */
 	@Override
@@ -63,17 +71,18 @@ public class MainActivity extends Activity {
 		});
 
 		mEventList = (ListView) findViewById(R.id.ListViewEvents);
-/*		
-		mEventList.setOnItemClickListener (new AdapterView.OnItemClickListener() {
+		/*
+		 * mEventList.setOnItemClickListener (new
+		 * AdapterView.OnItemClickListener() {
+		 * 
+		 * public void onItemClick(AdapterView<?> parent, View view, int
+		 * position, long id) { view.getItemAtPosition(position)
+		 * 
+		 * }
+		 * 
+		 * }
+		 */
 
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				view.getItemAtPosition(position) 
-				
-			}
-			
-		}
-*/		
-		
 		mDataProvider.setTodayDate();
 	}
 
@@ -147,9 +156,9 @@ public class MainActivity extends Activity {
 
 	private void updateDisplay() {
 		mDataProvider.gatherEvents(DataProvider.RANGE_DAY);
-		ArrayAdapter<Object> adapter = new ArrayAdapter<Object>(mContext,
-				R.layout.simple_event_item,
-				mDataProvider.get(DataProvider.RANGE_DAY));
+		Vector<SummaryItem> v = mDataProvider.get(DataProvider.RANGE_DAY);
+		SummaryItem[] arr = (SummaryItem[])v.toArray(new SummaryItem[v.size()]);
+		SummaryAdapter adapter = new SummaryAdapter(mContext, arr);
 		mEventList.setAdapter(adapter);
 		updateDateButton();
 	}
