@@ -74,16 +74,15 @@ public class MainActivity extends Activity {
 							int position, long id) {
 						SummaryItem si = (SummaryItem) parent
 								.getItemAtPosition(position);
-						/*
-						int duration = Toast.LENGTH_LONG;
-						Toast toast = Toast.makeText(mContext, si.toString(),
-								duration);
-						toast.show();
-						*/
-						Intent intent = new Intent(mContext, EventListActivity.class);
-						intent.putExtra(SummaryItem.LISTKEY_EVENT_KEY, si.mKey);
-						intent.putExtra(SummaryItem.LISTKEY_EVENT_DATE, mDateButton.getText());
-						startActivity(intent);
+						if (!si.mEvents.isEmpty()) {
+							Intent intent = new Intent(mContext,
+									EventListActivity.class);
+							intent.putExtra(SummaryItem.LISTKEY_EVENT_KEY,
+									si.mKey);
+							intent.putExtra(SummaryItem.LISTKEY_EVENT_DATE,
+									mDateButton.getText());
+							startActivity(intent);
+						}
 					}
 
 				});

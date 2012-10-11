@@ -8,6 +8,8 @@ public class SummaryItem {
 
 	public static final String LISTKEY_EVENT_KEY = "com.astromaximum.android.eventKey";
 	public static final String LISTKEY_EVENT_DATE = "com.astromaximum.android.eventDate";
+	public static final String LISTKEY_INTERPRETER_TEXT = "com.astromaximum.android.interpreterCode";
+	public static final String LISTKEY_INTERPRETER_EVENT = "com.astromaximum.android.event";
 	public String mKey;
 	public Vector<Event> mEvents;
 

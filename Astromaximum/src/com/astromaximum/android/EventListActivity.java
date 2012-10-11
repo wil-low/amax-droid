@@ -3,9 +3,13 @@ package com.astromaximum.android;
 import java.util.Vector;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -17,24 +21,58 @@ public class EventListActivity extends Activity {
 	private final String TAG = "EventListActivity";
 	private ListView mEventList;
 	private DataProvider mDataProvider;
+	private Context mContext;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Log.d(TAG, "OnCreate: ");
+		mContext = getApplicationContext();
 		setContentView(R.layout.event_list_activity);
 		mEventList = (ListView) findViewById(R.id.event_list_view);
+		mEventList
+				.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+					public void onItemClick(AdapterView<?> parent, View view,
+							int position, long id) {
+						Event ev = (Event) parent.getItemAtPosition(position);
+						/*
+						 * int duration = Toast.LENGTH_LONG; Toast toast =
+						 * Toast.makeText(mContext, si.toString(), duration);
+						 * toast.show();
+						 */
+						String interpreterCode = ev.makeInterpreterCode();
+						Log.d(TAG, ev.toString());
+						Log.d(TAG, interpreterCode);
+						String text = InterpreterActivity.getInterpreterText(
+								mContext, interpreterCode);
+						if (text != null) {
+							Intent intent = new Intent(getApplicationContext(),
+									InterpreterActivity.class);
+							intent.putExtra(
+									SummaryItem.LISTKEY_INTERPRETER_TEXT, text);
+							intent.putExtra(
+									SummaryItem.LISTKEY_INTERPRETER_EVENT, ev);
+							startActivity(intent);
+						}
+					}
+
+				});
+
 		mDataProvider = DataProvider.getInstance();
 		String key = getIntent().getStringExtra(SummaryItem.LISTKEY_EVENT_KEY);
-		setTitle(key + ": " + getIntent().getStringExtra(SummaryItem.LISTKEY_EVENT_DATE));
+		setTitle(key + ": "
+				+ getIntent().getStringExtra(SummaryItem.LISTKEY_EVENT_DATE));
 		Vector<SummaryItem> siv = mDataProvider.get(DataProvider.RANGE_DAY);
 		Vector<Event> v = null;
 		for (SummaryItem si : siv) {
-			if (si.mKey.contentEquals(key)) {
+			if (si.mKey.equals(key)) {
 				v = si.mEvents;
 				break;
 			}
 		}
+		if (v == null)
+			Log.e(TAG, "No events: key=" + key);
 		Event[] arr = (Event[]) v.toArray(new Event[v.size()]);
 		ArrayAdapter<Event> adapter = new ArrayAdapter<Event>(
 				getApplicationContext(), R.layout.simple_event_item, arr);

@@ -29,11 +29,10 @@
         <activity
             android:name=".EventListActivity"
             android:label="@string/title_activity_event_list" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+        </activity>
+        <activity
+            android:name=".InterpreterActivity"
+            android:label="@string/title_activity_interpreter" >
         </activity>
     </application>
 
