@@ -13,7 +13,7 @@ import com.astromaximum.util.Event;
 
 public class InterpreterActivity extends Activity {
 
-	private String TAG = "InterpreterActivity";
+	private static String TAG = "InterpreterActivity";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -38,7 +38,10 @@ public class InterpreterActivity extends Activity {
 		return true;
 	}
 
-	static String getInterpreterText(Context context, String interpreterCode) {
+	static String getInterpreterText(Context context, Event ev) {
+		String interpreterCode = makeInterpreterCode(ev);
+		Log.d(TAG, ev.toString());
+		Log.d(TAG, interpreterCode);
 		int resourceId = context.getResources().getIdentifier(interpreterCode,
 				"string", context.getPackageName());
 		if (resourceId == 0) {
@@ -48,6 +51,37 @@ public class InterpreterActivity extends Activity {
 		}
 	}
 
+	static String makeInterpreterCode(Event ev) {
+		String strPlanet = "";
+		String strEventType = Integer.toString(ev.getEvtype());
+		String param0 = "", param1 = "", param2 = "";
+		switch (ev.getEvtype()) {
+		case Event.EV_ASP_EXACT:
+			param0 = Integer.toString(ev.getPlanet0());
+			param1 = Integer.toString(ev.getPlanet1());
+			param2 = Integer.toString(Event.ASPECT_GOODNESS.get(ev.getDegree()));
+			break;
+		case Event.EV_DEGREE_PASS:
+			param0 = Integer.toString(ev.getDegree());
+			break;
+		case Event.EV_TITHI:
+		case Event.EV_SIGN_ENTER:
+			strPlanet = Integer.toString(ev.getPlanet0());
+			param0 = Integer.toString(ev.getDegree());
+			break;
+		case Event.EV_VOC:
+		case Event.EV_VIA_COMBUSTA:
+			strPlanet = Integer.toString(ev.getPlanet0());
+			param0 = "0";
+			break;
+		case Event.EV_RETROGRADE:
+			param0 = Integer.toString(ev.getPlanet0());
+			break;
+		}
+		return "int" + strPlanet + "_" + strEventType + "_" + param0 + "_"
+				+ param1 + "_" + param2;
+	}
+	
 	@Override
 	protected void onPause() {
 		super.onPause();

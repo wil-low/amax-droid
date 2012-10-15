@@ -1,9 +1,10 @@
 package com.astromaximum.util;
 
-import java.util.*;
+import java.util.Calendar;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.SparseIntArray;
 
 final public class Event implements Parcelable {
 	public static final byte SE_SUN = 0;
@@ -136,6 +137,20 @@ final public class Event implements Parcelable {
 	};
 	// Any changes above must be synched with %eventType in tools.pm
 	// and EventType in mutter2/events.h !!!
+	
+	
+    // angle: (ordinal number, aspect goodness(0 - conjunction, 1 - bad, 2 - good))
+    //ASPECT = {0: (0, 0), 180: (1, 1), 120: (2, 2), 90: (3, 1), 60: (4, 2), 45: (5, 2)}
+	public static final SparseIntArray ASPECT_GOODNESS = new SparseIntArray();
+	static {
+		ASPECT_GOODNESS.put(0, 0);
+		ASPECT_GOODNESS.put(180, 1);
+		ASPECT_GOODNESS.put(120, 2);
+		ASPECT_GOODNESS.put(90, 1);
+		ASPECT_GOODNESS.put(60, 2);
+		ASPECT_GOODNESS.put(45, 2);
+	}
+
 	static final long ROUNDING_MSEC = 60 * 1000;
 
 	int mEvtype = 0;
@@ -187,7 +202,7 @@ final public class Event implements Parcelable {
 		return str;
 	}
 
-	int getDegree() {
+	public int getDegree() {
 		return mDegree & 0x3ff;
 	}
 
@@ -337,29 +352,6 @@ final public class Event implements Parcelable {
 	boolean isDateBetween(int index, long start, long end) {
 		long dat = (index > 0) ? mDate1 : mDate0;
 		return start <= dat && dat < end;
-	}
-
-	public String makeInterpreterCode() {
-		String strPlanet = "";
-		String strEventType = Integer.toString(mEvtype);
-		String param0 = "", param1 = "", param2 = "";
-		switch (mEvtype) {
-		case Event.EV_TITHI:
-		case Event.EV_SIGN_ENTER:
-			strPlanet = Integer.toString(mPlanet0);
-			param0 = Integer.toString(mDegree);
-			break;
-		case Event.EV_VOC:
-		case Event.EV_VIA_COMBUSTA:
-			strPlanet = Integer.toString(mPlanet0);
-			param0 = "0";
-			break;
-		case Event.EV_RETROGRADE:
-			param0 = Integer.toString(mPlanet0);
-			break;
-		}
-		return "int" + strPlanet + "_" + strEventType + "_" + param0 + "_"
-				+ param1 + "_" + param2;
 	}
 
 	public int describeContents() {

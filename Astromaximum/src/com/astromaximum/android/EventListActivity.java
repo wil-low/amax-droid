@@ -41,11 +41,8 @@ public class EventListActivity extends Activity {
 						 * Toast.makeText(mContext, si.toString(), duration);
 						 * toast.show();
 						 */
-						String interpreterCode = ev.makeInterpreterCode();
-						Log.d(TAG, ev.toString());
-						Log.d(TAG, interpreterCode);
 						String text = InterpreterActivity.getInterpreterText(
-								mContext, interpreterCode);
+								mContext, ev);
 						if (text != null) {
 							Intent intent = new Intent(getApplicationContext(),
 									InterpreterActivity.class);

@@ -47,6 +47,8 @@ public class DataProvider {
 	public static final String KEY_ASPECTS = "ASPECTS";
 	public static final String KEY_MOON_MOVE = "MOON_MOVE";
 	public static final String KEY_RETROGRADE = "RETROGRADE";
+	public static final String KEY_SUN_RISESET = "SUN_RISESET";
+	public static final String KEY_MOON_RISESET = "MOON_RISESET";
 
 	private int mYear;
 	private int mMonth;
@@ -430,6 +432,8 @@ public class DataProvider {
 			v.add(new SummaryItem(KEY_VC, getVC()));
 			v.add(new SummaryItem(KEY_SUN_DEGREE, getSunDegree()));
 			v.add(new SummaryItem(KEY_MOON_SIGN, getMoonSign()));
+			v.add(new SummaryItem(KEY_SUN_RISESET, getRiseSet(Event.SE_SUN)));
+			v.add(new SummaryItem(KEY_MOON_RISESET, getRiseSet(Event.SE_MOON)));
 			v.add(new SummaryItem(KEY_TITHI, getTithis()));
 			v.add(new SummaryItem(KEY_PLANET_HOUR, getPlanetaryHours()));
 			v.add(new SummaryItem(KEY_ASPECTS, getAspects()));
@@ -471,12 +475,12 @@ public class DataProvider {
 	}
 
 	private Vector<Event> getSunDegree() {
-		return getEventsOnPeriod(Event.EV_DEGREE_PASS, Event.SE_SUN, false,
+		return getEventsOnPeriod(Event.EV_DEGREE_PASS, Event.SE_SUN, true,
 				mStartTime, mEndTime, 0);
 	}
 
 	private Vector<Event> getMoonSign() {
-		return getEventsOnPeriod(Event.EV_SIGN_ENTER, Event.SE_MOON, false,
+		return getEventsOnPeriod(Event.EV_SIGN_ENTER, Event.SE_MOON, true,
 				mStartTime, mEndTime, 0);
 	}
 
@@ -491,8 +495,7 @@ public class DataProvider {
 	}
 
 	private Vector<Event> getAspects() {
-		return getEventsOnPeriod(Event.EV_TITHI, Event.SE_MOON, false,
-				mStartTime, mEndTime, 0);
+		return getAspectsOnPeriod(-1, mStartTime, mEndTime);
 	}
 
 	private Vector<Event> getMoonMove() {
@@ -511,6 +514,56 @@ public class DataProvider {
 		return result;
 	}
 
+	private Vector<Event> getRiseSet(int planet) {
+		Vector<Event> result = new Vector<Event>();
+		Event eop = getEventOnPeriod(Event.EV_RISE, planet, true, mStartTime,
+				mEndTime);
+		if (eop == null || eop.getDate0() < mStartTime) {
+			eop = new Event(0, planet);
+		}
+		Event eop1 = getEventOnPeriod(Event.EV_SET, planet, false, mStartTime,
+				mEndTime);
+		if (eop1 == null || eop1.getDate0() < mStartTime) {
+			eop1 = new Event(0, planet);
+		}
+		eop.setDate1(eop1.getDate0());
+		result.add(eop);
+		return result;
+	}
+
+	private Event getEventOnPeriod(int evType, int planet, boolean special,
+			long startTime, long endTime) {
+		int cnt = getEvents(evType, planet, startTime, endTime);
+		for (int i = 0; i < cnt; i++) {
+			final Event ev = mEvents[i];
+			if (ev.isInPeriod(startTime, endTime, special)) {
+				return ev;
+			}
+		}
+		return null;
+	}
+
+	private Vector<Event> getAspectsOnPeriod(int planet, long startTime,
+			long endTime) {
+		Vector<Event> result = new Vector<Event>();
+		boolean flag = false;
+		int cnt = getEvents(Event.EV_ASP_EXACT,
+				planet == Event.SE_MOON ? Event.SE_MOON : -1, startTime,
+				endTime);
+		for (int i = 0; i < cnt; i++) {
+			final Event ev = mEvents[i];
+			if (planet == -1 || ev.mPlanet0 == planet || ev.mPlanet1 == planet) {
+				if (ev.isDateBetween(0, mStartTime, mEndTime)) {
+					flag = true;
+					result.addElement(ev);
+				}
+			} else if (flag) {
+				break;
+			}
+		}
+		return result;
+	}
+
 	public Vector<SummaryItem> get(int rangeType) {
 		return mEventCache.get(rangeType);
 	}
@@ -518,6 +571,12 @@ public class DataProvider {
 	public void setTodayDate() {
 		mCalendar = Calendar.getInstance(mCalendar.getTimeZone());
 		setDateFromCalendar();
+	}
+
+	public String getLocationName() {
+		if (mLocationDatafile == null)
+			return null;
+		return mLocationDatafile.mCity;
 	}
 
 	// mStartJD = calendar.getTime().getTime();
