@@ -7,6 +7,8 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -86,7 +88,7 @@ public class MainActivity extends Activity {
 					}
 
 				});
-
+		setTitle(getVersionedTitle());
 		mDataProvider.setTodayDate();
 	}
 
@@ -149,6 +151,7 @@ public class MainActivity extends Activity {
 		super.onResume();
 		Log.d(TAG, "OnResume");
 		mDataProvider.restoreState();
+		updateTitle();
 		updateDisplay();
 	}
 
@@ -174,6 +177,7 @@ public class MainActivity extends Activity {
 		super.onActivityResult(requestCode, resultCode, data);
 		switch (requestCode) {
 		case PreferenceUtils.ID_PREFERENCE:
+			updateTitle();
 			break;
 		}
 	}
@@ -183,4 +187,19 @@ public class MainActivity extends Activity {
 				DataProvider.mCalendar));
 	}
 
+	private String getVersionedTitle() {
+		PackageInfo pInfo;
+		try {
+			pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+			return getString(R.string.app_name) + " " + pInfo.versionName;
+		} catch (NameNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return getString(R.string.app_name);
+	}
+
+	private void updateTitle() {
+		setTitle(getVersionedTitle() + " - " + mDataProvider.getLocationName());
+	}
 }
