@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
-import android.view.Menu;
 import android.widget.TextView;
 
 import com.astromaximum.android.view.SummaryItem;
@@ -30,12 +29,6 @@ public class InterpreterActivity extends Activity {
 		TextView interpreter = (TextView) findViewById(R.id.textInterpretation);
 		if (text != null)
 			interpreter.setText(Html.fromHtml(text));
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.activity_interpreter, menu);
-		return true;
 	}
 
 	public static String getInterpreterText(Context context, Event ev) {

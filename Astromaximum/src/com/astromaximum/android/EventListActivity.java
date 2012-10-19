@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -73,12 +72,6 @@ public class EventListActivity extends Activity {
 		ArrayAdapter<Event> adapter = new ArrayAdapter<Event>(
 				getApplicationContext(), R.layout.simple_event_item, arr);
 		mEventList.setAdapter(adapter);
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.event_list_activity, menu);
-		return true;
 	}
 
 	@Override

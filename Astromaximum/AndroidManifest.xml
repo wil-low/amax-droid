@@ -27,12 +27,10 @@
         <activity android:name=".SummaryActivity" >
         </activity>
         <activity
-            android:name=".EventListActivity"
-            android:label="@string/title_activity_event_list" >
+            android:name=".EventListActivity" >
         </activity>
         <activity
-            android:name=".InterpreterActivity"
-            android:label="@string/title_activity_interpreter" >
+            android:name=".InterpreterActivity" >
         </activity>
     </application>
 
