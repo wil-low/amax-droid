@@ -38,7 +38,7 @@ public class InterpreterActivity extends Activity {
 		return true;
 	}
 
-	static String getInterpreterText(Context context, Event ev) {
+	public static String getInterpreterText(Context context, Event ev) {
 		String interpreterCode = makeInterpreterCode(ev);
 		Log.d(TAG, ev.toString());
 		Log.d(TAG, interpreterCode);

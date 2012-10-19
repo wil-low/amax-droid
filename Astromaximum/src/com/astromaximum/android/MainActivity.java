@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -23,12 +24,12 @@ import android.widget.ListView;
 
 import com.astromaximum.android.view.SummaryAdapter;
 import com.astromaximum.android.view.SummaryItem;
+import com.astromaximum.android.view.ViewHolder;
 import com.astromaximum.util.DataProvider;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements OnClickListener {
 	static final int DATE_DIALOG_ID = 0;
 
-	private Context mContext = null;
 	private final String TAG = "MainActivity";
 	private ListView mEventList = null;
 	private Button mDateButton;
@@ -40,34 +41,23 @@ public class MainActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Log.d(TAG, "OnCreate");
-		mContext = getApplicationContext();
-		mDataProvider = DataProvider.getInstance(mContext);
+		ViewHolder.setContext(this);
+		
+		mDataProvider = DataProvider.getInstance(this);
 
 		setContentView(R.layout.main);
+		
 		mDateButton = (Button) findViewById(R.id.buttonDate);
-		mDateButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				showDialog(DATE_DIALOG_ID);
-			}
-		});
+		mDateButton.setOnClickListener(this);
 
 		Button button = (Button) findViewById(R.id.buttonPrevDate);
-		button.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				mDataProvider.changeDate(-1);
-				updateDisplay();
-			}
-		});
+		button.setOnClickListener(this);
 
 		button = (Button) findViewById(R.id.buttonNextDate);
-		button.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				mDataProvider.changeDate(1);
-				updateDisplay();
-			}
-		});
+		button.setOnClickListener(this);
 
 		mEventList = (ListView) findViewById(R.id.ListViewEvents);
+		final Context context = this;
 
 		mEventList
 				.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -77,7 +67,7 @@ public class MainActivity extends Activity {
 						SummaryItem si = (SummaryItem) parent
 								.getItemAtPosition(position);
 						if (!si.mEvents.isEmpty()) {
-							Intent intent = new Intent(mContext,
+							Intent intent = new Intent(context,
 									EventListActivity.class);
 							intent.putExtra(SummaryItem.LISTKEY_EVENT_KEY,
 									si.mKey);
@@ -166,7 +156,7 @@ public class MainActivity extends Activity {
 		Vector<SummaryItem> v = mDataProvider.get(DataProvider.RANGE_DAY);
 		SummaryItem[] arr = (SummaryItem[]) v
 				.toArray(new SummaryItem[v.size()]);
-		SummaryAdapter adapter = new SummaryAdapter(mContext, arr);
+		SummaryAdapter adapter = new SummaryAdapter(this, arr);
 		mEventList.setAdapter(adapter);
 		updateDateButton();
 	}
@@ -201,5 +191,23 @@ public class MainActivity extends Activity {
 
 	private void updateTitle() {
 		setTitle(getVersionedTitle() + " - " + mDataProvider.getLocationName());
+	}
+	
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.buttonDate:
+			showDialog(DATE_DIALOG_ID);
+			break;
+		case R.id.buttonPrevDate:
+			mDataProvider.changeDate(-1);
+			updateDisplay();
+			break;
+		case R.id.buttonNextDate:
+			mDataProvider.changeDate(1);
+			updateDisplay();
+			break;
+		default:
+			Log.d(TAG, "Info clicked");		
+		}
 	}
 }

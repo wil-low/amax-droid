@@ -5,55 +5,44 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal" >
 
-    <TextView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/EventListItemType"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:text="Type" >
-    </TextView>
-
-    <TextView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/EventListItemText0"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="2dp"
-        android:text="Text" >
-    </TextView>
-
-    <TextView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/EventListItemText1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="2dp"
-        android:text="Text1" >
-    </TextView>
-
     <ImageView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/EventListItemPlanet0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="2dp" >
-    </ImageView>
+        android:layout_gravity="center_vertical|center"
+        android:padding="5dp" />
+
+    <TextView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/EventListItemDegree"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical|center"
+        android:padding="2dp"
+        android:text="dgr" />
 
     <ImageView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/EventListItemAspect"
+        android:id="@+id/EventListItemZodiac"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="2dp" >
-    </ImageView>
+        android:layout_gravity="center_vertical|center" />
     
-    <ImageView
+    <TextView
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/EventListItemPlanet1"
+        android:id="@+id/EventListItemText0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="2dp" >
-    </ImageView>
+        android:layout_gravity="center"
+        android:layout_weight="5"
+        android:padding="2dp"
+        android:text="Text0" />
+
+    <ImageView
+        android:id="@+id/EventListItemInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@android:drawable/ic_menu_info_details" />
 
 </LinearLayout>

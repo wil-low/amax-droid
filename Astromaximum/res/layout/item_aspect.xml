@@ -1,36 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/LinearLayout02"
-    android:layout_width="fill_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:gravity="center"
     android:orientation="horizontal" >
-
-    <TextView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/EventListItemType"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:text="Type" >
-    </TextView>
-
-    <TextView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/EventListItemText0"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="2dp"
-        android:text="Text" >
-    </TextView>
-
-    <TextView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/EventListItemText1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="2dp"
-        android:text="Text1" >
-    </TextView>
 
     <ImageView
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -47,7 +21,7 @@
         android:layout_height="wrap_content"
         android:padding="2dp" >
     </ImageView>
-    
+
     <ImageView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/EventListItemPlanet1"

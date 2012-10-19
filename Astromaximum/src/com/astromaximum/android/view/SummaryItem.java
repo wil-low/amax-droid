@@ -10,18 +10,30 @@ public class SummaryItem {
 	public static final String LISTKEY_EVENT_DATE = "com.astromaximum.android.eventDate";
 	public static final String LISTKEY_INTERPRETER_TEXT = "com.astromaximum.android.interpreterCode";
 	public static final String LISTKEY_INTERPRETER_EVENT = "com.astromaximum.android.event";
-	public String mKey;
+	private static long mPeriod0;
+	private static long mPeriod1;
+	public int mKey;
 	public Vector<Event> mEvents;
 
-	public SummaryItem(String key, Vector<Event> events) {
+	public SummaryItem(int key, Vector<Event> events) {
 		mKey = key;
 		mEvents = events;
 	}
 
 	public String toString() {
 		if (mEvents.isEmpty())
-			return mKey;
+			return Integer.toString(mKey);
 		return mEvents.get(0).toString();
 	}
 
+	public Event getActiveEvent() {
+		if (mEvents.isEmpty())
+			return null;
+		return mEvents.get(0);
+	}
+
+	public static void setTimeRange(long date0, long date1) {
+		mPeriod0 = date0;
+		mPeriod1 = date1;
+	}
 }

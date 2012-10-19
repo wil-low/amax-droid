@@ -428,17 +428,17 @@ public class DataProvider {
 			mEndTime = mStartTime + MSECINDAY;
 
 			Vector<SummaryItem> v = new Vector<SummaryItem>();
-			v.add(new SummaryItem(KEY_VOC, getVOCs()));
-			v.add(new SummaryItem(KEY_VC, getVC()));
-			v.add(new SummaryItem(KEY_SUN_DEGREE, getSunDegree()));
-			v.add(new SummaryItem(KEY_MOON_SIGN, getMoonSign()));
-			v.add(new SummaryItem(KEY_SUN_RISESET, getRiseSet(Event.SE_SUN)));
-			v.add(new SummaryItem(KEY_MOON_RISESET, getRiseSet(Event.SE_MOON)));
-			v.add(new SummaryItem(KEY_TITHI, getTithis()));
-			v.add(new SummaryItem(KEY_PLANET_HOUR, getPlanetaryHours()));
-			v.add(new SummaryItem(KEY_ASPECTS, getAspects()));
-			v.add(new SummaryItem(KEY_MOON_MOVE, getMoonMove()));
-			v.add(new SummaryItem(KEY_RETROGRADE, getRetrogrades()));
+			v.add(new SummaryItem(Event.EV_VOC, getVOCs()));
+			v.add(new SummaryItem(Event.EV_VIA_COMBUSTA, getVC()));
+			v.add(new SummaryItem(Event.EV_SUN_DEGREE, getSunDegree()));
+			v.add(new SummaryItem(Event.EV_MOON_SIGN, getMoonSign()));
+			//v.add(new SummaryItem(Event.EV_SUN_RISESET, getRiseSet(Event.SE_SUN)));
+			//v.add(new SummaryItem(Event.EV_MOON_RISESET, getRiseSet(Event.SE_MOON)));
+			//v.add(new SummaryItem(Event.EV_TITHI, getTithis()));
+			v.add(new SummaryItem(Event.EV_PLANET_HOUR, getPlanetaryHours()));
+			v.add(new SummaryItem(Event.EV_ASP_EXACT, getAspects()));
+			v.add(new SummaryItem(Event.EV_MOON_MOVE, getMoonMove()));
+			v.add(new SummaryItem(Event.EV_RETROGRADE, getRetrogrades()));
 			mEventCache.set(rangeType, v);
 			/*
 			 * getEventsOnPeriod(tmpVector, Event.EV_DEGREE_PASS, Event.SE_SUN,

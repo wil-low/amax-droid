@@ -77,7 +77,11 @@ final public class Event implements Parcelable {
 	public static final int EV_MSG = 50;
 	public static final int EV_BACK = 51;
 	public static final int EV_TATTVAS = 52;
-	public static final int EV_LAST = 53; // last - do not use
+	public static final int EV_SUN_DEGREE = 53;
+	public static final int EV_MOON_SIGN = 54;
+	public static final int EV_SUN_RISESET = 55;
+	public static final int EV_MOON_RISESET = 56;
+	public static final int EV_LAST = 57; // last - do not use
 
 	public static final String[] EVENT_TYPE_STR = { "EV_VOC", // 0; // void of
 																// course
@@ -133,7 +137,11 @@ final public class Event implements Parcelable {
 			"EV_MSG", // 50;
 			"EV_BACK", // 51;
 			"EV_TATTVAS", // 52;
-			"EV_LAST", // 53; // last - do not use
+			"EV_SUN_DEGREE", // 53;
+			"EV_MOON_SIGN", // 54;
+			"EV_SUN_RISESET", // 55;
+			"EV_MOON_RISESET", // 56;
+			"EV_LAST", // 57; // last - do not use
 	};
 	// Any changes above must be synched with %eventType in tools.pm
 	// and EventType in mutter2/events.h !!!
@@ -151,11 +159,21 @@ final public class Event implements Parcelable {
 		ASPECT_GOODNESS.put(45, 2);
 	}
 
+	public static final SparseIntArray ASPECT_MAP = new SparseIntArray();
+	static {
+		ASPECT_MAP.put(0, 0);
+		ASPECT_MAP.put(180, 1);
+		ASPECT_MAP.put(120, 2);
+		ASPECT_MAP.put(90, 3);
+		ASPECT_MAP.put(60, 4);
+		ASPECT_MAP.put(45, 5);
+	}
+
 	static final long ROUNDING_MSEC = 60 * 1000;
 
 	int mEvtype = 0;
 	byte mPlanet0, mPlanet1 = -1;
-	long mDate0, mDate1;
+	long[] mDate = new long[2];
 	short mDegree = 127;
 
 	String mCaption = null;
@@ -174,14 +192,14 @@ final public class Event implements Parcelable {
 	 */
 	Event(long date, int planet) {
 		mPlanet0 = (byte) planet;
-		mDate0 = mDate1 = date;
+		mDate[0] = mDate[1] = date;
 	}
 
 	public Event(int evType, long date0, long date1, int planet0, int planet1,
 			int degree) {
 		mEvtype = evType;
-		mDate0 = date0;
-		mDate1 = date1;
+		mDate[0] = date0;
+		mDate[1] = date1;
 		mPlanet0 = (byte) planet0;
 		mPlanet1 = (byte) planet1;
 		mDegree = (short) degree;
@@ -219,16 +237,16 @@ final public class Event implements Parcelable {
 	Event(Event event) {
 		mPlanet0 = event.mPlanet0;
 		mPlanet1 = event.mPlanet1;
-		mDate0 = event.mDate0;
-		mDate1 = event.mDate1;
+		mDate[0] = event.mDate[0];
+		mDate[1] = event.mDate[1];
 		mDegree = event.mDegree;
 		mEvtype = event.mEvtype;
 	}
 
 	public String toString() {
 		return "Event: (" + mEvtype + " " + getEvTypeStr() + " "
-				+ long2String(mDate0, 0, false) + " - "
-				+ long2String(mDate1, 0, false) + " " + getPlanetName(mPlanet0)
+				+ long2String(mDate[0], 0, false) + " - "
+				+ long2String(mDate[1], 0, false) + " " + getPlanetName(mPlanet0)
 				+ "-" + getPlanetName(mPlanet1) + " d " + mDegree + ")";
 	}
 
@@ -295,19 +313,19 @@ final public class Event implements Parcelable {
 	}
 
 	public long getDate0() {
-		return mDate0;
+		return mDate[0];
 	}
 
 	public void setDate0(long date0) {
-		mDate0 = date0;
+		mDate[0] = date0;
 	}
 
 	public long getDate1() {
-		return mDate1;
+		return mDate[1];
 	}
 
 	public void setDate1(long date1) {
-		mDate1 = date1;
+		mDate[1] = date1;
 	}
 
 	public short getFullDegree() {
@@ -323,11 +341,11 @@ final public class Event implements Parcelable {
 	}
 
 	boolean isInPeriod(long start, long end, boolean special) {
-		if (mDate0 == 0) {
+		if (mDate[0] == 0) {
 			return false;
 		}
-		final int f = dateBetween(mDate0, start, end)
-				+ dateBetween(mDate1, start, end);
+		final int f = dateBetween(mDate[0], start, end)
+				+ dateBetween(mDate[1], start, end);
 		if ((f == 2) || (f == -2)) {
 			return false;
 		}
@@ -350,7 +368,7 @@ final public class Event implements Parcelable {
 	}
 
 	boolean isDateBetween(int index, long start, long end) {
-		long dat = (index > 0) ? mDate1 : mDate0;
+		long dat = mDate[index];
 		return start <= dat && dat < end;
 	}
 
@@ -363,8 +381,8 @@ final public class Event implements Parcelable {
 		out.writeInt(mEvtype);
 		out.writeByte(mPlanet0);
 		out.writeByte(mPlanet1);
-		out.writeLong(mDate0);
-		out.writeLong(mDate1);
+		out.writeLong(mDate[0]);
+		out.writeLong(mDate[1]);
 		out.writeInt(mDegree);
 	}
 
@@ -372,8 +390,8 @@ final public class Event implements Parcelable {
 		mEvtype = in.readInt();
 		mPlanet0 = in.readByte();
 		mPlanet1 = in.readByte();
-		mDate0 = in.readLong();
-		mDate1 = in.readLong();
+		mDate[0] = in.readLong();
+		mDate[1] = in.readLong();
 		mDegree = (short) in.readInt();
 	}
 

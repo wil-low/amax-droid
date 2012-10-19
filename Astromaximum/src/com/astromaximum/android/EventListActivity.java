@@ -21,15 +21,14 @@ public class EventListActivity extends Activity {
 	private final String TAG = "EventListActivity";
 	private ListView mEventList;
 	private DataProvider mDataProvider;
-	private Context mContext;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Log.d(TAG, "OnCreate: ");
-		mContext = getApplicationContext();
 		setContentView(R.layout.event_list_activity);
 		mEventList = (ListView) findViewById(R.id.event_list_view);
+		final Context context = this;
 		mEventList
 				.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -42,7 +41,7 @@ public class EventListActivity extends Activity {
 						 * toast.show();
 						 */
 						String text = InterpreterActivity.getInterpreterText(
-								mContext, ev);
+								context, ev);
 						if (text != null) {
 							Intent intent = new Intent(getApplicationContext(),
 									InterpreterActivity.class);
@@ -57,13 +56,13 @@ public class EventListActivity extends Activity {
 				});
 
 		mDataProvider = DataProvider.getInstance();
-		String key = getIntent().getStringExtra(SummaryItem.LISTKEY_EVENT_KEY);
-		setTitle(key + ": "
+		int key = getIntent().getIntExtra(SummaryItem.LISTKEY_EVENT_KEY, Event.EV_LAST);
+		setTitle(Event.EVENT_TYPE_STR[key] + ": "
 				+ getIntent().getStringExtra(SummaryItem.LISTKEY_EVENT_DATE));
 		Vector<SummaryItem> siv = mDataProvider.get(DataProvider.RANGE_DAY);
 		Vector<Event> v = null;
 		for (SummaryItem si : siv) {
-			if (si.mKey.equals(key)) {
+			if (si.mKey == key) {
 				v = si.mEvents;
 				break;
 			}

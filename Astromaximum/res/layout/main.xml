@@ -11,13 +11,6 @@
 	    android:orientation="horizontal" >
 
 		<Button
-		    android:id="@+id/buttonPrevPage"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:layout_weight="1"
-		    android:text="&lt;&lt;" />
-
-		<Button
 		    android:id="@+id/buttonPrevDate"
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
@@ -28,7 +21,7 @@
 	        android:id="@+id/buttonDate"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:layout_weight="1"
+	        android:layout_weight="5"
 	        android:text="1970-01-01" />
 
 	    <Button
@@ -37,13 +30,6 @@
 	        android:layout_height="wrap_content"
 	        android:layout_weight="1"
 	        android:text=">" />
-
-	    <Button
-	        android:id="@+id/buttonNextPage"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_weight="1"
-	        android:text=">>" />
 
 	</LinearLayout>
 
