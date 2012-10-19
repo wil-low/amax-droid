@@ -15,12 +15,12 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.widget.DatePicker;
 import android.widget.ListView;
 
@@ -50,7 +50,7 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		Log.d(TAG, "OnCreate");
 		ViewHolder.setContext(this);
-	    
+
 		AstroTextView.assignTypeface(Typeface.createFromAsset(getAssets(),
 				"fonts/Astronom.ttf"));
 		mTitleDateFormat = getResources().getString(R.string.title_date_format);
@@ -150,7 +150,7 @@ public class MainActivity extends Activity {
 		super.onRestart();
 		Log.d(TAG, "OnRestart");
 	}
- 
+
 	private void updateDisplay() {
 		mDataProvider.gatherEvents(DataProvider.RANGE_DAY);
 		Vector<SummaryItem> v = mDataProvider.get(DataProvider.RANGE_DAY);
@@ -190,14 +190,14 @@ public class MainActivity extends Activity {
 		setTitle(mDataProvider.getLocationName() + " : " + mTitleDate);
 	}
 
-	private void onLTRFling() {
+	private void previousDate() {
 		mDataProvider.changeDate(-1);
 		updateDisplay();
 		// Toast.makeText(this, "Left-to-right fling",
 		// Toast.LENGTH_SHORT).show();
 	}
 
-	private void onRTLFling() {
+	private void nextDate() {
 		mDataProvider.changeDate(1);
 		updateDisplay();
 		// Toast.makeText(this, "Right-to-left fling",
@@ -213,6 +213,21 @@ public class MainActivity extends Activity {
 			intent.putExtra(SummaryItem.LISTKEY_EVENT_DATE, mTitleDate);
 			startActivity(intent);
 		}
+	}
+
+	@Override
+	public boolean dispatchKeyEvent(KeyEvent event) {
+		switch (event.getKeyCode()) {
+		case KeyEvent.KEYCODE_VOLUME_DOWN:
+			if (event.getAction() == KeyEvent.ACTION_DOWN)
+				previousDate();
+			return true;
+		case KeyEvent.KEYCODE_VOLUME_UP:
+			if (event.getAction() == KeyEvent.ACTION_DOWN)
+				nextDate();
+			return true;
+		}
+		return super.dispatchKeyEvent(event);
 	}
 
 	class MyGestureDetector extends SimpleOnGestureListener {
@@ -233,10 +248,10 @@ public class MainActivity extends Activity {
 				return false;
 			if (e1.getX() - e2.getX() > REL_SWIPE_MIN_DISTANCE
 					&& Math.abs(velocityX) > REL_SWIPE_THRESHOLD_VELOCITY) {
-				onRTLFling();
+				nextDate();
 			} else if (e2.getX() - e1.getX() > REL_SWIPE_MIN_DISTANCE
 					&& Math.abs(velocityX) > REL_SWIPE_THRESHOLD_VELOCITY) {
-				onLTRFling();
+				previousDate();
 			}
 			return false;
 		}
