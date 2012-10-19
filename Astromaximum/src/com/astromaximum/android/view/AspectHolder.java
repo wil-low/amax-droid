@@ -1,6 +1,7 @@
 package com.astromaximum.android.view;
 
 import com.astromaximum.android.R;
+import com.astromaximum.util.AstroFont;
 import com.astromaximum.util.Event;
 
 public class AspectHolder extends ViewHolder {
@@ -14,9 +15,8 @@ public class AspectHolder extends ViewHolder {
 
 	@Override
 	public void fillLayout(SummaryItem si) {
-		setImage(mPlanet0, R.drawable.p13 + mEvent.getPlanet0());
-		setImage(mAspect,
-				R.drawable.a00 + Event.ASPECT_MAP.get(mEvent.getDegree()));
-		setImage(mPlanet1, R.drawable.p13 + mEvent.getPlanet1());
+		mPlanet0.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET, mEvent.getPlanet0()));
+		mAspect.setText(AstroFont.getSymbol(AstroFont.TYPE_ASPECT, mEvent.getDegree()));
+		mPlanet1.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET, mEvent.getPlanet1()));
 	}
 }

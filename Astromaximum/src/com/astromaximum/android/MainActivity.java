@@ -5,36 +5,44 @@ import java.util.Vector;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.Button;
+import android.view.Window;
 import android.widget.DatePicker;
 import android.widget.ListView;
 
+import com.astromaximum.android.view.AstroTextView;
 import com.astromaximum.android.view.SummaryAdapter;
 import com.astromaximum.android.view.SummaryItem;
 import com.astromaximum.android.view.ViewHolder;
 import com.astromaximum.util.DataProvider;
 
-public class MainActivity extends Activity implements OnClickListener {
+public class MainActivity extends Activity {
 	static final int DATE_DIALOG_ID = 0;
 
 	private final String TAG = "MainActivity";
 	private ListView mEventList = null;
-	private Button mDateButton;
+
+	private int REL_SWIPE_MIN_DISTANCE;
+	private int REL_SWIPE_MAX_OFF_PATH;
+	private int REL_SWIPE_THRESHOLD_VELOCITY;
 
 	private DataProvider mDataProvider;
+	private String mTitleDateFormat;
+	private String mTitleDate;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -42,43 +50,32 @@ public class MainActivity extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		Log.d(TAG, "OnCreate");
 		ViewHolder.setContext(this);
-		
+	    
+		AstroTextView.assignTypeface(Typeface.createFromAsset(getAssets(),
+				"fonts/Astronom.ttf"));
+		mTitleDateFormat = getResources().getString(R.string.title_date_format);
+
+		// As paiego pointed out, it's better to use density-aware measurements.
+		DisplayMetrics dm = getResources().getDisplayMetrics();
+		REL_SWIPE_MIN_DISTANCE = (int) (120.0f * dm.densityDpi / 160.0f + 0.5);
+		REL_SWIPE_MAX_OFF_PATH = (int) (250.0f * dm.densityDpi / 160.0f + 0.5);
+		REL_SWIPE_THRESHOLD_VELOCITY = (int) (200.0f * dm.densityDpi / 160.0f + 0.5);
+
 		mDataProvider = DataProvider.getInstance(this);
 
 		setContentView(R.layout.main);
-		
-		mDateButton = (Button) findViewById(R.id.buttonDate);
-		mDateButton.setOnClickListener(this);
-
-		Button button = (Button) findViewById(R.id.buttonPrevDate);
-		button.setOnClickListener(this);
-
-		button = (Button) findViewById(R.id.buttonNextDate);
-		button.setOnClickListener(this);
 
 		mEventList = (ListView) findViewById(R.id.ListViewEvents);
-		final Context context = this;
 
-		mEventList
-				.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-					public void onItemClick(AdapterView<?> parent, View view,
-							int position, long id) {
-						SummaryItem si = (SummaryItem) parent
-								.getItemAtPosition(position);
-						if (!si.mEvents.isEmpty()) {
-							Intent intent = new Intent(context,
-									EventListActivity.class);
-							intent.putExtra(SummaryItem.LISTKEY_EVENT_KEY,
-									si.mKey);
-							intent.putExtra(SummaryItem.LISTKEY_EVENT_DATE,
-									mDateButton.getText());
-							startActivity(intent);
-						}
-					}
-
-				});
-		setTitle(getVersionedTitle());
+		final GestureDetector gestureDetector = new GestureDetector(
+				new MyGestureDetector());
+		View.OnTouchListener gestureListener = new View.OnTouchListener() {
+			public boolean onTouch(View v, MotionEvent event) {
+				return gestureDetector.onTouchEvent(event);
+			}
+		};
+		mEventList.setOnTouchListener(gestureListener);
+		// setTitle(getVersionedTitle());
 		mDataProvider.setTodayDate();
 	}
 
@@ -113,6 +110,9 @@ public class MainActivity extends Activity implements OnClickListener {
 			startActivityForResult(intent, PreferenceUtils.ID_PREFERENCE);
 			break;
 		}
+		case R.id.menu_pick_date:
+			showDialog(DATE_DIALOG_ID);
+			break;
 		}
 		return true;
 	}
@@ -150,7 +150,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		super.onRestart();
 		Log.d(TAG, "OnRestart");
 	}
-
+ 
 	private void updateDisplay() {
 		mDataProvider.gatherEvents(DataProvider.RANGE_DAY);
 		Vector<SummaryItem> v = mDataProvider.get(DataProvider.RANGE_DAY);
@@ -158,7 +158,7 @@ public class MainActivity extends Activity implements OnClickListener {
 				.toArray(new SummaryItem[v.size()]);
 		SummaryAdapter adapter = new SummaryAdapter(this, arr);
 		mEventList.setAdapter(adapter);
-		updateDateButton();
+		updateTitle();
 	}
 
 	@Override
@@ -170,11 +170,6 @@ public class MainActivity extends Activity implements OnClickListener {
 			updateTitle();
 			break;
 		}
-	}
-
-	private void updateDateButton() {
-		mDateButton.setText(DateFormat.format("yyyy-MM-dd",
-				DataProvider.mCalendar));
 	}
 
 	private String getVersionedTitle() {
@@ -190,24 +185,61 @@ public class MainActivity extends Activity implements OnClickListener {
 	}
 
 	private void updateTitle() {
-		setTitle(getVersionedTitle() + " - " + mDataProvider.getLocationName());
+		mTitleDate = (String) DateFormat.format(mTitleDateFormat,
+				DataProvider.mCalendar);
+		setTitle(mDataProvider.getLocationName() + " : " + mTitleDate);
 	}
-	
-	public void onClick(View v) {
-		switch (v.getId()) {
-		case R.id.buttonDate:
-			showDialog(DATE_DIALOG_ID);
-			break;
-		case R.id.buttonPrevDate:
-			mDataProvider.changeDate(-1);
-			updateDisplay();
-			break;
-		case R.id.buttonNextDate:
-			mDataProvider.changeDate(1);
-			updateDisplay();
-			break;
-		default:
-			Log.d(TAG, "Info clicked");		
+
+	private void onLTRFling() {
+		mDataProvider.changeDate(-1);
+		updateDisplay();
+		// Toast.makeText(this, "Left-to-right fling",
+		// Toast.LENGTH_SHORT).show();
+	}
+
+	private void onRTLFling() {
+		mDataProvider.changeDate(1);
+		updateDisplay();
+		// Toast.makeText(this, "Right-to-left fling",
+		// Toast.LENGTH_SHORT).show();
+	}
+
+	public void onEventItemClick(int position) {
+		Log.d(TAG, "onItemClick");
+		SummaryItem si = (SummaryItem) mEventList.getItemAtPosition(position);
+		if (!si.mEvents.isEmpty()) {
+			Intent intent = new Intent(this, EventListActivity.class);
+			intent.putExtra(SummaryItem.LISTKEY_EVENT_KEY, si.mKey);
+			intent.putExtra(SummaryItem.LISTKEY_EVENT_DATE, mTitleDate);
+			startActivity(intent);
 		}
+	}
+
+	class MyGestureDetector extends SimpleOnGestureListener {
+
+		// Detect a single-click and call my own handler.
+		@Override
+		public boolean onSingleTapUp(MotionEvent e) {
+			int pos = mEventList
+					.pointToPosition((int) e.getX(), (int) e.getY());
+			onEventItemClick(pos);
+			return false;
+		}
+
+		@Override
+		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+				float velocityY) {
+			if (Math.abs(e1.getY() - e2.getY()) > REL_SWIPE_MAX_OFF_PATH)
+				return false;
+			if (e1.getX() - e2.getX() > REL_SWIPE_MIN_DISTANCE
+					&& Math.abs(velocityX) > REL_SWIPE_THRESHOLD_VELOCITY) {
+				onRTLFling();
+			} else if (e2.getX() - e1.getX() > REL_SWIPE_MIN_DISTANCE
+					&& Math.abs(velocityX) > REL_SWIPE_THRESHOLD_VELOCITY) {
+				onLTRFling();
+			}
+			return false;
+		}
+
 	}
 }

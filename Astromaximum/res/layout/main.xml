@@ -1,37 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/LinearLayout01" android:layout_width="fill_parent"
-	android:layout_height="fill_parent" android:orientation="vertical">
-
-	<LinearLayout
-	    xmlns:android="http://schemas.android.com/apk/res/android"
-	    android:id="@+id/LinearLayout02"
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:orientation="horizontal" >
-
-		<Button
-		    android:id="@+id/buttonPrevDate"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:layout_weight="1"
-		    android:text="&lt;" />
-
-	    <Button
-	        android:id="@+id/buttonDate"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_weight="5"
-	        android:text="1970-01-01" />
-
-	    <Button
-	        android:id="@+id/buttonNextDate"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_weight="1"
-	        android:text=">" />
-
-	</LinearLayout>
+    android:id="@+id/MainLinearLayout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
 
 	<ListView android:id="@+id/ListViewEvents"
 		android:layout_width="fill_parent" android:layout_height="wrap_content" />

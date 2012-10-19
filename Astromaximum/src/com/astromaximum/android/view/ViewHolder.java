@@ -19,11 +19,11 @@ public abstract class ViewHolder implements OnClickListener {
 	protected TextView mType;
 	protected TextView mText0;
 	protected TextView mText1;
-	protected ImageView mPlanet0;
-	protected ImageView mPlanet1;
-	protected ImageView mAspect;
+	protected AstroTextView mPlanet0;
+	protected AstroTextView mPlanet1;
+	protected AstroTextView mAspect;
 	protected ImageView mInfo;
-	protected ImageView mZodiac;
+	protected AstroTextView mZodiac;
 	protected TextView mDegree;
 
 	protected int mLayoutId;
@@ -83,17 +83,17 @@ public abstract class ViewHolder implements OnClickListener {
 		if ((mFlags & LAYOUT_FLAG_TEXT1) != 0)
 			mText1 = (TextView) v.findViewById(R.id.EventListItemText1);
 		if ((mFlags & LAYOUT_FLAG_PLANET0) != 0)
-			mPlanet0 = (ImageView) v.findViewById(R.id.EventListItemPlanet0);
+			mPlanet0 = (AstroTextView) v.findViewById(R.id.EventListItemPlanet0);
 		if ((mFlags & LAYOUT_FLAG_PLANET1) != 0)
-			mPlanet1 = (ImageView) v.findViewById(R.id.EventListItemPlanet1);
+			mPlanet1 = (AstroTextView) v.findViewById(R.id.EventListItemPlanet1);
 		if ((mFlags & LAYOUT_FLAG_DEGREE) != 0)
 			mDegree = (TextView) v.findViewById(R.id.EventListItemDegree);
 		if ((mFlags & LAYOUT_FLAG_ASPECT) != 0)
-			mAspect = (ImageView) v.findViewById(R.id.EventListItemAspect);
+			mAspect = (AstroTextView) v.findViewById(R.id.EventListItemAspect);
 		if ((mFlags & LAYOUT_FLAG_INFO) != 0)
 			mInfo = (ImageView) v.findViewById(R.id.EventListItemInfo);
 		if ((mFlags & LAYOUT_FLAG_ZODIAC) != 0)
-			mZodiac = (ImageView) v.findViewById(R.id.EventListItemZodiac);
+			mZodiac = (AstroTextView) v.findViewById(R.id.EventListItemZodiac);
 	}
 
 	public static void setContext(Context context) {

@@ -32,28 +32,28 @@
         android:text="Text1" >
     </TextView>
 
-    <ImageView
+    <view
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/EventListItemPlanet0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="2dp" >
-    </ImageView>
+        class="com.astromaximum.android.view.AstroTextView"
+        android:padding="2dp" />
 
-    <ImageView
+    <view
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/EventListItemAspect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="2dp" >
-    </ImageView>
-    
-    <ImageView
+        class="com.astromaximum.android.view.AstroTextView"
+        android:padding="2dp" />
+
+    <view
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/EventListItemPlanet1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="2dp" >
-    </ImageView>
+        class="com.astromaximum.android.view.AstroTextView"
+        android:padding="2dp" />
 
 </LinearLayout>

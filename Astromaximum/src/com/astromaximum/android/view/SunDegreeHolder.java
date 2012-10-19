@@ -1,6 +1,7 @@
 package com.astromaximum.android.view;
 
 import com.astromaximum.android.R;
+import com.astromaximum.util.AstroFont;
 import com.astromaximum.util.Event;
 
 public class SunDegreeHolder extends ViewHolder {
@@ -18,13 +19,13 @@ public class SunDegreeHolder extends ViewHolder {
 			mText0.setText(Event.long2String(e.getDate0(), 1, true) + " - "
 					+ Event.long2String(e.getDate1(), 1, true));
 			mText1.setText((e.getDegree() % 30 + 1) + "°");
-			setImage(mZodiac, R.drawable.z00 + e.getDegree() / 30);
-			setImage(mPlanet0, R.drawable.p13 + e.getPlanet0());
+			mZodiac.setText(AstroFont.getSymbol(AstroFont.TYPE_ZODIAC, e.getDegree() / 30));
+			mPlanet0.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET, e.getPlanet0()));
 		} else {
 			mText0.setText("");
 			mText1.setText("");
-			clearImage(mZodiac);
-			clearImage(mPlanet0);
+			mZodiac.setText("");
+			mPlanet0.setText("");
 		}
 		updateInfoButton(e);
 	}

@@ -4,4 +4,5 @@
 <item android:title="@string/help_title" android:id="@+id/menu_help"></item>
 <item android:title="@string/today_title" android:id="@+id/menu_today"></item>
 <item android:id="@+id/menu_options" android:title="@string/prefs_title"></item>
+<item android:id="@+id/menu_pick_date" android:title="@string/pick_date"></item>
 </menu>
