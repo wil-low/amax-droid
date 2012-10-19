@@ -55,6 +55,7 @@ foreach my $infile (@interpret_files) {
 		$line =~ s/[\*\~\#\^\$\}\>\@\=\{]//g;
 		$line =~ s/\|/<\/p><p>/g;
 		$line =~ s/<p>--<\/p>/<hr\/>/g;
+		$line =~ s/--/&#8212;/g;
 		$line =~ s/&/&amp;/g;
 		$line =~ s/</&lt;/g;
 		$line =~ s/>/&gt;/g;
