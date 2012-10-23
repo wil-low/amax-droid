@@ -15,10 +15,10 @@ public class MoonSignHolder extends ViewHolder {
 	public void fillLayout(SummaryItem si) {
 		Event e = si.getActiveEvent();
 		if (e != null) {
-			mText0.setText(Event.long2String(e.getDate0(), 1, true) + " - "
-					+ Event.long2String(e.getDate1(), 1, true));
+			mText0.setText(Event.long2String(e.mDate[0], 1, true) + " - "
+					+ Event.long2String(e.mDate[1], 1, true));
 			mZodiac.setText(AstroFont.getSymbol(AstroFont.TYPE_ZODIAC, e.getDegree() / 30));
-			mPlanet0.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET, e.getPlanet0()));
+			mPlanet0.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET, e.mPlanet0));
 		} else {
 			mText0.setText("");
 			mZodiac.setText("");

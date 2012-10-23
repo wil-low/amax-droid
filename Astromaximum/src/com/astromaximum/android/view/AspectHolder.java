@@ -15,8 +15,8 @@ public class AspectHolder extends ViewHolder {
 
 	@Override
 	public void fillLayout(SummaryItem si) {
-		mPlanet0.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET, mEvent.getPlanet0()));
+		mPlanet0.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET, mEvent.mPlanet0));
 		mAspect.setText(AstroFont.getSymbol(AstroFont.TYPE_ASPECT, mEvent.getDegree()));
-		mPlanet1.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET, mEvent.getPlanet1()));
+		mPlanet1.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET, mEvent.mPlanet1));
 	}
 }

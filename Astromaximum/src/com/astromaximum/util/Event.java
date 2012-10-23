@@ -171,9 +171,10 @@ final public class Event implements Parcelable {
 
 	static final long ROUNDING_MSEC = 60 * 1000;
 
-	int mEvtype = 0;
-	byte mPlanet0, mPlanet1 = -1;
-	long[] mDate = new long[2];
+	public int mEvtype = 0;
+	public byte mPlanet0;
+	public byte mPlanet1 = -1;
+	public long[] mDate = new long[2];
 	short mDegree = 127;
 
 	String mCaption = null;
@@ -234,7 +235,7 @@ final public class Event implements Parcelable {
 	 * @param event
 	 *            Event
 	 */
-	Event(Event event) {
+	public Event(Event event) {
 		mPlanet0 = event.mPlanet0;
 		mPlanet1 = event.mPlanet1;
 		mDate[0] = event.mDate[0];
@@ -286,46 +287,6 @@ final public class Event implements Parcelable {
 
 		// s+=to2String(date0[index])+":"+to2String(date0[index]);
 		return s.toString();
-	}
-
-	public int getEvtype() {
-		return mEvtype;
-	}
-
-	public void setEvtype(int evtype) {
-		mEvtype = evtype;
-	}
-
-	public byte getPlanet0() {
-		return mPlanet0;
-	}
-
-	public void setPlanet0(byte planet0) {
-		mPlanet0 = planet0;
-	}
-
-	public byte getPlanet1() {
-		return mPlanet1;
-	}
-
-	public void setPlanet1(byte planet1) {
-		mPlanet1 = planet1;
-	}
-
-	public long getDate0() {
-		return mDate[0];
-	}
-
-	public void setDate0(long date0) {
-		mDate[0] = date0;
-	}
-
-	public long getDate1() {
-		return mDate[1];
-	}
-
-	public void setDate1(long date1) {
-		mDate[1] = date1;
 	}
 
 	public short getFullDegree() {

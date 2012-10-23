@@ -46,12 +46,12 @@ public class InterpreterActivity extends Activity {
 
 	static String makeInterpreterCode(Event ev) {
 		String strPlanet = "";
-		String strEventType = Integer.toString(ev.getEvtype());
+		String strEventType = Integer.toString(ev.mEvtype);
 		String param0 = "", param1 = "", param2 = "";
-		switch (ev.getEvtype()) {
+		switch (ev.mEvtype) {
 		case Event.EV_ASP_EXACT:
-			param0 = Integer.toString(ev.getPlanet0());
-			param1 = Integer.toString(ev.getPlanet1());
+			param0 = Integer.toString(ev.mPlanet0);
+			param1 = Integer.toString(ev.mPlanet1);
 			param2 = Integer.toString(Event.ASPECT_GOODNESS.get(ev.getDegree()));
 			break;
 		case Event.EV_DEGREE_PASS:
@@ -59,16 +59,16 @@ public class InterpreterActivity extends Activity {
 			break;
 		case Event.EV_TITHI:
 		case Event.EV_SIGN_ENTER:
-			strPlanet = Integer.toString(ev.getPlanet0());
+			strPlanet = Integer.toString(ev.mPlanet0);
 			param0 = Integer.toString(ev.getDegree());
 			break;
 		case Event.EV_VOC:
 		case Event.EV_VIA_COMBUSTA:
-			strPlanet = Integer.toString(ev.getPlanet0());
+			strPlanet = Integer.toString(ev.mPlanet0);
 			param0 = "0";
 			break;
 		case Event.EV_RETROGRADE:
-			param0 = Integer.toString(ev.getPlanet0());
+			param0 = Integer.toString(ev.mPlanet0);
 			break;
 		}
 		return "int" + strPlanet + "_" + strEventType + "_" + param0 + "_"

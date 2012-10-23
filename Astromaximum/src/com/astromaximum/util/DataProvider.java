@@ -217,7 +217,7 @@ public class DataProvider {
 					}
 				}
 				if (fnext_date2 != 0) {
-					last.setDate1(mydate0 - Event.ROUNDING_MSEC);
+					last.mDate[1] = mydate0 - Event.ROUNDING_MSEC;
 					mydate1 = mFinalJD;
 				}
 				if (last.isInPeriod(mStartTime, mEndTime, false)) {
@@ -230,8 +230,8 @@ public class DataProvider {
 				last.mPlanet0 = myplanet0;
 				last.mPlanet1 = myplanet1;
 				last.mDegree = (short) mydgr;
-				last.setDate0(mydate0);
-				last.setDate1(mydate1);
+				last.mDate[0] = mydate0;
+				last.mDate[1] = mydate1;
 			}
 			if (last.isInPeriod(mStartTime, mEndTime, false)) {
 				mEvents[eventsCount++] = new Event(last);
@@ -518,15 +518,15 @@ public class DataProvider {
 		Vector<Event> result = new Vector<Event>();
 		Event eop = getEventOnPeriod(Event.EV_RISE, planet, true, mStartTime,
 				mEndTime);
-		if (eop == null || eop.getDate0() < mStartTime) {
+		if (eop == null || eop.mDate[0] < mStartTime) {
 			eop = new Event(0, planet);
 		}
 		Event eop1 = getEventOnPeriod(Event.EV_SET, planet, false, mStartTime,
 				mEndTime);
-		if (eop1 == null || eop1.getDate0() < mStartTime) {
+		if (eop1 == null || eop1.mDate[0] < mStartTime) {
 			eop1 = new Event(0, planet);
 		}
-		eop.setDate1(eop1.getDate0());
+		eop.mDate[1] = eop1.mDate[0];
 		result.add(eop);
 		return result;
 	}
