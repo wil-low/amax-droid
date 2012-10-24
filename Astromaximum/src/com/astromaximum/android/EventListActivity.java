@@ -15,6 +15,7 @@ import android.widget.ListView;
 import com.astromaximum.android.view.SummaryItem;
 import com.astromaximum.util.DataProvider;
 import com.astromaximum.util.Event;
+import com.astromaximum.util.InterpretationProvider;
 
 public class EventListActivity extends Activity {
 	private final String TAG = "EventListActivity";
@@ -27,7 +28,6 @@ public class EventListActivity extends Activity {
 		Log.d(TAG, "OnCreate: ");
 		setContentView(R.layout.event_list_activity);
 		mEventList = (ListView) findViewById(R.id.event_list_view);
-		final Context context = this;
 		mEventList
 				.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -39,8 +39,7 @@ public class EventListActivity extends Activity {
 						 * Toast.makeText(mContext, si.toString(), duration);
 						 * toast.show();
 						 */
-						String text = InterpreterActivity.getInterpreterText(
-								context, ev);
+						String text = InterpretationProvider.getInstance().getText(ev);
 						if (text != null) {
 							Intent intent = new Intent(getApplicationContext(),
 									InterpreterActivity.class);

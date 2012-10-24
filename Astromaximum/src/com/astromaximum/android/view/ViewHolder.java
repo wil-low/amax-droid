@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.astromaximum.android.InterpreterActivity;
 import com.astromaximum.android.R;
 import com.astromaximum.util.Event;
+import com.astromaximum.util.InterpretationProvider;
 
 public abstract class ViewHolder implements OnClickListener {
 	private static final String TAG = "ViewHolder";
@@ -107,8 +108,7 @@ public abstract class ViewHolder implements OnClickListener {
 
 	public void onClick(View v) {
 		Event e = (Event) v.getTag();
-		String text = InterpreterActivity.getInterpreterText(
-				mContext, e);
+		String text = InterpretationProvider.getInstance().getText(e);
 		if (text != null) {
 			Intent intent = new Intent(mContext,
 					InterpreterActivity.class);

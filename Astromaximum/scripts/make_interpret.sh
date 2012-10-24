@@ -1,2 +1,3 @@
-perl interpret.pl en > ../res/values/interpret.xml
-perl interpret.pl ru > ../res/values-ru/interpret.xml
+mkdir -p ../assets/en/ ../assets/ru/
+perl interpret.pl en > ../assets/en/interpret.dat
+perl interpret.pl ru > ../assets/ru/interpret.dat

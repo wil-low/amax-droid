@@ -29,6 +29,7 @@ import com.astromaximum.android.view.SummaryAdapter;
 import com.astromaximum.android.view.SummaryItem;
 import com.astromaximum.android.view.ViewHolder;
 import com.astromaximum.util.DataProvider;
+import com.astromaximum.util.InterpretationProvider;
 
 public class MainActivity extends Activity {
 	static final int DATE_DIALOG_ID = 0;
@@ -62,6 +63,7 @@ public class MainActivity extends Activity {
 		REL_SWIPE_THRESHOLD_VELOCITY = (int) (200.0f * dm.densityDpi / 160.0f + 0.5);
 
 		mDataProvider = DataProvider.getInstance(this);
+		InterpretationProvider.getInstance(this);
 
 		setContentView(R.layout.main);
 

@@ -9,5 +9,5 @@
     <string name="app_name">Astromaximum</string>
     <string name="pick_date">Выбрать дату</string>
     <string name="title_date_format">d MMMM yyyy, EEEE</string>
-
+	<string name="interpretation_dir">ru</string>
 </resources>
