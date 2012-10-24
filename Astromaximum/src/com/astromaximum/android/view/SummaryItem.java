@@ -29,11 +29,33 @@ public class SummaryItem {
 	public Event getActiveEvent() {
 		if (mEvents.isEmpty())
 			return null;
-		return mEvents.get(0);
+		return normalizeCopy(mEvents.get(0));
+	}
+
+	public Event normalizeCopy(Event event) {
+		Event newEvent = new Event(event);
+		if (newEvent.mDate[0] < mPeriod0) {
+			newEvent.mDate[0] = mPeriod0;
+		}
+		if (newEvent.mDate[0] > mPeriod1) {
+			newEvent.mDate[0] = mPeriod1;
+		}
+
+		if (newEvent.mDate[1] < mPeriod0) {
+			newEvent.mDate[1] = mPeriod0;
+		}
+		if (newEvent.mDate[1] > mPeriod1) {
+			newEvent.mDate[1] = mPeriod1;
+		}
+		return newEvent;
 	}
 
 	public static void setTimeRange(long date0, long date1) {
 		mPeriod0 = date0;
 		mPeriod1 = date1;
+	}
+
+	public boolean isWholeDay(Event e) {
+		return e.mDate[0] == mPeriod0 && e.mDate[1] == mPeriod1;
 	}
 }

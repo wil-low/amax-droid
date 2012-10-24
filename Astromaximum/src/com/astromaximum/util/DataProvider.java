@@ -22,6 +22,7 @@ import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.text.format.DateFormat;
 import android.util.Log;
 
 import com.astromaximum.android.PreferenceUtils;
@@ -49,6 +50,11 @@ public class DataProvider {
 	public static final String KEY_RETROGRADE = "RETROGRADE";
 	public static final String KEY_SUN_RISESET = "SUN_RISESET";
 	public static final String KEY_MOON_RISESET = "MOON_RISESET";
+
+	private static final byte[] WEEK_START_HOUR = { 0, 3, 6, 2, 5, 1, 4 };
+	private static final byte[] PLANET_HOUR_SEQUENCE = { Event.SE_SUN,
+			Event.SE_VENUS, Event.SE_MERCURY, Event.SE_MOON, Event.SE_SATURN,
+			Event.SE_JUPITER, Event.SE_MARS };
 
 	private int mYear;
 	private int mMonth;
@@ -80,7 +86,7 @@ public class DataProvider {
 	public static final long MSECINDAY = 86400 * 1000;
 	protected long mStartJD, mFinalJD;
 	protected int mDayCount;
-	public static Calendar mCalendar = Calendar.getInstance(TimeZone
+	private Calendar mCalendar = Calendar.getInstance(TimeZone
 			.getTimeZone("UTC"));
 	private static final int STREAM_BUFFER_SIZE = 10000;
 
@@ -131,7 +137,8 @@ public class DataProvider {
 		}
 	}
 
-	int readSubData(DataInputStream is, int evtype, int planet, boolean isCommon) {
+	int readSubData(DataInputStream is, int evtype, int planet,
+			boolean isCommon, long dayStart, long dayEnd) {
 		try {
 			is.reset();
 		} catch (IOException e) {
@@ -220,7 +227,7 @@ public class DataProvider {
 					last.mDate[1] = mydate0 - Event.ROUNDING_MSEC;
 					mydate1 = mFinalJD;
 				}
-				if (last.isInPeriod(mStartTime, mEndTime, false)) {
+				if (last.isInPeriod(dayStart, dayEnd, false)) {
 					mEvents[eventsCount++] = new Event(last);
 				} else {
 					if (eventsCount > 0) {
@@ -233,7 +240,7 @@ public class DataProvider {
 				last.mDate[0] = mydate0;
 				last.mDate[1] = mydate1;
 			}
-			if (last.isInPeriod(mStartTime, mEndTime, false)) {
+			if (last.isInPeriod(dayStart, dayEnd, false)) {
 				mEvents[eventsCount++] = new Event(last);
 			}
 		} catch (IOException ex) {
@@ -269,9 +276,11 @@ public class DataProvider {
 		case Event.EV_SET:
 		case Event.EV_NAVROZ:
 		case Event.EV_ASCAPHETICS:
-			return readSubData(mLocationDatafile.mData, evtype, planet, false);
+			return readSubData(mLocationDatafile.mData, evtype, planet, false,
+					dayStart, dayEnd);
 		default:
-			return readSubData(mCommonDatafile.mData, evtype, planet, true);
+			return readSubData(mCommonDatafile.mData, evtype, planet, true,
+					dayStart, dayEnd);
 		}
 	}
 
@@ -361,6 +370,7 @@ public class DataProvider {
 		editor.commit();
 		mCalendar = new GregorianCalendar(
 				TimeZone.getTimeZone(mLocationDatafile.mTimezone));
+		Event.setTimeZone(mLocationDatafile.mTimezone);
 	}
 
 	private String unbundleLocationAsset() {
@@ -401,8 +411,9 @@ public class DataProvider {
 	}
 
 	public void changeDate(int deltaDays) {
-		mStartTime += MSECINDAY * deltaDays;
-		mCalendar.setTime(new Date(mStartTime));
+		// stick to noon to determine date
+		mStartTime += MSECINDAY * deltaDays + MSECINDAY / 2;
+		mCalendar.setTimeInMillis(mStartTime);
 		setDateFromCalendar();
 	}
 
@@ -425,17 +436,39 @@ public class DataProvider {
 			mCalendar.set(mYear, mMonth, mDay, 0, 0, 0);
 			mCalendar.set(Calendar.MILLISECOND, 0);
 			mStartTime = mCalendar.getTimeInMillis();
-			mEndTime = mStartTime + MSECINDAY;
+			mEndTime = mStartTime + MSECINDAY - Event.ROUNDING_MSEC;
+			Log.d(TAG, new Date(mStartTime) + " / " + new Date(mEndTime));
+			SummaryItem.setTimeRange(mStartTime, mEndTime);
+
+			Event[] riseSet = new Event[2];
+			// ****** SUN & MOON RISES & SETS
+			for (int i = Event.SE_SUN; i <= Event.SE_MOON; i++) {
+				Event eop = getEventOnPeriod(Event.EV_RISE, i, true,
+						mStartTime, mEndTime);
+				if (eop == null || eop.mDate[0] < mStartTime) {
+					eop = new Event(0, i);
+				}
+				riseSet[i] = eop;
+				eop = getEventOnPeriod(Event.EV_SET, i, false, mStartTime,
+						mEndTime);
+				if (eop == null || eop.mDate[0] < mStartTime) {
+					eop = new Event(0, i);
+				}
+				riseSet[i].mDate[1] = eop.mDate[0];
+			}
 
 			Vector<SummaryItem> v = new Vector<SummaryItem>();
 			v.add(new SummaryItem(Event.EV_VOC, getVOCs()));
 			v.add(new SummaryItem(Event.EV_VIA_COMBUSTA, getVC()));
 			v.add(new SummaryItem(Event.EV_SUN_DEGREE, getSunDegree()));
 			v.add(new SummaryItem(Event.EV_MOON_SIGN, getMoonSign()));
-			//v.add(new SummaryItem(Event.EV_SUN_RISESET, getRiseSet(Event.SE_SUN)));
-			//v.add(new SummaryItem(Event.EV_MOON_RISESET, getRiseSet(Event.SE_MOON)));
-			//v.add(new SummaryItem(Event.EV_TITHI, getTithis()));
-			v.add(new SummaryItem(Event.EV_PLANET_HOUR, getPlanetaryHours()));
+			// v.add(new SummaryItem(Event.EV_SUN_RISESET,
+			// getRiseSet(Event.SE_SUN)));
+			// v.add(new SummaryItem(Event.EV_MOON_RISESET,
+			// getRiseSet(Event.SE_MOON)));
+			// v.add(new SummaryItem(Event.EV_TITHI, getTithis()));
+			v.add(new SummaryItem(Event.EV_PLANET_HOUR,
+					getPlanetaryHours(riseSet[Event.SE_SUN])));
 			v.add(new SummaryItem(Event.EV_ASP_EXACT, getAspects()));
 			v.add(new SummaryItem(Event.EV_MOON_MOVE, getMoonMove()));
 			v.add(new SummaryItem(Event.EV_RETROGRADE, getRetrogrades()));
@@ -489,9 +522,24 @@ public class DataProvider {
 				mStartTime, mEndTime, 0);
 	}
 
-	private Vector<Event> getPlanetaryHours() {
-		return getEventsOnPeriod(Event.EV_TITHI, Event.SE_MOON, false,
-				mStartTime, mEndTime, 0);
+	private Vector<Event> getPlanetaryHours(Event currentSunRise) {
+		Event nextSunRise = getEventOnPeriod(Event.EV_RISE, Event.SE_SUN, true,
+				mStartTime + MSECINDAY, mEndTime + MSECINDAY);
+		Vector<Event> result = new Vector<Event>();
+		int startHour = WEEK_START_HOUR[mCalendar.get(Calendar.DAY_OF_WEEK) - 1];
+		final long dayHour = (currentSunRise.mDate[1] - currentSunRise.mDate[0]) / 12;
+		final long nightHour = (nextSunRise.mDate[0] - currentSunRise.mDate[1]) / 12;
+		long st = currentSunRise.mDate[0];
+		for (int i = 0; i < 24; ++i) {
+			Event ev = new Event(st, PLANET_HOUR_SEQUENCE[startHour % 7]);
+			ev.mEvtype = Event.EV_PLANET_HOUR;
+			st += i < 12 ? dayHour : nightHour;
+			ev.mDate[1] = st - Event.ROUNDING_MSEC; // exclude last minute
+			result.add(ev);
+			++startHour;
+		}
+
+		return result;
 	}
 
 	private Vector<Event> getAspects() {
@@ -534,6 +582,14 @@ public class DataProvider {
 	private Event getEventOnPeriod(int evType, int planet, boolean special,
 			long startTime, long endTime) {
 		int cnt = getEvents(evType, planet, startTime, endTime);
+		if (evType == Event.EV_RISE && planet == Event.SE_SUN) {
+			Event dummy = new Event(startTime, 0);
+			dummy.mDate[1] = endTime;
+			Log.d("dummy", dummy.toString());
+			for (int i = 0; i < cnt; i++) {
+				Log.d("getEventOnPeriod", mEvents[i].toString());
+			}
+		}
 		for (int i = 0; i < cnt; i++) {
 			final Event ev = mEvents[i];
 			if (ev.isInPeriod(startTime, endTime, special)) {
@@ -553,7 +609,7 @@ public class DataProvider {
 		for (int i = 0; i < cnt; i++) {
 			final Event ev = mEvents[i];
 			if (planet == -1 || ev.mPlanet0 == planet || ev.mPlanet1 == planet) {
-				if (ev.isDateBetween(0, mStartTime, mEndTime)) {
+				if (ev.isDateBetween(0, startTime, endTime)) {
 					flag = true;
 					result.addElement(ev);
 				}
@@ -569,14 +625,22 @@ public class DataProvider {
 	}
 
 	public void setTodayDate() {
+		Log.d(TAG, mCalendar.getTimeZone().getDisplayName());
 		mCalendar = Calendar.getInstance(mCalendar.getTimeZone());
 		setDateFromCalendar();
+		Log.d("setTodayDate", mYear + "-" + mMonth + "-" + mDay);
+		Log.d("setTodayDate",
+				(String) DateFormat.format("yyyy MMMM dddd", mCalendar));
 	}
 
 	public String getLocationName() {
 		if (mLocationDatafile == null)
 			return null;
 		return mLocationDatafile.mCity;
+	}
+
+	public String getCurrentDateString(String titleDateFormat) {
+		return (String) DateFormat.format(titleDateFormat, mCalendar);
 	}
 
 	// mStartJD = calendar.getTime().getTime();

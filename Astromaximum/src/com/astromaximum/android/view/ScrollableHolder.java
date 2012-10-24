@@ -1,7 +1,6 @@
 package com.astromaximum.android.view;
 
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 
@@ -29,7 +28,8 @@ public abstract class ScrollableHolder extends ViewHolder {
 		if (!si.mEvents.isEmpty()) {
 			for (Event e : si.mEvents) {
 				View v = makeChildHolder(e);
-				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(mLayout.getLayoutParams());
+				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+						mLayout.getLayoutParams());
 				params.setMargins(10, 0, 10, 0);
 				mLayout.addView(v, params);
 				v.setOnClickListener(this);

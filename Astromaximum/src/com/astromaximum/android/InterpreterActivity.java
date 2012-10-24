@@ -68,6 +68,7 @@ public class InterpreterActivity extends Activity {
 			param0 = "0";
 			break;
 		case Event.EV_RETROGRADE:
+		case Event.EV_PLANET_HOUR:
 			param0 = Integer.toString(ev.mPlanet0);
 			break;
 		}

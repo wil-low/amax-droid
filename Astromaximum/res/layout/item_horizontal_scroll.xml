@@ -3,17 +3,14 @@
     android:id="@+id/HorizontalScrollView"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
-    
+
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/LinearLayout"
-	    android:minHeight="?android:attr/listPreferredItemHeight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
+        android:minHeight="?android:attr/listPreferredItemHeight"
         android:orientation="horizontal" >
-
     </LinearLayout>
 
 </HorizontalScrollView>

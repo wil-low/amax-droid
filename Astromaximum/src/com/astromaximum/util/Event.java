@@ -1,6 +1,8 @@
 package com.astromaximum.util;
 
 import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -145,10 +147,11 @@ final public class Event implements Parcelable {
 	};
 	// Any changes above must be synched with %eventType in tools.pm
 	// and EventType in mutter2/events.h !!!
-	
-	
-    // angle: (ordinal number, aspect goodness(0 - conjunction, 1 - bad, 2 - good))
-    //ASPECT = {0: (0, 0), 180: (1, 1), 120: (2, 2), 90: (3, 1), 60: (4, 2), 45: (5, 2)}
+
+	// angle: (ordinal number, aspect goodness(0 - conjunction, 1 - bad, 2 -
+	// good))
+	// ASPECT = {0: (0, 0), 180: (1, 1), 120: (2, 2), 90: (3, 1), 60: (4, 2),
+	// 45: (5, 2)}
 	public static final SparseIntArray ASPECT_GOODNESS = new SparseIntArray();
 	static {
 		ASPECT_GOODNESS.put(0, 0);
@@ -169,13 +172,15 @@ final public class Event implements Parcelable {
 		ASPECT_MAP.put(45, 5);
 	}
 
-	static final long ROUNDING_MSEC = 60 * 1000;
+	public static final long ROUNDING_MSEC = 60 * 1000;
 
 	public int mEvtype = 0;
 	public byte mPlanet0;
 	public byte mPlanet1 = -1;
 	public long[] mDate = new long[2];
 	short mDegree = 127;
+
+	private static Calendar mCalendar;
 
 	String mCaption = null;
 
@@ -247,8 +252,9 @@ final public class Event implements Parcelable {
 	public String toString() {
 		return "Event: (" + mEvtype + " " + getEvTypeStr() + " "
 				+ long2String(mDate[0], 0, false) + " - "
-				+ long2String(mDate[1], 0, false) + " " + getPlanetName(mPlanet0)
-				+ "-" + getPlanetName(mPlanet1) + " d " + mDegree + ")";
+				+ long2String(mDate[1], 0, false) + " "
+				+ getPlanetName(mPlanet0) + "-" + getPlanetName(mPlanet1)
+				+ " d " + mDegree + ")";
 	}
 
 	private String getPlanetName(byte planet) {
@@ -256,23 +262,20 @@ final public class Event implements Parcelable {
 	}
 
 	public static String long2String(long date0, int hoursOnly, boolean h24) {
-		DataProvider.mCalendar.setTimeInMillis(date0);
+		mCalendar.setTimeInMillis(date0);
 		final StringBuffer s = new StringBuffer();
 		if (hoursOnly == 0) {
-			s.append(
-					Integer.toString(DataProvider.mCalendar.get(Calendar.YEAR)))
+			s.append(Integer.toString(mCalendar.get(Calendar.YEAR)))
 					.append("-")
-					.append(to2String(DataProvider.mCalendar
-							.get(Calendar.MONTH) + 1))
+					.append(to2String(mCalendar.get(Calendar.MONTH) + 1))
 					.append("-")
-					.append(to2String(DataProvider.mCalendar
-							.get(Calendar.DAY_OF_MONTH)));
+					.append(to2String(mCalendar.get(Calendar.DAY_OF_MONTH)));
 			s.append(" ");
 		}
 		int hh = 0, mm = 0;
 		try {
-			hh = DataProvider.mCalendar.get(Calendar.HOUR_OF_DAY);
-			mm = DataProvider.mCalendar.get(Calendar.MINUTE);
+			hh = mCalendar.get(Calendar.HOUR_OF_DAY);
+			mm = mCalendar.get(Calendar.MINUTE);
 		} catch (Exception e) {
 			System.out.println("Ex: long2String(" + Long.toString(date0) + ", "
 					+ Integer.toString(hoursOnly) + ", "
@@ -365,4 +368,8 @@ final public class Event implements Parcelable {
 			return new Event[size];
 		}
 	};
+
+	public static void setTimeZone(String timezone) {
+		mCalendar = new GregorianCalendar(TimeZone.getTimeZone(timezone));
+	}
 }

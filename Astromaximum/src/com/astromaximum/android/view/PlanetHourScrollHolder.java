@@ -4,16 +4,15 @@ import android.view.View;
 
 import com.astromaximum.util.Event;
 
-public class AspectScrollHolder extends ScrollableHolder {
+public class PlanetHourScrollHolder extends ScrollableHolder {
 
-	public AspectScrollHolder(SummaryItem si) {
+	public PlanetHourScrollHolder(SummaryItem si) {
 		super(si);
 	}
 
 	@Override
 	protected View makeChildHolder(Event e) {
-
-		ViewHolder holder = new AspectHolder(e);
+		ViewHolder holder = new PlanetHourHolder(e);
 		View v = mInflater.inflate(holder.mLayoutId, null);
 		holder.initLayout(v);
 		holder.fillLayout(null);

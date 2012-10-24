@@ -1,76 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/HorizontalScrollView1"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/LinearLayout01"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
 
-    <LinearLayout
+    <view
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/LinearLayout01"
-        android:layout_width="wrap_content"
+        android:id="@+id/EventListItemPlanet0"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-        
-        <Button
-            android:id="@+id/button1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Button1" />
+        android:layout_gravity="fill_horizontal|center"
+        class="com.astromaximum.android.view.AstroTextView"
+        android:gravity="center"
+        android:padding="2dp"
+        android:textSize="20sp" />
 
-        <Button
-            android:id="@+id/button2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Button2" />
+    <TextView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/EventListItemText0"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="fill_horizontal|center"
+        android:gravity="center"
+        android:padding="2dp"
+        android:text="Text0" />
 
-        <Button
-            android:id="@+id/button3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Button3" />
-
-        <Button
-            android:id="@+id/button4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Button4" />
-
-        <Button
-            android:id="@+id/button10"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Button5" />
-
-        <Button
-            android:id="@+id/button9"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Button6" />
-
-        <Button
-            android:id="@+id/button8"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Button7" />
-
-        <Button
-            android:id="@+id/button5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Button7" />
-
-        <Button
-            android:id="@+id/button7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Button8" />
-
-        <Button
-            android:id="@+id/button6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Button9" />
-
-    </LinearLayout>
-
-</HorizontalScrollView>
+</LinearLayout>

@@ -63,7 +63,7 @@ public abstract class ViewHolder implements OnClickListener {
 			holder = new AspectScrollHolder(si);
 			break;
 		case Event.EV_PLANET_HOUR:
-			holder = new PlanetHourHolder(si);
+			holder = new PlanetHourScrollHolder(si);
 			break;
 		default:
 			holder = new SimpleHolder(si);

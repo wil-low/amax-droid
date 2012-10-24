@@ -75,6 +75,7 @@ public class MainActivity extends Activity {
 			}
 		};
 		mEventList.setOnTouchListener(gestureListener);
+
 		// setTitle(getVersionedTitle());
 		mDataProvider.setTodayDate();
 	}
@@ -185,12 +186,12 @@ public class MainActivity extends Activity {
 	}
 
 	private void updateTitle() {
-		mTitleDate = (String) DateFormat.format(mTitleDateFormat,
-				DataProvider.mCalendar);
+		mTitleDate = mDataProvider.getCurrentDateString(mTitleDateFormat);
 		setTitle(mDataProvider.getLocationName() + " : " + mTitleDate);
 	}
 
 	private void previousDate() {
+		Log.d(TAG, "previousDate");
 		mDataProvider.changeDate(-1);
 		updateDisplay();
 		// Toast.makeText(this, "Left-to-right fling",
@@ -198,6 +199,7 @@ public class MainActivity extends Activity {
 	}
 
 	private void nextDate() {
+		Log.d(TAG, "nextDate");
 		mDataProvider.changeDate(1);
 		updateDisplay();
 		// Toast.makeText(this, "Right-to-left fling",
@@ -205,7 +207,7 @@ public class MainActivity extends Activity {
 	}
 
 	public void onEventItemClick(int position) {
-		Log.d(TAG, "onItemClick");
+		Log.d(TAG, "onItemClick " + position);
 		SummaryItem si = (SummaryItem) mEventList.getItemAtPosition(position);
 		if (!si.mEvents.isEmpty()) {
 			Intent intent = new Intent(this, EventListActivity.class);

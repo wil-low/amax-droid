@@ -15,7 +15,7 @@ public class SimpleHolder extends ViewHolder {
 	public void fillLayout(SummaryItem si) {
 		Event e = si.getActiveEvent();
 		if (e != null) {
-			mText0.setText(Event.long2String(e.mDate[0], 1, true) + " - "
+			mText0.setText(Event.long2String(e.mDate[0], 1, false) + " - "
 					+ Event.long2String(e.mDate[1], 1, true));
 		} else {
 			mText0.setText("");
