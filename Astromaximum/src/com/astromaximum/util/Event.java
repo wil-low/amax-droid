@@ -1,6 +1,7 @@
 package com.astromaximum.util;
 
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
@@ -65,10 +66,6 @@ final public class Event implements Parcelable {
 	public static final int EV_MOON_SIGN_LARGE = 36;
 	public static final int EV_HELP = 37;
 	public static final int EV_ASP_EXACT_MOON = 38;
-	public static final int EV_DEGPASS0 = 39;
-	public static final int EV_DEGPASS1 = 40;
-	public static final int EV_DEGPASS2 = 41;
-	public static final int EV_DEGPASS3 = 42;
 	public static final int EV_HELP0 = 43;
 	public static final int EV_HELP1 = 44;
 	public static final int EV_ASTRORISE = 45;
@@ -368,8 +365,18 @@ final public class Event implements Parcelable {
 			return new Event[size];
 		}
 	};
+	public static final short SIGN_ENTER_DEGREE = 200;
 
 	public static void setTimeZone(String timezone) {
 		mCalendar = new GregorianCalendar(TimeZone.getTimeZone(timezone));
 	}
+
+	public static class EventDate0Comparator implements Comparator<Event>
+	{
+	    public int compare(Event o1, Event o2)
+	    {
+	        return (int)(o1.mDate[0] - o2.mDate[0]);
+	    }
+	}
+
 }

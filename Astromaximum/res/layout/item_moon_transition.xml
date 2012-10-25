@@ -2,35 +2,45 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/LinearLayout02"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="fill_parent"
+    android:gravity="center"
     android:orientation="horizontal" >
 
-    <TextView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/EventListItemType"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_gravity="center"
-        android:text="@+string/hour_of" />
-
     <view
-        class="com.astromaximum.android.view.AstroTextView"
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/EventListItemPlanet0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textSize="20sp"
-        android:padding="2dp" />
-    
+        class="com.astromaximum.android.view.AstroTextView"
+        android:padding="2dp"
+        android:textSize="20sp" />
+
+    <TextView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="fill_horizontal|center"
+        android:gravity="center"
+        android:padding="2dp"
+        android:text=">" />
+
+    <view
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/EventListItemPlanet1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        class="com.astromaximum.android.view.AstroTextView"
+        android:padding="2dp"
+        android:textSize="20sp" />
+
     <TextView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/EventListItemText0"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_gravity="fill_horizontal|center"
         android:layout_weight="1"
-        android:layout_gravity="center"
+        android:gravity="center"
         android:padding="2dp"
         android:text="Text0" />
 

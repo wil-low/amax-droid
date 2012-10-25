@@ -11,6 +11,7 @@ import android.util.Log;
 import com.astromaximum.android.R;
 
 public class InterpretationProvider {
+	private static final String TAG = "InterpretationProvider";
 	private static InterpretationProvider mInstance;
 	private Context mContext;
 	DataInputStream mTexts;
@@ -38,6 +39,12 @@ public class InterpretationProvider {
 
 	public String getText(Event e) {
 		int[] params = makeInterpreterCode(e);
+		/*
+		Log.d(TAG, Integer.toString(e.mEvtype) + " " 
+						+ Integer.toString(params[0])+ " "
+						+ Integer.toString(params[1]) + " "
+						+ Integer.toString(params[2]) + " "
+						+ Integer.toString(params[3]));*/
 		int[] tempParams = new int[4];
 		try {
 			mTexts.reset();
@@ -59,11 +66,6 @@ public class InterpretationProvider {
 				tempParams[0] = mTexts.readByte();
 				for (int j = 0; j < 3; ++j)
 					tempParams[j + 1] = mTexts.readShort();
-				Log.d("TAG",
-						Integer.toString(tempParams[0]) + " "
-								+ Integer.toString(tempParams[1]) + " "
-								+ Integer.toString(tempParams[2]) + " "
-								+ Integer.toString(tempParams[3]));
 				if (Arrays.equals(params, tempParams)) {
 					return mTexts.readUTF();
 				} else {
@@ -82,6 +84,11 @@ public class InterpretationProvider {
 		int planet = -1;
 		int param0 = -1, param1 = -1, param2 = -1;
 		switch (ev.mEvtype) {
+		case Event.EV_ASP_EXACT_MOON:
+			planet = ev.mPlanet0;
+			param0 = ev.mPlanet1;
+			param1 = Event.ASPECT_GOODNESS.get(ev.getDegree());
+			break;
 		case Event.EV_ASP_EXACT:
 			param0 = ev.mPlanet0;
 			param1 = ev.mPlanet1;
@@ -104,6 +111,18 @@ public class InterpretationProvider {
 		case Event.EV_PLANET_HOUR:
 			param0 = ev.mPlanet0;
 			break;
+		case Event.EV_MOON_MOVE:
+			planet = Event.SE_MOON;
+			if (ev.mPlanet1 == -1) {
+				param0 = 255;
+				param1 = Event.SE_MOON;
+			} else {
+				if (ev.mPlanet0 == -1)
+					param0 = Event.SE_MOON;
+				else
+					param0 = ev.mPlanet0;
+				param1 = ev.mPlanet1;
+			}
 		}
 		return new int[] { planet, param0, param1, param2 };
 	}

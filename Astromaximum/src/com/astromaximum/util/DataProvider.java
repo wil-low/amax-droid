@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
@@ -547,8 +549,83 @@ public class DataProvider {
 	}
 
 	private Vector<Event> getMoonMove() {
-		return getEventsOnPeriod(Event.EV_TITHI, Event.SE_MOON, false,
-				mStartTime, mEndTime, 0);
+		long startTime = mStartTime - MSECINDAY * 2;
+		long endTime = mEndTime + MSECINDAY * 2;
+		Vector<Event> moonAspects = getAspectsOnPeriod(Event.SE_MOON,
+				startTime, endTime);
+		Vector<Event> result = getEventsOnPeriod(Event.EV_SIGN_ENTER,
+				Event.SE_MOON, false, startTime, endTime, 0);
+		moonAspects.addAll(result);
+		Comparator<Event> comparator = new Event.EventDate0Comparator();
+		Collections.sort(moonAspects, comparator);
+
+		Vector<Event> moonMove = new Vector<Event>();
+
+		int firstInPeriod = -1, lastInPeriod = -1;
+		int vecSize = moonAspects.size();
+		for (int i = 0; i < vecSize - 1; ++i) {
+			Event current = moonAspects.elementAt(i);
+			Log.d(TAG, current.toString());
+			if (Event.dateBetween(current.mDate[0], mStartTime, mEndTime) == 0) {
+				if (firstInPeriod == -1)
+					firstInPeriod = i;
+				lastInPeriod = i;
+			}
+			Event transitionEvent = new Event(0, Event.SE_MOON);
+			transitionEvent.mEvtype = Event.EV_MOON_MOVE;
+			if (current.mEvtype == Event.EV_SIGN_ENTER)
+				transitionEvent.mDate[0] = current.mDate[0];
+			else
+				transitionEvent.mDate[0] = current.mDate[1];
+			transitionEvent.mDate[1] = moonAspects.elementAt(i + 1).mDate[0];
+			
+			int j = i;
+			while (j >= 0) {
+				byte planet = moonAspects.elementAt(j).mPlanet1;
+				if (planet <= Event.SE_SATURN) {
+					transitionEvent.mPlanet0 = planet;
+					break;
+				}
+				--j;
+			}
+			j = i + 1;
+			while (j < vecSize) {
+				byte planet = moonAspects.elementAt(j).mPlanet1;
+				if (planet <= Event.SE_SATURN) {
+					transitionEvent.mPlanet1 = planet;
+					break;
+				}
+				++j;
+			}
+			
+			//transition_event.id0 = id0;
+		    //transition_event.id1 = id1
+			moonMove.add(current);
+			moonMove.add(transitionEvent);
+		}
+		moonMove.add(moonAspects.elementAt(vecSize - 1));
+		if (firstInPeriod > 0)
+			--firstInPeriod;
+		firstInPeriod *= 2;
+		++lastInPeriod;
+		lastInPeriod = lastInPeriod * 2 + 1;
+		result.clear();
+		for (int i = firstInPeriod; i < lastInPeriod; ++i) {
+			Event e = moonMove.elementAt(i);
+			if (e.mEvtype == Event.EV_MOON_MOVE) {
+				e.mDegree = Event.SIGN_ENTER_DEGREE;
+				//e.mPlanet0 = moonMove.elementAt(i - 1).mPlanet1;
+				//e.mPlanet1 = moonMove.elementAt(i + 1).mPlanet1;
+				//if (e.mPlanet1 == Event.SE_MOON)
+				//	e.mPlanet1 = -1;
+			} else if (e.mEvtype == Event.EV_ASP_EXACT) {
+				e.mEvtype = Event.EV_ASP_EXACT_MOON;
+			}
+			//e.mEvtype = Event.EV_MOON_MOVE;
+			e.mDate[1] -= Event.ROUNDING_MSEC;
+			result.add(e);
+		}
+		return result;
 	}
 
 	private Vector<Event> getRetrogrades() {
@@ -562,16 +639,16 @@ public class DataProvider {
 		return result;
 	}
 
-	private Vector<Event> getRiseSet(int planet) {
+	private Vector<Event> getRiseSet(int planet, long startTime, long endTime) {
 		Vector<Event> result = new Vector<Event>();
-		Event eop = getEventOnPeriod(Event.EV_RISE, planet, true, mStartTime,
-				mEndTime);
-		if (eop == null || eop.mDate[0] < mStartTime) {
+		Event eop = getEventOnPeriod(Event.EV_RISE, planet, true, startTime,
+				endTime);
+		if (eop == null || eop.mDate[0] < startTime) {
 			eop = new Event(0, planet);
 		}
-		Event eop1 = getEventOnPeriod(Event.EV_SET, planet, false, mStartTime,
+		Event eop1 = getEventOnPeriod(Event.EV_SET, planet, false, startTime,
 				mEndTime);
-		if (eop1 == null || eop1.mDate[0] < mStartTime) {
+		if (eop1 == null || eop1.mDate[0] < startTime) {
 			eop1 = new Event(0, planet);
 		}
 		eop.mDate[1] = eop1.mDate[0];
