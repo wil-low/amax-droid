@@ -179,16 +179,6 @@ final public class Event implements Parcelable {
 
 	private static Calendar mCalendar;
 
-	String mCaption = null;
-
-	public String getCaption() {
-		return mCaption;
-	}
-
-	public void setCaption(String caption) {
-		mCaption = caption;
-	}
-
 	/**
 	 * @param dat
 	 * @param planet

@@ -597,9 +597,6 @@ public class DataProvider {
 				}
 				++j;
 			}
-			
-			//transition_event.id0 = id0;
-		    //transition_event.id1 = id1
 			moonMove.add(current);
 			moonMove.add(transitionEvent);
 		}
@@ -612,16 +609,9 @@ public class DataProvider {
 		result.clear();
 		for (int i = firstInPeriod; i < lastInPeriod; ++i) {
 			Event e = moonMove.elementAt(i);
-			if (e.mEvtype == Event.EV_MOON_MOVE) {
-				e.mDegree = Event.SIGN_ENTER_DEGREE;
-				//e.mPlanet0 = moonMove.elementAt(i - 1).mPlanet1;
-				//e.mPlanet1 = moonMove.elementAt(i + 1).mPlanet1;
-				//if (e.mPlanet1 == Event.SE_MOON)
-				//	e.mPlanet1 = -1;
-			} else if (e.mEvtype == Event.EV_ASP_EXACT) {
+			if (e.mEvtype == Event.EV_ASP_EXACT) {
 				e.mEvtype = Event.EV_ASP_EXACT_MOON;
 			}
-			//e.mEvtype = Event.EV_MOON_MOVE;
 			e.mDate[1] -= Event.ROUNDING_MSEC;
 			result.add(e);
 		}
