@@ -8,7 +8,7 @@
     <string name="pref_show_all_texts">Show all texts</string>
     <string name="app_name">Astromaximum</string>
     <string name="pick_date">Pick date</string>
-    <string name="title_date_format">MMMM d, yyyy, EEEE</string>
+    <string name="title_date_format">MMMM d, EEEE</string>
     <string name="interpretation_dir">en</string>
     <string name="hour_of">Hour of</string>
     <string name="tithi">Tithi</string>
