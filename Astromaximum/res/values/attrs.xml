@@ -3,4 +3,5 @@
 <declare-styleable name="ImageListPreference">
 <attr name="entryImages" format="reference" />
 </declare-styleable>
+<dimen name="item_list_margin">4dp</dimen>
 </resources>
