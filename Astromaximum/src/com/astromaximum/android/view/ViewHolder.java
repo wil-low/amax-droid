@@ -69,6 +69,9 @@ public abstract class ViewHolder implements OnClickListener {
 		case Event.EV_MOON_MOVE:
 			holder = new MoonTransitionHolder(si);
 			break;
+		case Event.EV_TITHI:
+			holder = new TithiHolder(si);
+			break;
 		default:
 			holder = new SimpleHolder(si);
 			break;

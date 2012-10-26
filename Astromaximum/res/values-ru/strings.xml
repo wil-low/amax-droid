@@ -11,4 +11,5 @@
     <string name="title_date_format">d MMMM yyyy, EEEE</string>
 	<string name="interpretation_dir">ru</string>
     <string name="hour_of">Час</string>
+    <string name="tithi">Титхи</string>
 </resources>

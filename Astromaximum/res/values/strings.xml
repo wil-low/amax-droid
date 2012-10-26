@@ -11,4 +11,5 @@
     <string name="title_date_format">MMMM d, yyyy, EEEE</string>
     <string name="interpretation_dir">en</string>
     <string name="hour_of">Hour of</string>
+    <string name="tithi">Tithi</string>
 </resources>
