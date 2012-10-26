@@ -15,6 +15,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 import java.util.Vector;
@@ -468,12 +469,12 @@ public class DataProvider {
 			// getRiseSet(Event.SE_SUN)));
 			// v.add(new SummaryItem(Event.EV_MOON_RISESET,
 			// getRiseSet(Event.SE_MOON)));
-			// v.add(new SummaryItem(Event.EV_TITHI, getTithis()));
 			v.add(new SummaryItem(Event.EV_PLANET_HOUR,
 					getPlanetaryHours(riseSet[Event.SE_SUN])));
 			v.add(new SummaryItem(Event.EV_ASP_EXACT, getAspects()));
 			v.add(new SummaryItem(Event.EV_MOON_MOVE, getMoonMove()));
 			v.add(new SummaryItem(Event.EV_RETROGRADE, getRetrogrades()));
+			v.add(new SummaryItem(Event.EV_TITHI, getTithis()));
 			mEventCache.set(rangeType, v);
 			/*
 			 * getEventsOnPeriod(tmpVector, Event.EV_DEGREE_PASS, Event.SE_SUN,
@@ -549,8 +550,76 @@ public class DataProvider {
 	}
 
 	private Vector<Event> getMoonMove() {
-		long startTime = mStartTime - MSECINDAY * 2;
-		long endTime = mEndTime + MSECINDAY * 2;
+        Vector<Event> asp = getEventsOnPeriod(Event.EV_SIGN_ENTER, Event.SE_MOON,
+                true, mStartTime - MSECINDAY * 2, mEndTime + MSECINDAY * 4, 0);
+//        for (Event ev : asp)
+//            ev.mPlanet1 = Event.SE_MOON;
+        Vector<Event> moonMoveVec = getAspectsOnPeriod(Event.SE_MOON,
+        		mStartTime - MSECINDAY * 2, mEndTime + MSECINDAY * 2);
+
+        mergeEvents(moonMoveVec, asp, true);
+        asp.removeAllElements();
+        mergeEvents(asp, moonMoveVec, false);
+        int id1 = -1;
+        int id2 = -1;
+        int counter = 0;
+        for (Event ev : asp) {
+            final long dat = ev.mDate[0];
+            if (dat < mStartTime) {
+                id1 = counter;
+            }
+            if (id2 == -1 && dat >= mEndTime) {
+                id2 = counter;
+            }
+            ++counter;
+        }
+        asp.setSize(id2 + 1);
+        try {
+            for (int i = 0; i < id1; i++) {
+                asp.removeElementAt(0);
+            }
+        } catch (ArrayIndexOutOfBoundsException aie) {
+        }
+        int sz = asp.size() - 1;
+        int idx = 1;
+        for (int i = 0; i < sz; i++) {
+            Event evprev = asp.elementAt(idx - 1);
+            long dd = (evprev.mPlanet0 == evprev.mPlanet1) ? evprev.mDate[0] : evprev.mDate[1];
+            Event ev = new Event(dd, -1);
+            ev.mEvtype = Event.EV_MOON_MOVE;
+            ev.mDate[1] = asp.elementAt(idx).mDate[0] - Event.ROUNDING_MSEC;
+            ev.mPlanet0 = evprev.mPlanet1;
+            ev.mPlanet1 = asp.elementAt(idx).mPlanet1;
+//      ev.dump();
+            asp.insertElementAt(ev, idx);
+            idx += 2;
+        }
+        sz = asp.size();
+        for (int i = 0; i < sz; ++i) {
+        	Event e = asp.elementAt(i);
+        	if (e.mEvtype == Event.EV_MOON_MOVE) {
+    			int j = i - 1;
+    			while (j >= 0) {
+    				byte planet = asp.elementAt(j).mPlanet1;
+    				if (planet <= Event.SE_SATURN) {
+    					e.mPlanet0 = planet;
+    					break;
+    				}
+    				--j;
+    			}
+    			j = i + 1;
+    			while (j < sz) {
+    				byte planet = asp.elementAt(j).mPlanet1;
+    				if (planet <= Event.SE_SATURN) {
+    					e.mPlanet1 = planet;
+    					break;
+    				}
+    				++j;
+    			}
+        	} else if (e.mEvtype == Event.EV_ASP_EXACT)
+				e.mEvtype = Event.EV_ASP_EXACT_MOON;
+        }
+/*		
 		Vector<Event> moonAspects = getAspectsOnPeriod(Event.SE_MOON,
 				startTime, endTime);
 		Vector<Event> result = getEventsOnPeriod(Event.EV_SIGN_ENTER,
@@ -561,16 +630,10 @@ public class DataProvider {
 
 		Vector<Event> moonMove = new Vector<Event>();
 
-		int firstInPeriod = -1, lastInPeriod = -1;
 		int vecSize = moonAspects.size();
 		for (int i = 0; i < vecSize - 1; ++i) {
 			Event current = moonAspects.elementAt(i);
 			Log.d(TAG, current.toString());
-			if (Event.dateBetween(current.mDate[0], mStartTime, mEndTime) == 0) {
-				if (firstInPeriod == -1)
-					firstInPeriod = i;
-				lastInPeriod = i;
-			}
 			Event transitionEvent = new Event(0, Event.SE_MOON);
 			transitionEvent.mEvtype = Event.EV_MOON_MOVE;
 			if (current.mEvtype == Event.EV_SIGN_ENTER)
@@ -601,22 +664,35 @@ public class DataProvider {
 			moonMove.add(transitionEvent);
 		}
 		moonMove.add(moonAspects.elementAt(vecSize - 1));
-		if (firstInPeriod > 0)
-			--firstInPeriod;
-		firstInPeriod *= 2;
-		++lastInPeriod;
-		lastInPeriod = lastInPeriod * 2 + 1;
 		result.clear();
-		for (int i = firstInPeriod; i < lastInPeriod; ++i) {
-			Event e = moonMove.elementAt(i);
-			if (e.mEvtype == Event.EV_ASP_EXACT) {
-				e.mEvtype = Event.EV_ASP_EXACT_MOON;
+		for (Event e : moonMove) {
+			if (Event.dateBetween(e.mDate[0], mStartTime, mEndTime) == 0) {
+				if (e.mEvtype == Event.EV_ASP_EXACT) {
+					e.mEvtype = Event.EV_ASP_EXACT_MOON;
+				}
+				e.mDate[1] -= Event.ROUNDING_MSEC;
+				result.add(e);
 			}
-			e.mDate[1] -= Event.ROUNDING_MSEC;
-			result.add(e);
 		}
-		return result;
+		return result;*/
+        return asp;
 	}
+
+    private static void mergeEvents(Vector<Event> dest, Vector<Event> add, boolean isSort) {
+        for (Event ev : add) {
+            if (isSort) {
+                int idx = 0;
+                final long dat = ev.mDate[0];
+                final int sz = dest.size();
+                while (idx < sz && dat > dest.elementAt(idx).mDate[0]) {
+                    ++idx;
+                }
+                dest.insertElementAt(ev, idx);
+            } else {
+                dest.addElement(ev);
+            }
+        }
+    }
 
 	private Vector<Event> getRetrogrades() {
 		Vector<Event> result = new Vector<Event>();
