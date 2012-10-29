@@ -1,11 +1,15 @@
 package com.astromaximum.android.view;
 
+import android.content.Intent;
 import android.view.View;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 
+import com.astromaximum.android.EventListActivity;
+import com.astromaximum.android.InterpreterActivity;
 import com.astromaximum.android.R;
 import com.astromaximum.util.Event;
+import com.astromaximum.util.InterpretationProvider;
 
 public abstract class ScrollableHolder extends ViewHolder {
 
@@ -38,4 +42,19 @@ public abstract class ScrollableHolder extends ViewHolder {
 	}
 
 	abstract protected View makeChildHolder(Event e);
+
+	public void onClick(View v) {
+		Object obj = v.getTag();
+		if (obj != null) {
+			Event e = (Event) obj;
+			String text = InterpretationProvider.getInstance().getText(e);
+			if (text != null) {
+				Intent intent = new Intent(mContext,
+						InterpreterActivity.class);
+				intent.putExtra(SummaryItem.LISTKEY_INTERPRETER_TEXT, text);
+				intent.putExtra(SummaryItem.LISTKEY_INTERPRETER_EVENT, e);
+				mContext.startActivity(intent);
+			}
+		}
+	}
 }

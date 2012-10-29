@@ -10,8 +10,9 @@
         android:id="@+id/EventListItemType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:layout_gravity="center"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
         android:text="@+string/tithi" />
 
     <TextView
@@ -20,18 +21,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:padding="2dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
         android:text="Text0" />
-    
+
     <TextView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/EventListItemText0"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_weight="1"
+        android:layout_weight="7"
         android:gravity="center"
-        android:padding="2dp"
         android:text="Text0" />
 
     <ImageView

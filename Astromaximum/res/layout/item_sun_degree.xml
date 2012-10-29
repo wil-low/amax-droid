@@ -11,9 +11,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical|center"
+        android:layout_weight="1"
         class="com.astromaximum.android.view.AstroTextView"
-        android:textSize="20sp"
-        android:padding="5dp" />
+        android:textSize="20sp" />
 
     <TextView
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -21,8 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:gravity="center_vertical|center"
-        android:padding="2dp"
+        android:layout_weight="1"
         android:text="dgr" />
 
     <view
@@ -30,8 +29,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical|center"
-        android:textSize="20sp"
-        class="com.astromaximum.android.view.AstroTextView" />
+        android:layout_weight="1"
+        class="com.astromaximum.android.view.AstroTextView"
+        android:textSize="20sp" />
 
     <TextView
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -39,8 +39,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_weight="5"
-        android:padding="2dp"
+        android:gravity="center"
+        android:layout_weight="7"
         android:text="Text0" />
 
     <ImageView
@@ -49,6 +49,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="@dimen/item_list_margin"
+        android:layout_weight="1"
         android:src="@drawable/item_list" />
 
 </LinearLayout>

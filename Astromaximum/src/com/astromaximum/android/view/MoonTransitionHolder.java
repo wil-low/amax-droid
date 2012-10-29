@@ -47,7 +47,7 @@ public class MoonTransitionHolder extends ViewHolder {
 			mPlanet1.setVisibility(View.GONE);
 			mText1.setVisibility(View.GONE);
 		}
-		updateInfoButton(e);
+		updateInfoButton(si);
 	}
 
 }

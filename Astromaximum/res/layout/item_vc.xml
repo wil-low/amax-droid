@@ -11,7 +11,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:padding="10dp"
+        android:layout_weight="3"
+        android:gravity="center"
         android:text="VC" />
 
     <TextView
@@ -19,9 +20,9 @@
         android:id="@+id/EventListItemText0"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:layout_gravity="center"
-        android:padding="2dp"
+        android:layout_weight="9"
+        android:gravity="center"
         android:text="Text0" />
 
     <ImageView

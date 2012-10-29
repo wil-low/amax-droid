@@ -38,13 +38,14 @@ public class InterpretationProvider {
 	}
 
 	public String getText(Event e) {
+		if (e == null)
+			return null;
 		int[] params = makeInterpreterCode(e);
-		/*
 		Log.d(TAG, Integer.toString(e.mEvtype) + " " 
 						+ Integer.toString(params[0])+ " "
 						+ Integer.toString(params[1]) + " "
 						+ Integer.toString(params[2]) + " "
-						+ Integer.toString(params[3]));*/
+						+ Integer.toString(params[3]));
 		int[] tempParams = new int[4];
 		try {
 			mTexts.reset();

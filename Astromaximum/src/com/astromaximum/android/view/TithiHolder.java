@@ -13,16 +13,15 @@ public class TithiHolder extends ViewHolder {
 
 	@Override
 	public void fillLayout(SummaryItem si) {
-		Event ev = si.getActiveEvent();
-		if (ev != null) {
-			mDegree.setText(Integer.toString(ev.getDegree()));
-			Event e = si.normalizeCopy(ev);
+		if (mActiveEvent != null) {
+			mDegree.setText(Integer.toString(mActiveEvent.getDegree()));
+			Event e = si.normalizeCopy(mActiveEvent);
 			mText0.setText(Event.long2String(e.mDate[0], 1, false) + " - "
 					+ Event.long2String(e.mDate[1], 1, true));
 		} else {
 			mDegree.setText("");
 			mText0.setText("");
 		}
-		updateInfoButton(ev);
+		updateInfoButton(si);
 	}
 }

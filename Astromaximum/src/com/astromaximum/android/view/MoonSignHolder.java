@@ -13,20 +13,19 @@ public class MoonSignHolder extends ViewHolder {
 
 	@Override
 	public void fillLayout(SummaryItem si) {
-		Event e = si.getActiveEvent();
-		if (e != null) {
-			if (!si.isWholeDay(e)) {
-				mText0.setText(Event.long2String(e.mDate[0], 1, false));
+		if (mActiveEvent != null) {
+			if (!si.isWholeDay(mActiveEvent)) {
+				mText0.setText(Event.long2String(mActiveEvent.mDate[0], 1, false));
 			} else {
 				mText0.setText("");
 			}
-			mZodiac.setText(AstroFont.getSymbol(AstroFont.TYPE_ZODIAC, e.getDegree()));
-			mPlanet0.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET, e.mPlanet0));
+			mZodiac.setText(AstroFont.getSymbol(AstroFont.TYPE_ZODIAC, mActiveEvent.getDegree()));
+			mPlanet0.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET, mActiveEvent.mPlanet0));
 		} else {
 			mText0.setText("");
 			mZodiac.setText("");
 			mPlanet0.setText("");
 		}
-		updateInfoButton(e);
+		updateInfoButton(si);
 	}
 }

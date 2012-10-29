@@ -13,17 +13,16 @@ public class PlanetHourHolder extends ViewHolder {
 
 	@Override
 	public void fillLayout(SummaryItem si) {
-		Event ev = si.getActiveEvent();
-		if (ev != null) {
+		if (mActiveEvent != null) {
 			mPlanet0.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET,
-					ev.mPlanet0));
-			Event e = si.normalizeCopy(ev);
+					mActiveEvent.mPlanet0));
+			Event e = SummaryItem.normalizeCopy(mActiveEvent);
 			mText0.setText(Event.long2String(e.mDate[0], 1, false) + " - "
 					+ Event.long2String(e.mDate[1], 1, true));
 		} else {
 			mPlanet0.setText("");
 			mText0.setText("");
 		}
-		updateInfoButton(ev);
+		updateInfoButton(si);
 	}
 }

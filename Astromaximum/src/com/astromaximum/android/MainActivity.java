@@ -29,6 +29,7 @@ import com.astromaximum.android.view.SummaryAdapter;
 import com.astromaximum.android.view.SummaryItem;
 import com.astromaximum.android.view.ViewHolder;
 import com.astromaximum.util.DataProvider;
+import com.astromaximum.util.Event;
 import com.astromaximum.util.InterpretationProvider;
 
 public class MainActivity extends Activity {
@@ -68,7 +69,7 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.main);
 
 		mEventList = (ListView) findViewById(R.id.ListViewEvents);
-
+/*
 		final GestureDetector gestureDetector = new GestureDetector(
 				new MyGestureDetector());
 		View.OnTouchListener gestureListener = new View.OnTouchListener() {
@@ -77,7 +78,7 @@ public class MainActivity extends Activity {
 			}
 		};
 		mEventList.setOnTouchListener(gestureListener);
-
+*/
 		// setTitle(getVersionedTitle());
 		mDataProvider.setTodayDate();
 	}
@@ -210,13 +211,19 @@ public class MainActivity extends Activity {
 
 	public void onEventItemClick(int position) {
 		Log.d(TAG, "onItemClick " + position);
+/*		
 		SummaryItem si = (SummaryItem) mEventList.getItemAtPosition(position);
-		if (!si.mEvents.isEmpty()) {
-			Intent intent = new Intent(this, EventListActivity.class);
-			intent.putExtra(SummaryItem.LISTKEY_EVENT_KEY, si.mKey);
-			intent.putExtra(SummaryItem.LISTKEY_EVENT_DATE, mTitleDate);
+		Event e = si.getActiveEvent();
+		String text = InterpretationProvider.getInstance().getText(e);
+		if (text != null) {
+			Intent intent = new Intent(this,
+					InterpreterActivity.class);
+			intent.putExtra(
+					SummaryItem.LISTKEY_INTERPRETER_TEXT, text);
+			intent.putExtra(
+					SummaryItem.LISTKEY_INTERPRETER_EVENT, e);
 			startActivity(intent);
-		}
+		}*/
 	}
 
 	@Override

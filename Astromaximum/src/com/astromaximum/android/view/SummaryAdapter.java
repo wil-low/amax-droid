@@ -24,6 +24,7 @@ public class SummaryAdapter extends ArrayAdapter<SummaryItem> {
 			v = ViewHolder.makeView(si);
 		}
 		ViewHolder holder = (ViewHolder) v.getTag();
+		holder.calculateActiveEvent(si);
 		holder.fillLayout(si);
 		return v;
 	}

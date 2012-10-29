@@ -10,9 +10,9 @@
         android:id="@+id/EventListItemType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:layout_gravity="center"
-        android:padding="10dp"
+        android:layout_weight="3"
+        android:gravity="center"
         android:text="VOC" />
 
     <TextView
@@ -20,20 +20,10 @@
         android:id="@+id/EventListItemText0"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:layout_gravity="center"
-        android:padding="2dp"
+        android:layout_weight="9"
+        android:gravity="center"
         android:text="Text0" />
-
-    <TextView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/EventListItemText1"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:layout_gravity="center"
-        android:padding="2dp"
-        android:text="Text1" />
 
     <ImageView
         android:id="@+id/EventListItemInfo"

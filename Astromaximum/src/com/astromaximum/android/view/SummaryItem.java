@@ -26,13 +26,7 @@ public class SummaryItem {
 		return mEvents.get(0).toString();
 	}
 
-	public Event getActiveEvent() {
-		if (mEvents.isEmpty())
-			return null;
-		return normalizeCopy(mEvents.get(0));
-	}
-
-	public Event normalizeCopy(Event event) {
+	public static Event normalizeCopy(Event event) {
 		Event newEvent = new Event(event);
 		if (newEvent.mDate[0] < mPeriod0) {
 			newEvent.mDate[0] = mPeriod0;

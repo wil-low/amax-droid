@@ -10,6 +10,7 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.astromaximum.android.EventListActivity;
 import com.astromaximum.android.InterpreterActivity;
 import com.astromaximum.android.R;
 import com.astromaximum.util.Event;
@@ -44,6 +45,8 @@ public abstract class ViewHolder implements OnClickListener {
 	protected static int LAYOUT_FLAG_ZODIAC = 1 << 8;
 
 	protected static Context mContext;
+	protected SummaryItem mSummaryItem;
+	public Event mActiveEvent;
 
 	public static View makeView(SummaryItem si) {
 		ViewHolder holder = null;
@@ -90,17 +93,23 @@ public abstract class ViewHolder implements OnClickListener {
 		if ((mFlags & LAYOUT_FLAG_TEXT1) != 0)
 			mText1 = (TextView) v.findViewById(R.id.EventListItemText1);
 		if ((mFlags & LAYOUT_FLAG_PLANET0) != 0)
-			mPlanet0 = (AstroTextView) v.findViewById(R.id.EventListItemPlanet0);
+			mPlanet0 = (AstroTextView) v
+					.findViewById(R.id.EventListItemPlanet0);
 		if ((mFlags & LAYOUT_FLAG_PLANET1) != 0)
-			mPlanet1 = (AstroTextView) v.findViewById(R.id.EventListItemPlanet1);
+			mPlanet1 = (AstroTextView) v
+					.findViewById(R.id.EventListItemPlanet1);
 		if ((mFlags & LAYOUT_FLAG_DEGREE) != 0)
 			mDegree = (TextView) v.findViewById(R.id.EventListItemDegree);
 		if ((mFlags & LAYOUT_FLAG_ASPECT) != 0)
 			mAspect = (AstroTextView) v.findViewById(R.id.EventListItemAspect);
-		if ((mFlags & LAYOUT_FLAG_INFO) != 0)
+		if ((mFlags & LAYOUT_FLAG_INFO) != 0) {
 			mInfo = (ImageView) v.findViewById(R.id.EventListItemInfo);
+			if (mInfo != null)
+				mInfo.setOnClickListener(this);
+		}
 		if ((mFlags & LAYOUT_FLAG_ZODIAC) != 0)
 			mZodiac = (AstroTextView) v.findViewById(R.id.EventListItemZodiac);
+		v.setOnClickListener(this);
 	}
 
 	public static void setContext(Context context) {
@@ -113,19 +122,32 @@ public abstract class ViewHolder implements OnClickListener {
 	abstract public void fillLayout(SummaryItem si);
 
 	public void onClick(View v) {
-		Event e = (Event) v.getTag();
-		String text = InterpretationProvider.getInstance().getText(e);
-		if (text != null) {
-			Intent intent = new Intent(mContext,
-					InterpreterActivity.class);
-			intent.putExtra(
-					SummaryItem.LISTKEY_INTERPRETER_TEXT, text);
-			intent.putExtra(
-					SummaryItem.LISTKEY_INTERPRETER_EVENT, e);
-			mContext.startActivity(intent);
+		if (v.getId() == R.id.EventListItemInfo) {
+			SummaryItem si = (SummaryItem) v.getTag();
+			if (si != null) {
+				Intent intent = new Intent(mContext, EventListActivity.class);
+				intent.putExtra(SummaryItem.LISTKEY_EVENT_KEY, si.mKey);
+				intent.putExtra(SummaryItem.LISTKEY_EVENT_DATE, "mTitleDate");
+				mContext.startActivity(intent);
+			}
+		} else {
+			Object obj = v.getTag();
+			if (obj != null) {
+				ViewHolder holder = (ViewHolder) obj;
+				String text = InterpretationProvider.getInstance().getText(
+						holder.mActiveEvent);
+				if (text != null) {
+					Intent intent = new Intent(mContext,
+							InterpreterActivity.class);
+					intent.putExtra(SummaryItem.LISTKEY_INTERPRETER_TEXT, text);
+					intent.putExtra(SummaryItem.LISTKEY_INTERPRETER_EVENT,
+							holder.mActiveEvent);
+					mContext.startActivity(intent);
+				}
+			}
 		}
 	}
-	
+
 	void setImage(ImageView v, int id) {
 		Drawable drawable = mResources.getDrawable(id);
 		v.setImageDrawable(drawable);
@@ -134,18 +156,26 @@ public abstract class ViewHolder implements OnClickListener {
 	void clearImage(ImageView v) {
 		v.setImageDrawable(null);
 	}
-	
-	void updateInfoButton(Event e) {
+
+	void updateInfoButton(SummaryItem si) {
 		if (mInfo != null) {
-			if (e != null) {
+			int remainingEventCount = si.mEvents.size();
+			if (mActiveEvent != null)
+				--remainingEventCount;
+			if (remainingEventCount > 0) {
 				mInfo.setVisibility(View.VISIBLE);
-				mInfo.setOnClickListener(this);
-				mInfo.setTag(e);
-			}
-			else {
+				mInfo.setTag(si);
+			} else {
 				mInfo.setVisibility(View.INVISIBLE);
 				mInfo.setTag(null);
 			}
 		}
 	}
+
+	public void calculateActiveEvent(SummaryItem si) {
+		mActiveEvent = null;
+		if (!si.mEvents.isEmpty())
+			mActiveEvent = SummaryItem.normalizeCopy(si.mEvents.get(0));
+	}
+
 }
