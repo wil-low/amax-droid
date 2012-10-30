@@ -1,5 +1,6 @@
 package com.astromaximum.android;
 
+import java.util.Calendar;
 import java.util.Vector;
 
 import android.app.Activity;
@@ -160,7 +161,7 @@ public class MainActivity extends Activity {
 		Vector<SummaryItem> v = mDataProvider.get(DataProvider.RANGE_DAY);
 		SummaryItem[] arr = (SummaryItem[]) v
 				.toArray(new SummaryItem[v.size()]);
-		SummaryAdapter adapter = new SummaryAdapter(this, arr);
+		SummaryAdapter adapter = new SummaryAdapter(this, arr, mDataProvider.getNowTimeOnly());
 		mEventList.setAdapter(adapter);
 		updateTitle();
 	}

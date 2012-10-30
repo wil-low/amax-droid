@@ -308,7 +308,7 @@ final public class Event implements Parcelable {
 		return true;
 	}
 
-	static int dateBetween(long date0, long start, long end) {
+	public static int dateBetween(long date0, long start, long end) {
 		if (date0 < start) {
 			return -1;
 		}

@@ -41,10 +41,10 @@ public class InterpretationProvider {
 		if (e == null)
 			return null;
 		int[] params = makeInterpreterCode(e);
-		Log.d(TAG, Integer.toString(e.mEvtype) + " " 
-						+ Integer.toString(params[0])+ " "
-						+ Integer.toString(params[1]) + " "
-						+ Integer.toString(params[2]) + " "
+		Log.d(TAG, "type: " + Event.EVENT_TYPE_STR[e.mEvtype] + " (" + e.mEvtype + "), params: " 
+						+ Integer.toString(params[0])+ ", "
+						+ Integer.toString(params[1]) + ", "
+						+ Integer.toString(params[2]) + ", "
 						+ Integer.toString(params[3]));
 		int[] tempParams = new int[4];
 		try {

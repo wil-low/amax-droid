@@ -47,6 +47,7 @@ public abstract class ViewHolder implements OnClickListener {
 	protected static Context mContext;
 	protected SummaryItem mSummaryItem;
 	public Event mActiveEvent;
+	protected int mBetweenCheckValue = 0;
 
 	public static View makeView(SummaryItem si) {
 		ViewHolder holder = null;
@@ -172,10 +173,13 @@ public abstract class ViewHolder implements OnClickListener {
 		}
 	}
 
-	public void calculateActiveEvent(SummaryItem si) {
+	public void calculateActiveEvent(SummaryItem si, long now) {
 		mActiveEvent = null;
-		if (!si.mEvents.isEmpty())
-			mActiveEvent = SummaryItem.normalizeCopy(si.mEvents.get(0));
+		for (Event e : si.mEvents) {
+			if (Event.dateBetween(now, e.mDate[0], e.mDate[1]) == mBetweenCheckValue) {
+				mActiveEvent = SummaryItem.normalizeCopy(e);
+				break;
+			}
+		}
 	}
-
 }

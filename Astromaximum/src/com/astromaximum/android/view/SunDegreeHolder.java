@@ -15,7 +15,8 @@ public class SunDegreeHolder extends ViewHolder {
 	@Override
 	public void fillLayout(SummaryItem si) {
 		if (mActiveEvent != null) {
-			mText0.setText(Event.long2String(mActiveEvent.mDate[0], 1, false));
+			mText0.setText(Event.long2String(mActiveEvent.mDate[0], 1, false) + " - "
+					+ Event.long2String(mActiveEvent.mDate[1], 1, true));
 			mText1.setText((mActiveEvent.getDegree() % 30 + 1) + "°");
 			mZodiac.setText(AstroFont.getSymbol(AstroFont.TYPE_ZODIAC, mActiveEvent.getDegree() / 30));
 			mPlanet0.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET, mActiveEvent.mPlanet0));
