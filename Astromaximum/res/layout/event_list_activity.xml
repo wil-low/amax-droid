@@ -6,10 +6,9 @@
     <ListView
         android:id="@+id/event_list_view"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true">
-
+        android:layout_centerHorizontal="true" >
     </ListView>
 
 </RelativeLayout>

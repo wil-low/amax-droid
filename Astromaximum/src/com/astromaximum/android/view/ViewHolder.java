@@ -3,6 +3,7 @@ package com.astromaximum.android.view;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import com.astromaximum.android.EventListActivity;
 import com.astromaximum.android.InterpreterActivity;
+import com.astromaximum.android.PreferenceUtils;
 import com.astromaximum.android.R;
 import com.astromaximum.util.Event;
 import com.astromaximum.util.InterpretationProvider;
@@ -45,11 +47,19 @@ public abstract class ViewHolder implements OnClickListener {
 	protected static int LAYOUT_FLAG_ZODIAC = 1 << 8;
 
 	protected static Context mContext;
+	protected static int mDefaultTextColor;
+	protected static int mBlueMarkColor;
 	protected SummaryItem mSummaryItem;
 	public Event mActiveEvent;
-	protected int mBetweenCheckValue = 0;
+	protected boolean mIsSummaryMode = true;
 
-	public static View makeView(SummaryItem si) {
+	public ViewHolder(SummaryItem si, int layoutId, int flags) {
+		mSummaryItem = si;
+		mLayoutId = layoutId;
+		mFlags = flags;
+	}
+
+	public static ViewHolder makeHolder(SummaryItem si, boolean isSummaryMode) {
 		ViewHolder holder = null;
 		switch (si.mKey) {
 		case Event.EV_VOC:
@@ -65,7 +75,10 @@ public abstract class ViewHolder implements OnClickListener {
 			holder = new MoonSignHolder(si);
 			break;
 		case Event.EV_ASP_EXACT:
-			holder = new AspectScrollHolder(si);
+			if (isSummaryMode)
+				holder = new AspectScrollHolder(si);
+			else
+				holder = new AspectHolder(si);
 			break;
 		case Event.EV_PLANET_HOUR:
 			holder = new PlanetHourHolder(si);
@@ -76,14 +89,15 @@ public abstract class ViewHolder implements OnClickListener {
 		case Event.EV_TITHI:
 			holder = new TithiHolder(si);
 			break;
-		default:
-			holder = new SimpleHolder(si);
+		case Event.EV_SUN_DAY:
+		case Event.EV_MOON_DAY:
+			holder = new SunMoonDayHolder(si);
 			break;
+		default:
+			return null;
 		}
-		View v = mInflater.inflate(holder.mLayoutId, null);
-		holder.initLayout(v);
-		v.setTag(holder);
-		return v;
+		holder.mIsSummaryMode = isSummaryMode;
+		return holder;
 	}
 
 	protected void initLayout(View v) {
@@ -104,7 +118,7 @@ public abstract class ViewHolder implements OnClickListener {
 		if ((mFlags & LAYOUT_FLAG_ASPECT) != 0)
 			mAspect = (AstroTextView) v.findViewById(R.id.EventListItemAspect);
 		if ((mFlags & LAYOUT_FLAG_INFO) != 0) {
-			mInfo = (ImageView) v.findViewById(R.id.EventListItemInfo);
+			mInfo = (ImageView) v.findViewById(R.id.ShowEventList);
 			if (mInfo != null)
 				mInfo.setOnClickListener(this);
 		}
@@ -113,36 +127,38 @@ public abstract class ViewHolder implements OnClickListener {
 		v.setOnClickListener(this);
 	}
 
-	public static void setContext(Context context) {
+	public static void initialize(Context context) {
 		mContext = context;
 		mInflater = (LayoutInflater) mContext
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		mResources = mContext.getResources();
+		mDefaultTextColor = mResources.getColor(R.color.main_text);
+		mBlueMarkColor = mResources.getColor(R.color.blue_mark);
+		AstroTextView.assignTypeface(Typeface.createFromAsset(mContext.getAssets(),
+				"fonts/Astronom.ttf"));
 	}
 
-	abstract public void fillLayout(SummaryItem si);
+	abstract public void fillLayout();
 
 	public void onClick(View v) {
-		if (v.getId() == R.id.EventListItemInfo) {
+		if (v.getId() == R.id.ShowEventList) {
 			SummaryItem si = (SummaryItem) v.getTag();
 			if (si != null) {
 				Intent intent = new Intent(mContext, EventListActivity.class);
-				intent.putExtra(SummaryItem.LISTKEY_EVENT_KEY, si.mKey);
-				intent.putExtra(SummaryItem.LISTKEY_EVENT_DATE, "mTitleDate");
+				intent.putExtra(PreferenceUtils.LISTKEY_EVENT_KEY, si.mKey);
 				mContext.startActivity(intent);
 			}
 		} else {
 			Object obj = v.getTag();
 			if (obj != null) {
 				ViewHolder holder = (ViewHolder) obj;
-				String text = InterpretationProvider.getInstance().getText(
-						holder.mActiveEvent);
+				Event e = holder.getActiveEvent();
+				String text = InterpretationProvider.getInstance().getText(e);
 				if (text != null) {
 					Intent intent = new Intent(mContext,
 							InterpreterActivity.class);
-					intent.putExtra(SummaryItem.LISTKEY_INTERPRETER_TEXT, text);
-					intent.putExtra(SummaryItem.LISTKEY_INTERPRETER_EVENT,
-							holder.mActiveEvent);
+					intent.putExtra(PreferenceUtils.LISTKEY_INTERPRETER_TEXT, text);
+					intent.putExtra(PreferenceUtils.LISTKEY_INTERPRETER_EVENT, e);
 					mContext.startActivity(intent);
 				}
 			}
@@ -160,26 +176,36 @@ public abstract class ViewHolder implements OnClickListener {
 
 	void updateInfoButton(SummaryItem si) {
 		if (mInfo != null) {
-			int remainingEventCount = si.mEvents.size();
-			if (mActiveEvent != null)
-				--remainingEventCount;
-			if (remainingEventCount > 0) {
-				mInfo.setVisibility(View.VISIBLE);
-				mInfo.setTag(si);
+			if (mIsSummaryMode) {
+				int remainingEventCount = si.mEvents.size();
+				if (mActiveEvent != null)
+					--remainingEventCount;
+				if (remainingEventCount > 0) {
+					mInfo.setVisibility(View.VISIBLE);
+					mInfo.setTag(si);
+					return;
+				}
 			} else {
-				mInfo.setVisibility(View.INVISIBLE);
-				mInfo.setTag(null);
+				mInfo.setPadding(0, 0, 0, 0);
 			}
+			mInfo.setVisibility(View.INVISIBLE);
+			mInfo.setTag(null);
 		}
 	}
 
-	public void calculateActiveEvent(SummaryItem si, long now) {
+	public void calculateActiveEvent(long now) {
 		mActiveEvent = null;
-		for (Event e : si.mEvents) {
-			if (Event.dateBetween(now, e.mDate[0], e.mDate[1]) == mBetweenCheckValue) {
-				mActiveEvent = SummaryItem.normalizeCopy(e);
+		for (Event e : mSummaryItem.mEvents) {
+			if (Event.dateBetween(now, e.mDate[0], e.mDate[1]) == 0) {
+				mActiveEvent = e;
 				break;
 			}
 		}
 	}
+
+	public Event getActiveEvent() {
+		return mIsSummaryMode ? mActiveEvent
+				: mSummaryItem.mEvents.get(0);
+	}
+
 }

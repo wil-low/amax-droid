@@ -1,15 +1,12 @@
 package com.astromaximum.android.view;
 
-import android.content.Intent;
 import android.view.View;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.astromaximum.android.EventListActivity;
-import com.astromaximum.android.InterpreterActivity;
 import com.astromaximum.android.R;
 import com.astromaximum.util.Event;
-import com.astromaximum.util.InterpretationProvider;
 
 public abstract class ScrollableHolder extends ViewHolder {
 
@@ -17,7 +14,7 @@ public abstract class ScrollableHolder extends ViewHolder {
 	protected LinearLayout mLayout;
 
 	public ScrollableHolder(SummaryItem si) {
-		mLayoutId = R.layout.item_horizontal_scroll;
+		super(si, R.layout.item_horizontal_scroll, 0);
 	}
 
 	@Override
@@ -25,12 +22,15 @@ public abstract class ScrollableHolder extends ViewHolder {
 		mScroll = (HorizontalScrollView) v
 				.findViewById(R.id.HorizontalScrollView);
 		mLayout = (LinearLayout) v.findViewById(R.id.LinearLayout);
+		mInfo = (ImageView) v.findViewById(R.id.ShowEventList);
+		if (mInfo != null)
+			mInfo.setOnClickListener(this);
 	}
 
 	@Override
-	public void fillLayout(SummaryItem si) {
-		if (!si.mEvents.isEmpty()) {
-			for (Event e : si.mEvents) {
+	public void fillLayout() {
+		if (!mSummaryItem.mEvents.isEmpty()) {
+			for (Event e : mSummaryItem.mEvents) {
 				View v = makeChildHolder(e);
 				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 						mLayout.getLayoutParams());
@@ -39,22 +39,15 @@ public abstract class ScrollableHolder extends ViewHolder {
 				v.setOnClickListener(this);
 			}
 		}
+		if (mSummaryItem.mEvents.size() > 1) {
+			mInfo.setVisibility(View.VISIBLE);
+			mInfo.setTag(mSummaryItem);
+		} else {
+			mInfo.setVisibility(View.INVISIBLE);
+			mInfo.setTag(null);
+		}
 	}
 
 	abstract protected View makeChildHolder(Event e);
 
-	public void onClick(View v) {
-		Object obj = v.getTag();
-		if (obj != null) {
-			Event e = (Event) obj;
-			String text = InterpretationProvider.getInstance().getText(e);
-			if (text != null) {
-				Intent intent = new Intent(mContext,
-						InterpreterActivity.class);
-				intent.putExtra(SummaryItem.LISTKEY_INTERPRETER_TEXT, text);
-				intent.putExtra(SummaryItem.LISTKEY_INTERPRETER_EVENT, e);
-				mContext.startActivity(intent);
-			}
-		}
-	}
 }

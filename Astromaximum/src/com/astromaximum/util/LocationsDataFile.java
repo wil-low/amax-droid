@@ -63,7 +63,7 @@ final public class LocationsDataFile {
                 	transition.mTime = (long)dis.readInt() * 1000; // start_date
                 	transition.mOffset = (long)dis.readShort() * 60000; // gmt_ofs_min
                 	transition.mName = dis.readUTF(); // name
-                    //Log.d(TAG, transition.mTime + ", " + new Date(transition.mTime) + " > " + transition.mOffset + " " + transition.mName);
+                    //MyLog.d(TAG, transition.mTime + ", " + new Date(transition.mTime) + " > " + transition.mOffset + " " + transition.mName);
                     mTransitions[i] = transition;
                 }
                 byte[] buffer = new byte[dis.available()];

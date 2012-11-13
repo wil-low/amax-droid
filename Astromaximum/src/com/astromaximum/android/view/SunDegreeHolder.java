@@ -7,25 +7,28 @@ import com.astromaximum.util.Event;
 public class SunDegreeHolder extends ViewHolder {
 
 	public SunDegreeHolder(SummaryItem si) {
-		mLayoutId = R.layout.item_sun_degree;
-		mFlags = LAYOUT_FLAG_TEXT0 | LAYOUT_FLAG_ZODIAC | LAYOUT_FLAG_TEXT1
-				| LAYOUT_FLAG_PLANET0 | LAYOUT_FLAG_INFO;
+		super(si, R.layout.item_sun_degree, LAYOUT_FLAG_TEXT0
+				| LAYOUT_FLAG_ZODIAC | LAYOUT_FLAG_TEXT1 | LAYOUT_FLAG_PLANET0
+				| LAYOUT_FLAG_INFO);
 	}
 
 	@Override
-	public void fillLayout(SummaryItem si) {
-		if (mActiveEvent != null) {
-			mText0.setText(Event.long2String(mActiveEvent.mDate[0], 1, false) + " - "
-					+ Event.long2String(mActiveEvent.mDate[1], 1, true));
-			mText1.setText((mActiveEvent.getDegree() % 30 + 1) + "°");
-			mZodiac.setText(AstroFont.getSymbol(AstroFont.TYPE_ZODIAC, mActiveEvent.getDegree() / 30));
-			mPlanet0.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET, mActiveEvent.mPlanet0));
+	public void fillLayout() {
+		Event e = getActiveEvent();
+		if (e != null) {
+			mText0.setText(e.normalizedRangeString());
+			mText1.setText((e.getDegree() % 30 + 1) + "\u00b0");
+			mZodiac.setText(AstroFont.getSymbol(AstroFont.TYPE_ZODIAC,
+					e.getDegree() / 30));
+			mPlanet0.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET,
+					e.mPlanet0));
+			mText0.setTextColor(e == mActiveEvent ? mBlueMarkColor : mDefaultTextColor);
 		} else {
 			mText0.setText("");
 			mText1.setText("");
 			mZodiac.setText("");
 			mPlanet0.setText("");
 		}
-		updateInfoButton(si);
+		updateInfoButton(mSummaryItem);
 	}
 }

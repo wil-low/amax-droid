@@ -12,13 +12,12 @@ public class AspectScrollHolder extends ScrollableHolder {
 
 	@Override
 	protected View makeChildHolder(Event e) {
-
-		ViewHolder holder = new AspectHolder(e);
+		ViewHolder holder = new AspectHolder(new SummaryItem(mSummaryItem.mKey, e));
 		View v = mInflater.inflate(holder.mLayoutId, null);
+		holder.mActiveEvent = e;
 		holder.initLayout(v);
-		holder.fillLayout(null);
-		v.setTag(e);
-
+		holder.fillLayout();
+		v.setTag(holder);
 		return v;
 	}
 }

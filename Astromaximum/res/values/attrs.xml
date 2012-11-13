@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<declare-styleable name="ImageListPreference">
-<attr name="entryImages" format="reference" />
-</declare-styleable>
-<dimen name="item_list_margin">4dp</dimen>
+
+    <dimen name="show_list_padding">10dp</dimen>
+    <dimen name="list_item_text_size">22sp</dimen>
+    <dimen name="astro_item_text_size">26sp</dimen>
+    <dimen name="astro_item_top_padding">6sp</dimen>
+
+    <color name="main_text">#FFFFFF</color>
+    <color name="blue_mark">#0ADF44</color>
+
+    <dimen name="interp_title_text_size">24sp</dimen>
+    <dimen name="interp_text_size">18sp</dimen>
+
 </resources>

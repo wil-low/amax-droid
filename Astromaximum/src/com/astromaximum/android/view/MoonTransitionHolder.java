@@ -1,37 +1,83 @@
 package com.astromaximum.android.view;
 
-import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.astromaximum.android.R;
 import com.astromaximum.util.AstroFont;
+import com.astromaximum.util.DataProvider;
 import com.astromaximum.util.Event;
 
 public class MoonTransitionHolder extends ViewHolder {
+	private TextView mTransitionSignView;
 
 	public MoonTransitionHolder(SummaryItem si) {
-		mLayoutId = R.layout.item_moon_transition;
-		mFlags = LAYOUT_FLAG_PLANET0 | LAYOUT_FLAG_PLANET1 | LAYOUT_FLAG_TEXT0
-				| LAYOUT_FLAG_TEXT1 | LAYOUT_FLAG_INFO;
+		super(si, R.layout.item_moon_transition, LAYOUT_FLAG_PLANET0
+				| LAYOUT_FLAG_PLANET1 | LAYOUT_FLAG_TEXT0 | LAYOUT_FLAG_TEXT1
+				| LAYOUT_FLAG_INFO);
 	}
 
 	@Override
-	public void fillLayout(SummaryItem si) {
-		if (mActiveEvent != null) {
-			Log.d("TAG", mActiveEvent.toString());
-			mPlanet0.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET,
-					mActiveEvent.mPlanet0));
-			if (mActiveEvent.mPlanet1 == -1) { // VOC
+	protected void initLayout(View v) {
+		super.initLayout(v);
+		mTransitionSignView = (TextView) v
+				.findViewById(R.id.EventListTransitionSign);
+	}
+
+	@Override
+	public void fillLayout() {
+		Event e = getActiveEvent();
+		if (e != null) {
+			// MyLog.d("MoonTransitionHolder", e.toString());
+			mText0.setTextColor(mDefaultTextColor);
+			switch (e.mEvtype) {
+			case Event.EV_MOON_MOVE:
+				mPlanet0.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET,
+						e.mPlanet0 == -1 ? Event.SE_MOON : e.mPlanet0));
+				if (e.mPlanet1 == -1) { // VOC
+					mPlanet1.setVisibility(View.GONE);
+					mText1.setVisibility(View.VISIBLE);
+				} else {
+					mPlanet1.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET,
+							e.mPlanet1));
+					mPlanet1.setVisibility(View.VISIBLE);
+					mText1.setVisibility(View.GONE);
+				}
+				mText0.setText(e.normalizedRangeString());
+				if (e == mActiveEvent)
+					mText0.setTextColor(mBlueMarkColor);
+				mPlanet0.setVisibility(View.VISIBLE);
+				mTransitionSignView.setVisibility(View.VISIBLE);
+				break;
+			case Event.EV_ASP_EXACT_MOON:
+				mPlanet0.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET,
+						e.mPlanet0)
+						+ " "
+						+ AstroFont.getSymbol(AstroFont.TYPE_ASPECT,
+								e.getDegree())
+						+ " "
+						+ AstroFont
+								.getSymbol(AstroFont.TYPE_PLANET, e.mPlanet1));
 				mPlanet1.setVisibility(View.GONE);
-				mText1.setVisibility(View.VISIBLE);
-			} else {
-				mPlanet1.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET,
-						mActiveEvent.mPlanet1));
+				mText1.setVisibility(View.GONE);
+				mText0.setText(Event.long2String(e.mDate[0], DataProvider
+						.getInstance().isInCurrentDay(e.mDate[0]) ? null
+						: Event.mMonthAbbrDayDateFormat, true));
+				mPlanet0.setVisibility(View.VISIBLE);
+				mTransitionSignView.setVisibility(View.GONE);
+				break;
+			case Event.EV_SIGN_ENTER:
+				mPlanet1.setText(AstroFont.getSymbol(AstroFont.TYPE_ZODIAC,
+						e.getDegree()));
+				mPlanet0.setVisibility(View.GONE);
 				mPlanet1.setVisibility(View.VISIBLE);
 				mText1.setVisibility(View.GONE);
+				mText0.setText(Event.long2String(e.mDate[0], DataProvider
+						.getInstance().isInCurrentDay(e.mDate[0]) ? null
+						: Event.mMonthAbbrDayDateFormat, true));
+				mTransitionSignView.setVisibility(View.GONE);
+				break;
 			}
-			mText0.setText(Event.long2String(mActiveEvent.mDate[0], 1, false) + " - "
-					+ Event.long2String(mActiveEvent.mDate[1], 1, true));
 		} else {
 			mPlanet0.setText("");
 			mPlanet1.setText("");
@@ -39,17 +85,19 @@ public class MoonTransitionHolder extends ViewHolder {
 			mText1.setText("");
 			mPlanet1.setVisibility(View.GONE);
 			mText1.setVisibility(View.GONE);
+			mTransitionSignView.setVisibility(View.GONE);
 		}
-		updateInfoButton(si);
+		updateInfoButton(mSummaryItem);
 	}
 
 	@Override
-	public void calculateActiveEvent(SummaryItem si, long now) {
+	public void calculateActiveEvent(long now) {
 		mActiveEvent = null;
-		for (Event e : si.mEvents) {
-			if (e.mEvtype == Event.EV_MOON_MOVE && Event.dateBetween(now, e.mDate[0], e.mDate[1]) == mBetweenCheckValue) {
-				mActiveEvent = SummaryItem.normalizeCopy(e);
-				Log.d("MoonTrans", mActiveEvent.toString());
+		for (Event e : mSummaryItem.mEvents) {
+			if (e.mEvtype == Event.EV_MOON_MOVE
+					&& Event.dateBetween(now, e.mDate[0], e.mDate[1]) == 0) {
+				mActiveEvent = e;
+				// MyLog.d("MoonTrans", mActiveEvent.toString());
 				break;
 			}
 		}

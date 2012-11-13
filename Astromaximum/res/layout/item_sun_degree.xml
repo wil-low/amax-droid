@@ -3,6 +3,7 @@
     android:id="@+id/LinearLayout02"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
+    android:background="@android:drawable/list_selector_background"
     android:orientation="horizontal" >
 
     <view
@@ -13,7 +14,8 @@
         android:layout_gravity="center_vertical|center"
         android:layout_weight="1"
         class="com.astromaximum.android.view.AstroTextView"
-        android:textSize="20sp" />
+        android:paddingTop="@dimen/astro_item_top_padding"
+        android:textSize="@dimen/astro_item_text_size" />
 
     <TextView
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -22,7 +24,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
-        android:text="dgr" />
+        android:text="dgr"
+        android:textSize="@dimen/list_item_text_size" />
 
     <view
         android:id="@+id/EventListItemZodiac"
@@ -31,7 +34,8 @@
         android:layout_gravity="center_vertical|center"
         android:layout_weight="1"
         class="com.astromaximum.android.view.AstroTextView"
-        android:textSize="20sp" />
+        android:paddingTop="@dimen/astro_item_top_padding"
+        android:textSize="@dimen/astro_item_text_size" />
 
     <TextView
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -40,15 +44,17 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_weight="10"
-        android:gravity="center"
-        android:text="Text0" />
+        android:gravity="right"
+        android:text="Text0"
+        android:textSize="@dimen/list_item_text_size" />
 
     <ImageView
-        android:id="@+id/EventListItemInfo"
+        android:id="@+id/ShowEventList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_margin="@dimen/item_list_margin"
+        android:background="@android:drawable/list_selector_background"
+        android:paddingLeft="@dimen/show_list_padding"
         android:src="@drawable/item_list" />
 
 </LinearLayout>

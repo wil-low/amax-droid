@@ -7,27 +7,32 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
-public class SummaryAdapter extends ArrayAdapter<SummaryItem> {
+import com.astromaximum.util.Event;
+
+public class EventListAdapter extends ArrayAdapter<Event> {
+	private int mKey;
 	private long mNow;
 
-	public SummaryAdapter(Context context, ArrayList<SummaryItem> eventCache,
-			long now) {
-		super(context, 0, eventCache);
+	public EventListAdapter(Context context, ArrayList<Event> v, int key, long now) {
+		super(context, 0, v);
+		mKey = key;
 		mNow = now;
 	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View v = convertView;
-		SummaryItem si = getItem(position);
+		Event e = getItem(position);
 		ViewHolder holder = null;
 		if (v == null) {
-			holder = ViewHolder.makeHolder(si, true);
+			SummaryItem si = new SummaryItem(mKey, e);
+			holder = ViewHolder.makeHolder(si, false);
 			v = ViewHolder.mInflater.inflate(holder.mLayoutId, null);
 			holder.initLayout(v);
 			v.setTag(holder);
 		} else {
 			holder = (ViewHolder) v.getTag();
+			holder.mSummaryItem.mEvents.set(0, e);
 		}
 		holder.calculateActiveEvent(mNow);
 		holder.fillLayout();

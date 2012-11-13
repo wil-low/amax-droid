@@ -1,37 +1,29 @@
 package com.astromaximum.android;
 
-import java.util.Calendar;
-import java.util.Vector;
-
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.graphics.Typeface;
 import android.os.Bundle;
-import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.DatePicker;
 import android.widget.ListView;
 
-import com.astromaximum.android.view.AstroTextView;
 import com.astromaximum.android.view.SummaryAdapter;
-import com.astromaximum.android.view.SummaryItem;
 import com.astromaximum.android.view.ViewHolder;
 import com.astromaximum.util.DataProvider;
 import com.astromaximum.util.Event;
 import com.astromaximum.util.InterpretationProvider;
+import com.astromaximum.util.MyLog;
 
 public class MainActivity extends Activity {
 	static final int DATE_DIALOG_ID = 0;
@@ -44,19 +36,20 @@ public class MainActivity extends Activity {
 	private int REL_SWIPE_THRESHOLD_VELOCITY;
 
 	private DataProvider mDataProvider;
-	private String mTitleDateFormat;
 	private String mTitleDate;
+	private Context mContext;
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.d(TAG, "OnCreate");
-		ViewHolder.setContext(this);
-
-		AstroTextView.assignTypeface(Typeface.createFromAsset(getAssets(),
-				"fonts/Astronom.ttf"));
-		mTitleDateFormat = getResources().getString(R.string.title_date_format);
+		MyLog.setLevel(0);
+		
+		MyLog.d(TAG, "OnCreate");
+		mContext = this;
+		
+		Event.setContext(mContext);
+		ViewHolder.initialize(mContext);
 
 		// As paiego pointed out, it's better to use density-aware measurements.
 		DisplayMetrics dm = getResources().getDisplayMetrics();
@@ -70,18 +63,16 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.main);
 
 		mEventList = (ListView) findViewById(R.id.ListViewEvents);
-/*
-		final GestureDetector gestureDetector = new GestureDetector(
-				new MyGestureDetector());
-		View.OnTouchListener gestureListener = new View.OnTouchListener() {
-			public boolean onTouch(View v, MotionEvent event) {
-				return gestureDetector.onTouchEvent(event);
-			}
-		};
-		mEventList.setOnTouchListener(gestureListener);
-*/
+		/*
+		 * final GestureDetector gestureDetector = new GestureDetector( new
+		 * MyGestureDetector()); View.OnTouchListener gestureListener = new
+		 * View.OnTouchListener() { public boolean onTouch(View v, MotionEvent
+		 * event) { return gestureDetector.onTouchEvent(event); } };
+		 * mEventList.setOnTouchListener(gestureListener);
+		 */
 		// setTitle(getVersionedTitle());
-		mDataProvider.setTodayDate();
+		updateTitle();
+		updateDisplay();
 	}
 
 	// the callback received when the user "sets" the date in the dialog
@@ -137,38 +128,35 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		Log.d(TAG, "OnPause");
+		MyLog.d(TAG, "OnPause");
 		mDataProvider.saveState();
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		Log.d(TAG, "OnResume");
-		mDataProvider.restoreState();
-		updateTitle();
-		updateDisplay();
+		MyLog.d(TAG, "OnResume");
 	}
 
 	@Override
 	protected void onRestart() {
 		super.onRestart();
-		Log.d(TAG, "OnRestart");
+		mDataProvider.restoreState();
+		updateDisplay();
+		MyLog.d(TAG, "OnRestart");
 	}
 
 	private void updateDisplay() {
-		mDataProvider.gatherEvents(DataProvider.RANGE_DAY);
-		Vector<SummaryItem> v = mDataProvider.get(DataProvider.RANGE_DAY);
-		SummaryItem[] arr = (SummaryItem[]) v
-				.toArray(new SummaryItem[v.size()]);
-		SummaryAdapter adapter = new SummaryAdapter(this, arr, mDataProvider.getNowTimeOnly());
+		mDataProvider.prepareCalculation();
+		mDataProvider.calculateAll();
+		SummaryAdapter adapter = new SummaryAdapter(this, mDataProvider.mEventCache,
+				mDataProvider.getHighlightTime());
 		mEventList.setAdapter(adapter);
 		updateTitle();
 	}
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Log.d(TAG, "onActivityResult " + requestCode + "=>" + resultCode);
 		super.onActivityResult(requestCode, resultCode, data);
 		switch (requestCode) {
 		case PreferenceUtils.ID_PREFERENCE:
@@ -190,12 +178,16 @@ public class MainActivity extends Activity {
 	}
 
 	private void updateTitle() {
-		mTitleDate = mDataProvider.getCurrentDateString(mTitleDateFormat);
-		setTitle(mDataProvider.getLocationName() + " : " + mTitleDate);
+		mTitleDate = mDataProvider.getCurrentDateString();
+		setTitle(mDataProvider.getLocationName()
+				+ " : "
+				+ mTitleDate
+				+ " "
+				+ mDataProvider.getHighlightTimeString());
 	}
 
 	private void previousDate() {
-		Log.d(TAG, "previousDate");
+		MyLog.d(TAG, "previousDate");
 		mDataProvider.changeDate(-1);
 		updateDisplay();
 		// Toast.makeText(this, "Left-to-right fling",
@@ -203,7 +195,7 @@ public class MainActivity extends Activity {
 	}
 
 	private void nextDate() {
-		Log.d(TAG, "nextDate");
+		MyLog.d(TAG, "nextDate");
 		mDataProvider.changeDate(1);
 		updateDisplay();
 		// Toast.makeText(this, "Right-to-left fling",
@@ -211,20 +203,17 @@ public class MainActivity extends Activity {
 	}
 
 	public void onEventItemClick(int position) {
-		Log.d(TAG, "onItemClick " + position);
-/*		
-		SummaryItem si = (SummaryItem) mEventList.getItemAtPosition(position);
-		Event e = si.getActiveEvent();
-		String text = InterpretationProvider.getInstance().getText(e);
-		if (text != null) {
-			Intent intent = new Intent(this,
-					InterpreterActivity.class);
-			intent.putExtra(
-					SummaryItem.LISTKEY_INTERPRETER_TEXT, text);
-			intent.putExtra(
-					SummaryItem.LISTKEY_INTERPRETER_EVENT, e);
-			startActivity(intent);
-		}*/
+		MyLog.d(TAG, "onItemClick " + position);
+		/*
+		 * SummaryItem si = (SummaryItem)
+		 * mEventList.getItemAtPosition(position); Event e =
+		 * si.getActiveEvent(); String text =
+		 * InterpretationProvider.getInstance().getText(e); if (text != null) {
+		 * Intent intent = new Intent(this, InterpreterActivity.class);
+		 * intent.putExtra( SummaryItem.LISTKEY_INTERPRETER_TEXT, text);
+		 * intent.putExtra( SummaryItem.LISTKEY_INTERPRETER_EVENT, e);
+		 * startActivity(intent); }
+		 */
 	}
 
 	@Override

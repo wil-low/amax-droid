@@ -9,7 +9,119 @@
     <string name="app_name">Astromaximum</string>
     <string name="pick_date">Pick date</string>
     <string name="title_date_format">MMMM d, EEEE</string>
+    <string name="month_abbr_day_date_format">MMM d</string>
     <string name="interpretation_dir">en</string>
     <string name="hour_of">Hour of</string>
+    <string name="day">day</string>
     <string name="tithi">Tithi</string>
+    <string name="time_uses_24h">N</string>
+    <string name="norm_range_whole_day">whole day</string>
+    <string name="norm_range_till">till</string>
+    <string name="norm_range_since">since</string>
+    <string name="si_key_voc">Moon \"Void of Course\"</string>
+    <string name="si_key_vc">\"Via Combusta\"</string>
+    <string name="si_key_sun_degree">Degree of Sun</string>
+    <string name="si_key_moon_sign">Sign of Moon</string>
+    <string name="si_key_planet_hour">Planetary Hour</string>
+    <string name="si_key_moon_move">Moon Motion</string>
+    <string name="si_key_tithi">Tithi</string>
+    <string name="si_aspect">Aspect</string>
+    <string name="si_sun_day">Solar Day</string>
+    <string name="si_moon_day">Lunar Day</string>
+    <string name="interp_key_degree_pass">Planet in Degree</string>
+    <string name="interp_key_sign_enter">Planet in Sign</string>
+    <string name="interp_key_moon_aspect">Aspect of Moon</string>
+    <string name="inter_key_aspect">Aspect</string>
+    <string name="pref_custom_time">Use custom time</string>
+    <string name="use_custom_time">Highlight events at</string>
+    <string name="use_current_time">Highlight events at current time</string>
+
+    <string-array name="planets">
+        <item>Sun</item>
+        <item>Moon</item>
+        <item>Mercury</item>
+        <item>Venus</item>
+        <item>Mars</item>
+        <item>Jupiter</item>
+        <item>Saturn</item>
+        <item>Uranus</item>
+        <item>Neptun</item>
+        <item>Pluto</item>
+    </string-array>
+
+    <string name="fmt_planet_in_degree">%1$s in %2$d\u00b0 of %3$s</string>
+
+    <string-array name="constell_genitive">
+        <item>Aries</item>
+        <item>Taurus</item>
+        <item>Gemini</item>
+        <item>Cancer</item>
+        <item>Leo</item>
+        <item>Virgo</item>
+        <item>Libra</item>
+        <item>Scorpio</item>
+        <item>Sagittarius</item>
+        <item>Capricorn</item>
+        <item>Aquarius</item>
+        <item>Pisces</item>
+    </string-array>
+
+    <string name="fmt_planet_in_sign">%1$s in %2$s</string>
+
+    <string-array name="constell_locative">
+        <item>Aries</item>
+        <item>Taurus</item>
+        <item>Gemini</item>
+        <item>Cancer</item>
+        <item>Leo</item>
+        <item>Virgo</item>
+        <item>Libra</item>
+        <item>Scorpio</item>
+        <item>Sagittarius</item>
+        <item>Capricorn</item>
+        <item>Aquarius</item>
+        <item>Pisces</item>
+    </string-array>
+    <string-array name="planets_genitive">
+        <item>Sun</item>
+        <item>Moon</item>
+        <item>Mercury</item>
+        <item>Venus</item>
+        <item>Mars</item>
+        <item>Jupiter</item>
+        <item>Saturn</item>
+        <item>Uranus</item>
+        <item>Neptun</item>
+        <item>Pluto</item>
+    </string-array>
+
+    <string name="fmt_hour_of_planet">Hour of %1$s</string>
+
+    <string-array name="aspect">
+        <item>Conjunction</item>
+        <item>Opposition</item>
+        <item>Trine</item>
+        <item>Square</item>
+        <item>Sextile</item>
+        <item>Semi-square</item>
+    </string-array>
+
+    <string name="fmt_aspect">%1$s %2$s-%3$s</string>
+    <string name="pref_start_page">Start page layout</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="start_page_layout">Start Page Layout</string>
+
+    <string-array name="startpage_items">
+        <item>Moon Void of Course (VOC)</item>
+        <item>Moon on Burnt Path (VC)</item>
+        <item>Degree of Sun</item>
+        <item>Sign of Moon</item>
+        <item>Planetary Hour</item>
+        <item>Moon Motion</item>
+        <item>Tithi</item>
+        <item>Aspects</item>
+        <item>Solar Day</item>
+        <item>Lunar Day</item>
+    </string-array>
 </resources>

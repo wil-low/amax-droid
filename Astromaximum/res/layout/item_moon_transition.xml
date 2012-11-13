@@ -3,6 +3,7 @@
     android:id="@+id/LinearLayout02"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="@android:drawable/list_selector_background"
     android:gravity="center"
     android:orientation="horizontal" >
 
@@ -14,16 +15,19 @@
         android:layout_gravity="center_vertical|center"
         android:layout_weight="1"
         class="com.astromaximum.android.view.AstroTextView"
-        android:textSize="20sp" />
+        android:paddingTop="@dimen/astro_item_top_padding"
+        android:textSize="@dimen/astro_item_text_size" />
 
     <TextView
         xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/EventListTransitionSign"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_weight="1"
         android:gravity="center"
-        android:text=">" />
+        android:text=">"
+        android:textSize="@dimen/list_item_text_size" />
 
     <TextView
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -33,7 +37,8 @@
         android:layout_gravity="center"
         android:layout_weight="1"
         android:gravity="center"
-        android:text="VOC" />
+        android:text="VOC"
+        android:textSize="@dimen/list_item_text_size" />
 
     <view
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -44,7 +49,8 @@
         android:layout_weight="1"
         class="com.astromaximum.android.view.AstroTextView"
         android:gravity="center"
-        android:textSize="20sp" />
+        android:paddingTop="@dimen/astro_item_top_padding"
+        android:textSize="@dimen/astro_item_text_size" />
 
     <TextView
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -53,15 +59,17 @@
         android:layout_height="fill_parent"
         android:layout_gravity="center"
         android:layout_weight="6"
-        android:gravity="center"
-        android:text="Text0" />
+        android:gravity="right|center"
+        android:text="Text0"
+        android:textSize="@dimen/list_item_text_size" />
 
     <ImageView
-        android:id="@+id/EventListItemInfo"
+        android:id="@+id/ShowEventList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_margin="@dimen/item_list_margin"
+        android:background="@android:drawable/list_selector_background"
+        android:paddingLeft="@dimen/show_list_padding"
         android:src="@drawable/item_list" />
 
 </LinearLayout>

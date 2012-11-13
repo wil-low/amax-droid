@@ -26,11 +26,13 @@
         </activity>
         <activity android:name=".SummaryActivity" >
         </activity>
-        <activity
-            android:name=".EventListActivity" >
+        <activity android:name=".EventListActivity" >
+        </activity>
+        <activity android:name=".InterpreterActivity" >
         </activity>
         <activity
-            android:name=".InterpreterActivity" >
+            android:name=".StartPageLayoutActivity"
+            android:label="@string/start_page_layout" >
         </activity>
     </application>
 

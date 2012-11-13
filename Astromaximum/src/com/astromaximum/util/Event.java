@@ -5,9 +5,13 @@ import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.format.DateFormat;
 import android.util.SparseIntArray;
+
+import com.astromaximum.android.R;
 
 final public class Event implements Parcelable {
 	public static final byte SE_SUN = 0;
@@ -26,6 +30,9 @@ final public class Event implements Parcelable {
 
 	private static final String[] PLANET_STR = { "??", "SO", "MO", "ME", "VE",
 			"MA", "JU", "SA", "UR", "NE", "PL", "TN", "AP", "WM" };
+
+	public static final String[] CONSTELL_STR = { "Ari", "Tau", "Gem", "Cnc",
+			"Leo", "Vir", "Lib", "Sco", "Sgr", "Cap", "Aqu", "Psc" };
 
 	public static final int EV_VOC = 0; // void of course
 	public static final int EV_SIGN_ENTER = 1; // enter into sign
@@ -171,13 +178,21 @@ final public class Event implements Parcelable {
 
 	public static final long ROUNDING_MSEC = 60 * 1000;
 
+	// TODO Move USE_EXACT_RANGE to settings
+	private static final boolean USE_EXACT_RANGE = true;
+	public static final String DEFAULT_DATE_FORMAT = "yyyy-MMM-dd";
+
 	public int mEvtype = 0;
 	public byte mPlanet0;
 	public byte mPlanet1 = -1;
 	public long[] mDate = new long[2];
 	short mDegree = 127;
 
+	private static long mPeriod0;
+	private static long mPeriod1;
 	private static Calendar mCalendar;
+	private static Context mContext;
+	public static String mMonthAbbrDayDateFormat;
 
 	/**
 	 * @param dat
@@ -238,36 +253,27 @@ final public class Event implements Parcelable {
 
 	public String toString() {
 		return "Event: (" + mEvtype + " " + getEvTypeStr() + " "
-				+ long2String(mDate[0], 0, false) + " - "
-				+ long2String(mDate[1], 0, false) + " "
+				+ long2String(mDate[0], DEFAULT_DATE_FORMAT, false) + " - "
+				+ long2String(mDate[1], DEFAULT_DATE_FORMAT, false) + " "
 				+ getPlanetName(mPlanet0) + "-" + getPlanetName(mPlanet1)
 				+ " d " + mDegree + ")";
 	}
 
-	private String getPlanetName(byte planet) {
+	public static String getPlanetName(byte planet) {
 		return PLANET_STR[planet + 1];
 	}
 
-	public static String long2String(long date0, int hoursOnly, boolean h24) {
+	public static String long2String(long date0, String dateFormat, boolean h24) {
 		mCalendar.setTimeInMillis(date0);
 		final StringBuffer s = new StringBuffer();
-		if (hoursOnly == 0) {
-			s.append(Integer.toString(mCalendar.get(Calendar.YEAR)))
-					.append("-")
-					.append(to2String(mCalendar.get(Calendar.MONTH) + 1))
-					.append("-")
-					.append(to2String(mCalendar.get(Calendar.DAY_OF_MONTH)));
+		if (dateFormat != null) {
+			s.append(DateFormat.format(dateFormat,  mCalendar));
 			s.append(" ");
 		}
 		int hh = 0, mm = 0;
-		try {
-			hh = mCalendar.get(Calendar.HOUR_OF_DAY);
-			mm = mCalendar.get(Calendar.MINUTE);
-		} catch (Exception e) {
-			System.out.println("Ex: long2String(" + Long.toString(date0) + ", "
-					+ Integer.toString(hoursOnly) + ", "
-					+ (h24 ? "true" : "false"));
-		}
+		hh = mCalendar.get(Calendar.HOUR_OF_DAY);
+		mm = mCalendar.get(Calendar.MINUTE);
+
 		if (h24 && hh + mm == 0) {
 			hh = 24;
 		}
@@ -355,18 +361,62 @@ final public class Event implements Parcelable {
 			return new Event[size];
 		}
 	};
-	public static final short SIGN_ENTER_DEGREE = 200;
 
 	public static void setTimeZone(String timezone) {
 		mCalendar = new GregorianCalendar(TimeZone.getTimeZone(timezone));
 	}
 
-	public static class EventDate0Comparator implements Comparator<Event>
-	{
-	    public int compare(Event o1, Event o2)
-	    {
-	        return (int)(o1.mDate[0] - o2.mDate[0]);
-	    }
+	public static class EventDate0Comparator implements Comparator<Event> {
+		public int compare(Event o1, Event o2) {
+			return (int) (o1.mDate[0] - o2.mDate[0]);
+		}
+	}
+
+	public static void setTimeRange(long date0, long date1) {
+		mPeriod0 = date0;
+		mPeriod1 = date1;
+	}
+
+	public String normalizedRangeString() {
+		long date0 = mDate[0], date1 = mDate[1];
+		if (USE_EXACT_RANGE) {
+			if (date0 < mPeriod0)
+				date0 = mPeriod0;
+			/*
+			if (date0 > mPeriod1)
+				date0 = mPeriod1;
+
+			if (date1 < mPeriod0)
+				date1 = mPeriod0;
+			 */
+			if (date1 > mPeriod1)
+				date1 = mPeriod1;
+
+			return Event.long2String(date0, null, false) + " - "
+					+ Event.long2String(date1, null, true);
+		}
+
+		boolean isTillRequired = date0 < mPeriod0;
+		boolean isSinceRequired = date1 > mPeriod1;
+
+		if (isTillRequired && isSinceRequired)
+			return mContext.getString(R.string.norm_range_whole_day);
+
+		if (isTillRequired)
+			return mContext.getString(R.string.norm_range_till) + " "
+					+ Event.long2String(date1, null, true);
+
+		if (isSinceRequired)
+			return mContext.getString(R.string.norm_range_since) + " "
+					+ Event.long2String(date0, null, false);
+
+		return Event.long2String(date0, null, false) + " - "
+				+ Event.long2String(date1, null, true);
+	}
+
+	public static void setContext(Context context) {
+		mContext = context;
+		mMonthAbbrDayDateFormat = mContext.getString(R.string.month_abbr_day_date_format);
 	}
 
 }

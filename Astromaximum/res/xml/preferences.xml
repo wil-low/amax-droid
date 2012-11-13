@@ -2,15 +2,23 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:amaxdroid="http://schemas.android.com/apk/res/com.astromaximum" >
 
-	<ListPreference
+    <ListPreference
         android:key="current_location_id"
         android:persistent="false"
         android:summary="OK"
         android:title="@string/pref_current_city" >
     </ListPreference>
 
-    <CheckBoxPreference android:title="@string/pref_show_all_texts" >
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="use_custom_time"
+        android:persistent="true"
+        android:title="@string/pref_custom_time" >
     </CheckBoxPreference>
 
+    <com.astromaximum.android.TimePreference
+        android:dialogLayout="@layout/time_preference"
+        android:key="custom_time" />
+    <Preference android:title="@string/start_page_layout" android:key="start_page_layout"/>
 
 </PreferenceScreen>

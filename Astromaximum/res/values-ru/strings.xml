@@ -9,7 +9,116 @@
     <string name="app_name">Astromaximum</string>
     <string name="pick_date">Выбрать дату</string>
     <string name="title_date_format">d MMMM, EEEE</string>
-	<string name="interpretation_dir">ru</string>
+    <string name="month_abbr_day_date_format">d MMM</string>
+    <string name="interpretation_dir">ru</string>
     <string name="hour_of">Час</string>
+    <string name="day">день</string>
     <string name="tithi">Титхи</string>
+    <string name="time_uses_24h">Y</string>
+    <string name="norm_range_whole_day">весь день</string>
+    <string name="norm_range_till">до</string>
+    <string name="norm_range_since">с</string>
+    <string name="si_key_voc">Луна \"без курса\"</string>
+    <string name="si_key_vc">\"Сожженный путь\"</string>
+    <string name="si_key_sun_degree">Градус Солнца</string>
+    <string name="si_key_moon_sign">Знак Луны</string>
+    <string name="si_key_planet_hour">Планетарный час</string>
+    <string name="si_key_moon_move">Движение Луны</string>
+    <string name="si_key_tithi">Титхи</string>
+    <string name="si_aspect">Аспект</string>
+    <string name="si_sun_day">Солнечный день</string>
+    <string name="si_moon_day">Лунный день</string>
+    <string name="interp_key_degree_pass">Планета в градусе</string>
+    <string name="interp_key_sign_enter">Планета в знаке</string>
+    <string name="interp_key_moon_aspect">Аспект Луны</string>
+    <string name="inter_key_aspect">Аспект</string>
+    <string name="pref_custom_time">Произвольное время</string>
+    <string name="use_custom_time">Выделить события на</string>
+    <string name="use_current_time">Выделить события на текущее время</string>
+
+    <string-array name="planets">
+        <item>Солнце</item>
+        <item>Луна</item>
+        <item>Меркурий</item>
+        <item>Венера</item>
+        <item>Марс</item>
+        <item>Юпитер</item>
+        <item>Сатурн</item>
+        <item>Уран</item>
+        <item>Нептун</item>
+        <item>Плутон</item>
+    </string-array>
+
+    <string name="fmt_planet_in_degree">%1$s в %2$d\u00b0 %3$s</string>
+
+    <string-array name="constell_genitive">
+        <item>Овна</item>
+        <item>Тельца</item>
+        <item>Близнецов</item>
+        <item>Рака</item>
+        <item>Льва</item>
+        <item>Девы</item>
+        <item>Весов</item>
+        <item>Скорпиона</item>
+        <item>Стрельца</item>
+        <item>Козерога</item>
+        <item>Водолея</item>
+        <item>Рыб</item>
+    </string-array>
+
+    <string name="fmt_planet_in_sign">%1$s в %2$s</string>
+
+    <string-array name="constell_locative">
+        <item>Овне</item>
+        <item>Тельце</item>
+        <item>Близнецах</item>
+        <item>Раке</item>
+        <item>Льве</item>
+        <item>Деве</item>
+        <item>Весах</item>
+        <item>Скорпионе</item>
+        <item>Стрельце</item>
+        <item>Козероге</item>
+        <item>Водолее</item>
+        <item>Рыбах</item>
+    </string-array>
+    <string-array name="planets_genitive">
+        <item>Солнца</item>
+        <item>Луны</item>
+        <item>Меркурия</item>
+        <item>Венеры</item>
+        <item>Марса</item>
+        <item>Юпитера</item>
+        <item>Сатурна</item>
+        <item>Урана</item>
+        <item>Нептуна</item>
+        <item>Плутона</item>
+    </string-array>
+
+    <string name="fmt_hour_of_planet">Час %1$s</string>
+
+    <string-array name="aspect">
+        <item>Соединение</item>
+        <item>Оппозиция</item>
+        <item>Тригон</item>
+        <item>Квадратура</item>
+        <item>Секстиль</item>
+        <item>Полуквадрат</item>
+    </string-array>
+
+    <string name="start_page_layout">Вид стартового экрана</string>
+
+    <string-array name="startpage_items">
+        <item>Луна без курса (VOC)</item>
+        <item>Луна на сожженном пути (VC)</item>
+        <item>Градус Солнца</item>
+        <item>Знак Луны</item>
+        <item>Планетарный час</item>
+        <item>Движение Луны</item>
+        <item>Титхи</item>
+        <item>Аспекты</item>
+        <item>Солнечный день</item>
+        <item>Лунный день</item>
+    </string-array>
+
 </resources>

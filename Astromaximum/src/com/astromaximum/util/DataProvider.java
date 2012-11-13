@@ -11,14 +11,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
-import java.util.Vector;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -26,33 +23,16 @@ import android.content.res.AssetManager;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
-import android.util.Log;
 
 import com.astromaximum.android.PreferenceUtils;
+import com.astromaximum.android.R;
 import com.astromaximum.android.view.SummaryItem;
 
 public class DataProvider {
 	private static DataProvider mInstance;
-	private final String TAG = "DataProvider";
-
-	public static final int RANGE_DAY = 0;
-	public static final int RANGE_WEEK = 1;
-	public static final int RANGE_MONTH = 2;
-	public static final int RANGE_LAST = 3;
+	private final static String TAG = "DataProvider";
 
 	// constants used in event map
-
-	public static final String KEY_VOC = "VOC";
-	public static final String KEY_VC = "VC";
-	public static final String KEY_SUN_DEGREE = "SUN_DEGREE";
-	public static final String KEY_MOON_SIGN = "MOON_SIGN";
-	public static final String KEY_TITHI = "TITHI";
-	public static final String KEY_PLANET_HOUR = "PLANET_HOUR";
-	public static final String KEY_ASPECTS = "ASPECTS";
-	public static final String KEY_MOON_MOVE = "MOON_MOVE";
-	public static final String KEY_RETROGRADE = "RETROGRADE";
-	public static final String KEY_SUN_RISESET = "SUN_RISESET";
-	public static final String KEY_MOON_RISESET = "MOON_RISESET";
 
 	private static final byte[] WEEK_START_HOUR = { 0, 3, 6, 2, 5, 1, 4 };
 	private static final byte[] PLANET_HOUR_SEQUENCE = { Event.SE_SUN,
@@ -62,10 +42,14 @@ public class DataProvider {
 	private int mYear;
 	private int mMonth;
 	private int mDay;
+
+	private int mCurrentHour;
+	private int mCurrentMinute;
+
 	private long mStartTime;
 	private long mEndTime;
 
-	private Vector<Vector<SummaryItem>> mEventCache;
+	public ArrayList<SummaryItem> mEventCache;
 
 	private CommonDataFile mCommonDatafile;
 	private LocationsDataFile mLocationDatafile;
@@ -88,7 +72,6 @@ public class DataProvider {
 
 	public static final long MSECINDAY = 86400 * 1000;
 	protected long mStartJD, mFinalJD;
-	protected int mDayCount;
 	private Calendar mCalendar = Calendar.getInstance(TimeZone
 			.getTimeZone("UTC"));
 	private static final int STREAM_BUFFER_SIZE = 10000;
@@ -96,12 +79,32 @@ public class DataProvider {
 	boolean mExternalStorageAvailable = false;
 	boolean mExternalStorageWriteable = false;
 	private String mLocationDir = null;
+	private int mCustomHour = 0;
+	private int mCustomMinute = 0;
+	private String mTitleDateFormat;
+	private boolean mUseCustomTime = false;
+	private Event[] mNavroz = new Event[2];
+	private ArrayList<StartPageItem> mStartPageLayout;
+	
+	// Keep in sync with string-array name="startpage_items"
+	static final int[] START_PAGE_ITEM_SEQ = new int[] {
+		Event.EV_VOC,
+		Event.EV_VIA_COMBUSTA,
+		Event.EV_SUN_DEGREE,
+		Event.EV_MOON_SIGN,
+		Event.EV_PLANET_HOUR,
+		Event.EV_MOON_MOVE,
+		Event.EV_TITHI,
+		Event.EV_ASP_EXACT,
+		Event.EV_SUN_DAY,
+		Event.EV_MOON_DAY,
+	};
 
 	private DataProvider(Context context) {
 		mContext = context;
-		mEventCache = new Vector<Vector<SummaryItem>>();
-		for (int i = 0; i < RANGE_LAST; ++i)
-			mEventCache.add(new Vector<SummaryItem>());
+		mTitleDateFormat = mContext.getResources().getString(
+				R.string.title_date_format);
+		mEventCache = new ArrayList<SummaryItem>();
 
 		AssetManager manager = mContext.getAssets();
 		InputStream is;
@@ -110,11 +113,11 @@ public class DataProvider {
 			mCommonDatafile = new CommonDataFile(is);
 			checkStorage();
 			if (mExternalStorageAvailable) {
-				File cacheDir = Environment.getExternalStorageDirectory();
-				mLocationDir = cacheDir.getAbsolutePath()
-						+ "/Android/data/com.astromaximum.android/cache";
-				cacheDir = new File(mLocationDir);
-				cacheDir.mkdirs();
+				File filesDir = Environment.getExternalStorageDirectory();
+				mLocationDir = filesDir.getAbsolutePath()
+						+ "/Android/data/com.astromaximum.android/files";
+				filesDir = new File(mLocationDir);
+				filesDir.mkdirs();
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -251,10 +254,10 @@ public class DataProvider {
 		return eventsCount;
 	}
 
-	Vector<Event> getEventsOnPeriod(int evtype, int planet, boolean special,
+	ArrayList<Event> getEventsOnPeriod(int evtype, int planet, boolean special,
 			long dayStart, long dayEnd, int value) {
 		boolean flag = false;
-		Vector<Event> result = new Vector<Event>();
+		ArrayList<Event> result = new ArrayList<Event>();
 		int cnt = getEvents(evtype, planet, dayStart, dayEnd);
 		for (int i = 0; i < cnt; i++) {
 			final Event ev = mEvents[i];
@@ -263,7 +266,7 @@ public class DataProvider {
 				if (value > 0) {
 					ev.mDegree = (short) value;
 				}
-				result.addElement(ev);
+				result.add(ev);
 			} else if (flag) {
 				break;
 			}
@@ -295,13 +298,11 @@ public class DataProvider {
 		return mFinalJD;
 	}
 
-	int getDayCount() {
-		return mDayCount;
-	}
-
 	public static DataProvider getInstance(Context context) {
-		if (mInstance == null)
+		if (mInstance == null) {
 			mInstance = new DataProvider(context);
+			mInstance.restoreState();
+		}
 		return mInstance;
 	}
 
@@ -322,31 +323,36 @@ public class DataProvider {
 	}
 
 	public void saveState() {
-		Log.d(TAG, "saveInstanceState");
+		MyLog.d(TAG, "saveInstanceState");
 		SharedPreferences.Editor editor = PreferenceManager
 				.getDefaultSharedPreferences(mContext).edit();
 		editor.putLong(PreferenceUtils.KEY_START_TIME, mStartTime);
+		editor.putInt(PreferenceUtils.KEY_CUSTOM_HOUR, mCustomHour);
+		editor.putInt(PreferenceUtils.KEY_CUSTOM_MINUTE, mCustomMinute);
 		editor.commit();
 	}
 
 	public void restoreState() {
-		Log.d(TAG, "restoreInstanceState");
+		MyLog.d(TAG, "restoreInstanceState");
 		SharedPreferences sharedPref = PreferenceManager
 				.getDefaultSharedPreferences(mContext);
 		String locationId = sharedPref.getString(
 				PreferenceUtils.KEY_LOCATION_ID, "");
-		Log.i(TAG, "Received locationId " + locationId + ": " + mYear);
 		if (locationId.equals("")) { // no default location, unbundle from asset
 			if (mExternalStorageWriteable)
 				locationId = unbundleLocationAsset();
 		}
 		loadLocation(locationId, sharedPref);
-		Log.i(TAG, "Received locationId " + locationId + ": " + mYear + " "
-				+ mLocationDatafile.mCity);
 		mStartTime = sharedPref.getLong(PreferenceUtils.KEY_START_TIME,
 				mCalendar.getTimeInMillis());
+		MyLog.i(TAG, "Restored mStartTime " + mStartTime);
+		mUseCustomTime = sharedPref.getBoolean(
+				PreferenceUtils.KEY_USE_CUSTOM_TIME, false);
+		mCustomHour = sharedPref.getInt(PreferenceUtils.KEY_CUSTOM_HOUR, 0);
+		mCustomMinute = sharedPref.getInt(PreferenceUtils.KEY_CUSTOM_MINUTE, 0);
 		mCalendar.setTimeInMillis(mStartTime);
 		setDateFromCalendar();
+		mStartPageLayout = PreferenceUtils.getStartPageLayout(mContext);
 	}
 
 	private void loadLocation(String locationId, SharedPreferences sharedPref) {
@@ -373,7 +379,18 @@ public class DataProvider {
 		editor.commit();
 		mCalendar = new GregorianCalendar(
 				TimeZone.getTimeZone(mLocationDatafile.mTimezone));
+		mCalendar.set(mLocationDatafile.mStartYear,
+				mLocationDatafile.mStartMonth, mLocationDatafile.mStartDay, 0,
+				0, 0);
+		mStartJD = mCalendar.getTime().getTime();
+		mFinalJD = mStartJD + mLocationDatafile.mDayCount * MSECINDAY;
 		Event.setTimeZone(mLocationDatafile.mTimezone);
+		int navrozCount = getEvents(Event.EV_NAVROZ, Event.SE_SUN, 0, mFinalJD);
+		if (navrozCount != 2)
+			MyLog.e(TAG, "Navroz count = " + navrozCount);
+		System.arraycopy(mEvents, 0, mNavroz, 0, navrozCount);
+		MyLog.d(TAG, "mNavroz0 " + mNavroz[0].toString());
+		MyLog.d(TAG, "mNavroz1 " + mNavroz[1].toString());
 	}
 
 	private String unbundleLocationAsset() {
@@ -392,7 +409,8 @@ public class DataProvider {
 				LocationsDataFile datafile = new LocationsDataFile(
 						new ByteArrayInputStream(buffer));
 				lastLocationId = Integer.toHexString(datafile.mCityId);
-				Log.i(TAG, index + ": " + lastLocationId + " " + datafile.mCity);
+				MyLog.i(TAG, index + ": " + lastLocationId + " "
+						+ datafile.mCity);
 				File locFile = new File(mLocationDir, lastLocationId + ".dat");
 				OutputStream out = null;
 				try {
@@ -415,6 +433,7 @@ public class DataProvider {
 
 	public void changeDate(int deltaDays) {
 		// stick to noon to determine date
+		mEventCache.clear();
 		mStartTime += MSECINDAY * deltaDays + MSECINDAY / 2;
 		mCalendar.setTimeInMillis(mStartTime);
 		setDateFromCalendar();
@@ -432,103 +451,141 @@ public class DataProvider {
 		mDay = mCalendar.get(Calendar.DAY_OF_MONTH);
 	}
 
-	public void gatherEvents(int rangeType) {
-		mEventCache.get(rangeType).clear();
-		switch (rangeType) {
-		case RANGE_DAY:
-			mCalendar.set(mYear, mMonth, mDay, 0, 0, 0);
-			mCalendar.set(Calendar.MILLISECOND, 0);
-			mStartTime = mCalendar.getTimeInMillis();
-			mEndTime = mStartTime + MSECINDAY - Event.ROUNDING_MSEC;
-			Log.d(TAG, new Date(mStartTime) + " / " + new Date(mEndTime));
-			SummaryItem.setTimeRange(mStartTime, mEndTime);
+	public void prepareCalculation() {
+		mCalendar.set(mYear, mMonth, mDay, 0, 0, 0);
+		mCalendar.set(Calendar.MILLISECOND, 0);
+		mStartTime = mCalendar.getTimeInMillis();
+		mEndTime = mStartTime + MSECINDAY - Event.ROUNDING_MSEC;
+		MyLog.d(TAG, new Date(mStartTime) + " / " + new Date(mEndTime));
+		Event.setTimeRange(mStartTime, mEndTime);
+		mEventCache.clear();
+	}
 
-			Event[] riseSet = new Event[2];
-			// ****** SUN & MOON RISES & SETS
-			for (int i = Event.SE_SUN; i <= Event.SE_MOON; i++) {
-				Event eop = getEventOnPeriod(Event.EV_RISE, i, true,
-						mStartTime, mEndTime);
-				if (eop == null || eop.mDate[0] < mStartTime) {
-					eop = new Event(0, i);
-				}
-				riseSet[i] = eop;
-				eop = getEventOnPeriod(Event.EV_SET, i, false, mStartTime,
-						mEndTime);
-				if (eop == null || eop.mDate[0] < mStartTime) {
-					eop = new Event(0, i);
-				}
-				riseSet[i].mDate[1] = eop.mDate[0];
-			}
-
-			Vector<SummaryItem> v = new Vector<SummaryItem>();
-			v.add(new SummaryItem(Event.EV_VOC, getVOCs()));
-			v.add(new SummaryItem(Event.EV_VIA_COMBUSTA, getVC()));
-			v.add(new SummaryItem(Event.EV_SUN_DEGREE, getSunDegree()));
-			v.add(new SummaryItem(Event.EV_MOON_SIGN, getMoonSign()));
-			// v.add(new SummaryItem(Event.EV_SUN_RISESET,
-			// getRiseSet(Event.SE_SUN)));
-			// v.add(new SummaryItem(Event.EV_MOON_RISESET,
-			// getRiseSet(Event.SE_MOON)));
-			v.add(new SummaryItem(Event.EV_PLANET_HOUR,
-					getPlanetaryHours(riseSet[Event.SE_SUN])));
-			v.add(new SummaryItem(Event.EV_ASP_EXACT, getAspects()));
-			v.add(new SummaryItem(Event.EV_MOON_MOVE, getMoonMove()));
-			v.add(new SummaryItem(Event.EV_RETROGRADE, getRetrogrades()));
-			v.add(new SummaryItem(Event.EV_TITHI, getTithis()));
-			mEventCache.set(rangeType, v);
-			/*
-			 * getEventsOnPeriod(tmpVector, Event.EV_DEGREE_PASS, Event.SE_SUN,
-			 * false, mStartTime, mEndTime, 0); getEventsOnPeriod(tmpVector,
-			 * Event.EV_SIGN_ENTER, Event.SE_MOON, false, mStartTime, mEndTime,
-			 * 0); getEventsOnPeriod(tmpVector, Event.EV_TITHI, Event.SE_MOON,
-			 * false, mStartTime, mEndTime, 0); getEventsOnPeriod(tmpVector,
-			 * Event.EV_PLANET_HOUR, -1, false, mStartTime, mEndTime, 0);
-			 * getEventsOnPeriod(tmpVector, Event.EV_ASP_EXACT, -1, false,
-			 * mStartTime, mEndTime, 0);
-			 * mEventCache.get(rangeType).addAll(tmpVector);
-			 */
-
-			break;
+	public void calculateAll() {
+		for (StartPageItem item : mStartPageLayout) {
+			if (item.mIsEnabled)
+				calculate(START_PAGE_ITEM_SEQ[item.mIndex]);
 		}
 	}
 
-	private Vector<Event> selectSingleEvent(Vector<Event> vc) {
-		if (vc.isEmpty())
-			return vc;
-		Vector<Event> result = new Vector<Event>();
-		result.add(vc.get(0));
+	public SummaryItem calculate(int key) {
+		ArrayList<Event> events = null;
+		switch (key) {
+		case Event.EV_VOC:
+			events = calculateVOCs();
+			break;
+		case Event.EV_VIA_COMBUSTA:
+			events = calculateVC();
+			break;
+		case Event.EV_SUN_DEGREE:
+			events = calculateSunDegree();
+			break;
+		case Event.EV_MOON_SIGN:
+			events = calculateMoonSign();
+			break;
+		case Event.EV_PLANET_HOUR:
+			events = calculatePlanetaryHours();
+			break;
+		case Event.EV_ASP_EXACT:
+			events = calculateAspects();
+			break;
+		case Event.EV_MOON_MOVE:
+			events = calculateMoonMove();
+			break;
+		case Event.EV_TITHI:
+			events = calculateTithis();
+			break;
+		case Event.EV_SUN_DAY:
+			events = calculateSunDays();
+			break;
+		case Event.EV_MOON_DAY:
+			events = calculateMoonDays();
+			break;
+		default:
+			return null;
+		}
+		SummaryItem si = new SummaryItem(key, events);
+		mEventCache.add(si);
+		return si;
+		// v.add(new SummaryItem(Event.EV_SUN_RISESET,
+		// getRiseSet(Event.SE_SUN)));
+		// v.add(new SummaryItem(Event.EV_MOON_RISESET,
+		// getRiseSet(Event.SE_MOON)));
+	}
+
+	private ArrayList<Event> calculateMoonDays() {
+		ArrayList<Event> result = getEventsOnPeriod(Event.EV_RISE, Event.SE_MOON, false,
+				mStartTime, mEndTime, 0);
+		for (Event e : result)
+			e.mEvtype = Event.EV_MOON_DAY;
 		return result;
 	}
 
-	private Vector<Event> getVOCs() {
+	private ArrayList<Event> calculateSunDays() {
+		ArrayList<Event> result = getEventsOnPeriod(Event.EV_RISE,
+				Event.SE_SUN, false, mStartTime, mEndTime, 0);
+		long navroz = mNavroz[1].mDate[0];
+		final long sunrise = mEvents[0].mDate[0];
+		if (sunrise < navroz) {
+			navroz = mNavroz[0].mDate[0];
+		}
+		int pltDaySun1 = (int) ((sunrise - navroz) * 1000 / MSECINDAY + 500) / 1000;
+		int pltDaySun2 = pltDaySun1 + 1;
+		if (pltDaySun1 < 360) {
+			pltDaySun1 = pltDaySun1 % 30 + 1;
+		}
+		result.get(0).mDegree = (short) pltDaySun1;
+		result.get(0).mEvtype = Event.EV_NAVROZ;
+		if (pltDaySun2 < 360) {
+			pltDaySun2 = pltDaySun2 % 30 + 1;
+		}
+		result.get(1).mDegree = (short) pltDaySun2;
+		result.get(1).mEvtype = Event.EV_NAVROZ;
+		return result;
+	}
+
+	private ArrayList<Event> calculateVOCs() {
 		return getEventsOnPeriod(Event.EV_VOC, Event.SE_MOON, false,
 				mStartTime, mEndTime, 0);
 	}
 
-	private Vector<Event> getVC() {
+	private ArrayList<Event> calculateVC() {
 		return getEventsOnPeriod(Event.EV_VIA_COMBUSTA, Event.SE_MOON, false,
 				mStartTime, mEndTime, 0);
 	}
 
-	private Vector<Event> getSunDegree() {
+	private ArrayList<Event> calculateSunDegree() {
 		return getEventsOnPeriod(Event.EV_DEGREE_PASS, Event.SE_SUN, false,
 				mStartTime, mEndTime, 0);
 	}
 
-	private Vector<Event> getMoonSign() {
+	private ArrayList<Event> calculateMoonSign() {
 		return getEventsOnPeriod(Event.EV_SIGN_ENTER, Event.SE_MOON, false,
 				mStartTime, mEndTime, 0);
 	}
 
-	private Vector<Event> getTithis() {
+	private ArrayList<Event> calculateTithis() {
 		return getEventsOnPeriod(Event.EV_TITHI, Event.SE_MOON, false,
 				mStartTime, mEndTime, 0);
 	}
 
-	private Vector<Event> getPlanetaryHours(Event currentSunRise) {
-		Event nextSunRise = getEventOnPeriod(Event.EV_RISE, Event.SE_SUN, true,
-				mStartTime + MSECINDAY, mEndTime + MSECINDAY);
-		Vector<Event> result = new Vector<Event>();
+	private ArrayList<Event> calculatePlanetaryHours() {
+		ArrayList<Event> sunRises = getEventsOnPeriod(Event.EV_RISE,
+				Event.SE_SUN, true, mStartTime - MSECINDAY, mEndTime
+						+ MSECINDAY, 0);
+		ArrayList<Event> sunSets = getEventsOnPeriod(Event.EV_SET,
+				Event.SE_SUN, true, mStartTime - MSECINDAY, mEndTime
+						+ MSECINDAY, 0);
+		for (int i = 0; i < sunRises.size(); ++i)
+			sunRises.get(i).mDate[1] = sunSets.get(i).mDate[0];
+		ArrayList<Event> result = new ArrayList<Event>();
+		getPlanetaryHours(result, sunRises.get(0), sunRises.get(1));
+		getPlanetaryHours(result, sunRises.get(1), sunRises.get(2));
+		return result;
+	}
+
+	private void getPlanetaryHours(ArrayList<Event> result,
+			Event currentSunRise, Event nextSunRise) {
 		int startHour = WEEK_START_HOUR[mCalendar.get(Calendar.DAY_OF_WEEK) - 1];
 		final long dayHour = (currentSunRise.mDate[1] - currentSunRise.mDate[0]) / 12;
 		final long nightHour = (nextSunRise.mDate[0] - currentSunRise.mDate[1]) / 12;
@@ -538,26 +595,25 @@ public class DataProvider {
 			ev.mEvtype = Event.EV_PLANET_HOUR;
 			st += i < 12 ? dayHour : nightHour;
 			ev.mDate[1] = st - Event.ROUNDING_MSEC; // exclude last minute
-			result.add(ev);
+			if (ev.isInPeriod(mStartTime, mEndTime, false))
+				result.add(ev);
 			++startHour;
 		}
-
-		return result;
 	}
 
-	private Vector<Event> getAspects() {
+	private ArrayList<Event> calculateAspects() {
 		return getAspectsOnPeriod(-1, mStartTime, mEndTime);
 	}
 
-	private Vector<Event> getMoonMove() {
-		Vector<Event> asp = getEventsOnPeriod(Event.EV_SIGN_ENTER,
+	private ArrayList<Event> calculateMoonMove() {
+		ArrayList<Event> asp = getEventsOnPeriod(Event.EV_SIGN_ENTER,
 				Event.SE_MOON, true, mStartTime - MSECINDAY * 2, mEndTime
 						+ MSECINDAY * 4, 0);
-		Vector<Event> moonMoveVec = getAspectsOnPeriod(Event.SE_MOON,
+		ArrayList<Event> moonMoveVec = getAspectsOnPeriod(Event.SE_MOON,
 				mStartTime - MSECINDAY * 2, mEndTime + MSECINDAY * 2);
 
 		mergeEvents(moonMoveVec, asp, true);
-		asp.removeAllElements();
+		asp.clear();
 		mergeEvents(asp, moonMoveVec, false);
 		int id1 = -1;
 		int id2 = -1;
@@ -572,76 +628,79 @@ public class DataProvider {
 			}
 			++counter;
 		}
-		asp.setSize(id2 + 1);
-		try {
-			for (int i = 0; i < id1; i++) {
-				asp.removeElementAt(0);
-			}
-		} catch (ArrayIndexOutOfBoundsException aie) {
-		}
-		int sz = asp.size() - 1;
+		moonMoveVec.clear();
+		for (int i = id1; i <= id2; i++)
+			moonMoveVec.add(asp.get(i));
+
+		int sz = moonMoveVec.size() - 1;
 		int idx = 1;
 		for (int i = 0; i < sz; i++) {
-			Event evprev = asp.elementAt(idx - 1);
-			long dd = (evprev.mPlanet0 == evprev.mPlanet1) ? evprev.mDate[0]
+			Event evprev = moonMoveVec.get(idx - 1);
+			long dd = (evprev.mEvtype == Event.EV_SIGN_ENTER) ? evprev.mDate[0]
 					: evprev.mDate[1];
 			Event ev = new Event(dd, -1);
 			ev.mEvtype = Event.EV_MOON_MOVE;
-			ev.mDate[1] = asp.elementAt(idx).mDate[0] - Event.ROUNDING_MSEC;
+			ev.mDate[1] = moonMoveVec.get(idx).mDate[0] - Event.ROUNDING_MSEC;
 			ev.mPlanet0 = evprev.mPlanet1;
-			ev.mPlanet1 = asp.elementAt(idx).mPlanet1;
-			asp.insertElementAt(ev, idx);
+			ev.mPlanet1 = moonMoveVec.get(idx).mPlanet1;
+			moonMoveVec.add(idx, ev);
 			idx += 2;
 		}
-		sz = asp.size();
+		sz = moonMoveVec.size();
 		for (int i = 0; i < sz; ++i) {
-			Event e = asp.elementAt(i);
+			Event e = moonMoveVec.get(i);
 			if (e.mEvtype == Event.EV_MOON_MOVE) {
 				int j = i - 1;
 				while (j >= 0) {
-					byte planet = asp.elementAt(j).mPlanet1;
-					if (planet <= Event.SE_SATURN) {
-						e.mPlanet0 = planet;
-						break;
+					Event prev = moonMoveVec.get(j);
+					if (prev.mEvtype != Event.EV_MOON_MOVE) {
+						byte planet = prev.mPlanet1;
+						if (planet <= Event.SE_SATURN) {
+							e.mPlanet0 = planet;
+							break;
+						}
 					}
 					--j;
 				}
 				j = i + 1;
 				while (j < sz) {
-					byte planet = asp.elementAt(j).mPlanet1;
-					if (planet <= Event.SE_SATURN) {
-						e.mPlanet1 = planet;
-						break;
+					Event next = moonMoveVec.get(j);
+					if (next.mEvtype != Event.EV_MOON_MOVE) {
+						byte planet = next.mPlanet1;
+						if (planet <= Event.SE_SATURN) {
+							e.mPlanet1 = planet;
+							break;
+						}
 					}
 					++j;
 				}
 			} else if (e.mEvtype == Event.EV_ASP_EXACT)
 				e.mEvtype = Event.EV_ASP_EXACT_MOON;
 		}
-		return asp;
+		return moonMoveVec;
 	}
 
-	private static void mergeEvents(Vector<Event> dest, Vector<Event> add,
-			boolean isSort) {
+	private static void mergeEvents(ArrayList<Event> dest,
+			ArrayList<Event> add, boolean isSort) {
 		for (Event ev : add) {
 			if (isSort) {
 				int idx = 0;
 				final long dat = ev.mDate[0];
 				final int sz = dest.size();
-				while (idx < sz && dat > dest.elementAt(idx).mDate[0]) {
+				while (idx < sz && dat > dest.get(idx).mDate[0]) {
 					++idx;
 				}
-				dest.insertElementAt(ev, idx);
+				dest.add(idx, ev);
 			} else {
-				dest.addElement(ev);
+				dest.add(ev);
 			}
 		}
 	}
 
-	private Vector<Event> getRetrogrades() {
-		Vector<Event> result = new Vector<Event>();
+	private ArrayList<Event> getRetrogrades() {
+		ArrayList<Event> result = new ArrayList<Event>();
 		for (int planet = Event.SE_SUN; planet <= Event.SE_PLUTO; ++planet) {
-			Vector<Event> v = getEventsOnPeriod(Event.EV_RETROGRADE, planet,
+			ArrayList<Event> v = getEventsOnPeriod(Event.EV_RETROGRADE, planet,
 					false, mStartTime, mEndTime, 0);
 			if (!v.isEmpty())
 				result.addAll(v);
@@ -649,8 +708,8 @@ public class DataProvider {
 		return result;
 	}
 
-	private Vector<Event> getRiseSet(int planet, long startTime, long endTime) {
-		Vector<Event> result = new Vector<Event>();
+	private ArrayList<Event> getRiseSet(int planet, long startTime, long endTime) {
+		ArrayList<Event> result = new ArrayList<Event>();
 		Event eop = getEventOnPeriod(Event.EV_RISE, planet, true, startTime,
 				endTime);
 		if (eop == null || eop.mDate[0] < startTime) {
@@ -672,9 +731,9 @@ public class DataProvider {
 		if (evType == Event.EV_RISE && planet == Event.SE_SUN) {
 			Event dummy = new Event(startTime, 0);
 			dummy.mDate[1] = endTime;
-			Log.d("dummy", dummy.toString());
+			MyLog.d("dummy", dummy.toString());
 			for (int i = 0; i < cnt; i++) {
-				Log.d("getEventOnPeriod", mEvents[i].toString());
+				MyLog.d("getEventOnPeriod", mEvents[i].toString());
 			}
 		}
 		for (int i = 0; i < cnt; i++) {
@@ -686,9 +745,9 @@ public class DataProvider {
 		return null;
 	}
 
-	private Vector<Event> getAspectsOnPeriod(int planet, long startTime,
+	private ArrayList<Event> getAspectsOnPeriod(int planet, long startTime,
 			long endTime) {
-		Vector<Event> result = new Vector<Event>();
+		ArrayList<Event> result = new ArrayList<Event>();
 		boolean flag = false;
 		int cnt = getEvents(Event.EV_ASP_EXACT,
 				planet == Event.SE_MOON ? Event.SE_MOON : -1, startTime,
@@ -698,7 +757,7 @@ public class DataProvider {
 			if (planet == -1 || ev.mPlanet0 == planet || ev.mPlanet1 == planet) {
 				if (ev.isDateBetween(0, startTime, endTime)) {
 					flag = true;
-					result.addElement(ev);
+					result.add(ev);
 				}
 			} else if (flag) {
 				break;
@@ -707,17 +766,10 @@ public class DataProvider {
 		return result;
 	}
 
-	public Vector<SummaryItem> get(int rangeType) {
-		return mEventCache.get(rangeType);
-	}
-
 	public void setTodayDate() {
-		Log.d(TAG, mCalendar.getTimeZone().getDisplayName());
+		MyLog.d(TAG, mCalendar.getTimeZone().getDisplayName());
 		mCalendar = Calendar.getInstance(mCalendar.getTimeZone());
 		setDateFromCalendar();
-		Log.d("setTodayDate", mYear + "-" + mMonth + "-" + mDay);
-		Log.d("setTodayDate",
-				(String) DateFormat.format("yyyy MMMM dddd", mCalendar));
 	}
 
 	public String getLocationName() {
@@ -726,18 +778,52 @@ public class DataProvider {
 		return mLocationDatafile.mCity;
 	}
 
-	public String getCurrentDateString(String titleDateFormat) {
-		return (String) DateFormat.format(titleDateFormat, mCalendar);
+	public String getCurrentDateString() {
+		return (String) DateFormat.format(mTitleDateFormat, mCalendar);
 	}
 
-	public long getNowTimeOnly() {
+	public long getHighlightTime() {
 		Calendar calendar = Calendar.getInstance(mCalendar.getTimeZone());
-		calendar.set(Calendar.YEAR, mYear);
-		calendar.set(Calendar.MONTH, mMonth);
-		calendar.set(Calendar.DAY_OF_MONTH, mDay);
-		Log.d ("getNow", (String)DateFormat.format("dd MMMM yyyy, kk:mm", calendar));
+		if (mUseCustomTime) {
+			calendar.set(mYear, mMonth, mDay, mCustomHour, mCustomMinute);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+		} else {
+			calendar.set(Calendar.YEAR, mYear);
+			calendar.set(Calendar.MONTH, mMonth);
+			calendar.set(Calendar.DAY_OF_MONTH, mDay);
+			mCurrentHour = calendar.get(Calendar.HOUR_OF_DAY);
+			mCurrentMinute = calendar.get(Calendar.MINUTE);
+		}
+
+		MyLog.d("getHightlightTime",
+				(String) DateFormat.format("dd MMMM yyyy, kk:mm", calendar));
 		return calendar.getTimeInMillis();
 	}
+
 	// mStartJD = calendar.getTime().getTime();
 	// mFinalJD = mStartJD + mDayCount * MSECINDAY;
+
+	public void setCustomTime(int hour, int min) {
+		mCustomHour = hour;
+		mCustomMinute = min;
+	}
+
+	public int getCustomHour() {
+		return mCustomHour;
+	}
+
+	public int getCustomMinute() {
+		return mCustomMinute;
+	}
+
+	public String getHighlightTimeString() {
+		if (mUseCustomTime)
+			return String.format("%02d:%02d", mCustomHour, mCustomMinute);
+		return String.format("%02d:%02d", mCurrentHour, mCurrentMinute);
+	}
+
+	public boolean isInCurrentDay(long date) {
+		return Event.dateBetween(date, mStartTime, mEndTime) == 0;
+	}
 }

@@ -1,23 +1,35 @@
 package com.astromaximum.android.view;
 
+import android.view.View;
+
 import com.astromaximum.android.R;
 import com.astromaximum.util.AstroFont;
 import com.astromaximum.util.Event;
 
 public class AspectHolder extends ViewHolder {
-	Event mEvent;
-
-	public AspectHolder(Event e) {
-		mLayoutId = R.layout.item_aspect;
-		mFlags = LAYOUT_FLAG_PLANET0 | LAYOUT_FLAG_ASPECT | LAYOUT_FLAG_PLANET1 | LAYOUT_FLAG_TEXT0;
-		mEvent = e;
+	public AspectHolder(SummaryItem si) {
+		super(si, R.layout.item_aspect, LAYOUT_FLAG_PLANET0
+				| LAYOUT_FLAG_ASPECT | LAYOUT_FLAG_PLANET1 | LAYOUT_FLAG_TEXT0 | LAYOUT_FLAG_INFO);
 	}
 
 	@Override
-	public void fillLayout(SummaryItem si) {
-		mPlanet0.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET, mEvent.mPlanet0));
-		mAspect.setText(AstroFont.getSymbol(AstroFont.TYPE_ASPECT, mEvent.getDegree()));
-		mPlanet1.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET, mEvent.mPlanet1));
-		mText0.setText(Event.long2String(mEvent.mDate[0], 1, false));
+	public void fillLayout() {
+		Event e = getActiveEvent();
+		if (e != null) {
+			mPlanet0.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET,
+					e.mPlanet0));
+			mAspect.setText(AstroFont.getSymbol(AstroFont.TYPE_ASPECT,
+					e.getDegree()));
+			mPlanet1.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET,
+					e.mPlanet1));
+			if (mIsSummaryMode) {
+				mText0.setVisibility(View.GONE);
+				mInfo.setVisibility(View.GONE);
+			} else {
+				mText0.setText(Event.long2String(e.mDate[0], Event.mMonthAbbrDayDateFormat, false));
+				mText0.setTextColor(mBlueMarkColor);
+				mInfo.setVisibility(View.INVISIBLE);
+			}
+		}
 	}
 }
