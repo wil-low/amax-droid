@@ -89,17 +89,4 @@ public class MoonTransitionHolder extends ViewHolder {
 		}
 		updateInfoButton(mSummaryItem);
 	}
-
-	@Override
-	public void calculateActiveEvent(long now) {
-		mActiveEvent = null;
-		for (Event e : mSummaryItem.mEvents) {
-			if (e.mEvtype == Event.EV_MOON_MOVE
-					&& Event.dateBetween(now, e.mDate[0], e.mDate[1]) == 0) {
-				mActiveEvent = e;
-				// MyLog.d("MoonTrans", mActiveEvent.toString());
-				break;
-			}
-		}
-	}
 }

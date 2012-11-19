@@ -130,8 +130,8 @@ public abstract class ViewHolder implements OnClickListener {
 		mResources = mContext.getResources();
 		mDefaultTextColor = mResources.getColor(R.color.main_text);
 		mBlueMarkColor = mResources.getColor(R.color.blue_mark);
-		AstroTextView.assignTypeface(Typeface.createFromAsset(mContext.getAssets(),
-				"fonts/Astronom.ttf"));
+		AstroTextView.assignTypeface(Typeface.createFromAsset(
+				mContext.getAssets(), "fonts/Astronom.ttf"));
 	}
 
 	abstract public void fillLayout();
@@ -153,8 +153,10 @@ public abstract class ViewHolder implements OnClickListener {
 				if (text != null) {
 					Intent intent = new Intent(mContext,
 							InterpreterActivity.class);
-					intent.putExtra(PreferenceUtils.LISTKEY_INTERPRETER_TEXT, text);
-					intent.putExtra(PreferenceUtils.LISTKEY_INTERPRETER_EVENT, e);
+					intent.putExtra(PreferenceUtils.LISTKEY_INTERPRETER_TEXT,
+							text);
+					intent.putExtra(PreferenceUtils.LISTKEY_INTERPRETER_EVENT,
+							e);
 					mContext.startActivity(intent);
 				}
 			}
@@ -189,19 +191,13 @@ public abstract class ViewHolder implements OnClickListener {
 		}
 	}
 
-	public void calculateActiveEvent(long now) {
-		mActiveEvent = null;
-		for (Event e : mSummaryItem.mEvents) {
-			if (Event.dateBetween(now, e.mDate[0], e.mDate[1]) == 0) {
-				mActiveEvent = e;
-				break;
-			}
-		}
+	public final void calculateActiveEvent(long now) {
+		int pos = mSummaryItem.getActiveEventPosition(now);
+		mActiveEvent = (pos == -1) ? null : mSummaryItem.mEvents.get(pos);
 	}
 
 	public Event getActiveEvent() {
-		return mIsSummaryMode ? mActiveEvent
-				: mSummaryItem.mEvents.get(0);
+		return mIsSummaryMode ? mActiveEvent : mSummaryItem.mEvents.get(0);
 	}
 
 }
