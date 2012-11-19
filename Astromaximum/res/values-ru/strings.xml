@@ -16,8 +16,7 @@
     <string name="tithi">Титхи</string>
     <string name="time_uses_24h">Y</string>
     <string name="norm_range_whole_day">весь день</string>
-    <string name="norm_range_till">до</string>
-    <string name="norm_range_since">с</string>
+    <string name="norm_range_arrow">⇨</string>
     <string name="si_key_voc">Луна \"без курса\"</string>
     <string name="si_key_vc">\"Сожженный путь\"</string>
     <string name="si_key_sun_degree">Градус Солнца</string>

@@ -179,7 +179,7 @@ final public class Event implements Parcelable {
 	public static final long ROUNDING_MSEC = 60 * 1000;
 
 	// TODO Move USE_EXACT_RANGE to settings
-	private static final boolean USE_EXACT_RANGE = true;
+	private static final boolean USE_EXACT_RANGE = false;
 	public static final String DEFAULT_DATE_FORMAT = "yyyy-MMM-dd";
 
 	public int mEvtype = 0;
@@ -267,7 +267,7 @@ final public class Event implements Parcelable {
 		mCalendar.setTimeInMillis(date0);
 		final StringBuffer s = new StringBuffer();
 		if (dateFormat != null) {
-			s.append(DateFormat.format(dateFormat,  mCalendar));
+			s.append(DateFormat.format(dateFormat, mCalendar));
 			s.append(" ");
 		}
 		int hh = 0, mm = 0;
@@ -403,12 +403,12 @@ final public class Event implements Parcelable {
 			return mContext.getString(R.string.norm_range_whole_day);
 
 		if (isTillRequired)
-			return mContext.getString(R.string.norm_range_till) + " "
+			return mContext.getString(R.string.norm_range_arrow) + " "
 					+ Event.long2String(date1, null, true);
 
 		if (isSinceRequired)
-			return mContext.getString(R.string.norm_range_since) + " "
-					+ Event.long2String(date0, null, false);
+			return Event.long2String(date0, null, false) + " "
+					+ mContext.getString(R.string.norm_range_arrow);
 
 		return Event.long2String(date0, null, false) + " - "
 				+ Event.long2String(date1, null, true);
@@ -416,7 +416,8 @@ final public class Event implements Parcelable {
 
 	public static void setContext(Context context) {
 		mContext = context;
-		mMonthAbbrDayDateFormat = mContext.getString(R.string.month_abbr_day_date_format);
+		mMonthAbbrDayDateFormat = mContext
+				.getString(R.string.month_abbr_day_date_format);
 	}
 
 }

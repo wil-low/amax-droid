@@ -16,8 +16,7 @@
     <string name="tithi">Tithi</string>
     <string name="time_uses_24h">N</string>
     <string name="norm_range_whole_day">whole day</string>
-    <string name="norm_range_till">till</string>
-    <string name="norm_range_since">since</string>
+    <string name="norm_range_arrow">⇨</string>
     <string name="si_key_voc">Moon \"Void of Course\"</string>
     <string name="si_key_vc">\"Via Combusta\"</string>
     <string name="si_key_sun_degree">Degree of Sun</string>
