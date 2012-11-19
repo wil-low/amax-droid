@@ -7,24 +7,22 @@
     android:minHeight="@dimen/list_item_height"
     android:orientation="horizontal" >
 
-    <view
+    <com.astromaximum.android.view.AstroTextView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/EventListItemPlanet0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_weight="1"
-        class="com.astromaximum.android.view.AstroTextView"
         android:paddingTop="@dimen/astro_item_top_padding"
         android:textSize="@dimen/astro_item_text_size" />
 
-    <view
+    <com.astromaximum.android.view.AstroTextView
         android:id="@+id/EventListItemZodiac"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_weight="2"
-        class="com.astromaximum.android.view.AstroTextView"
         android:paddingTop="@dimen/astro_item_top_padding"
         android:textSize="@dimen/astro_item_text_size" />
 

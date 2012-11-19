@@ -33,28 +33,25 @@
         android:text="Text1" >
     </TextView>
 
-    <view
+    <com.astromaximum.android.view.AstroTextView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/EventListItemPlanet0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        class="com.astromaximum.android.view.AstroTextView"
         android:padding="2dp" />
 
-    <view
+    <com.astromaximum.android.view.AstroTextView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/EventListItemAspect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        class="com.astromaximum.android.view.AstroTextView"
         android:padding="2dp" />
 
-    <view
+    <com.astromaximum.android.view.AstroTextView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/EventListItemPlanet1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        class="com.astromaximum.android.view.AstroTextView"
         android:padding="2dp" />
 
 </LinearLayout>
