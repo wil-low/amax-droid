@@ -7,8 +7,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
+import com.astromaximum.util.Event;
+
 public class SummaryAdapter extends ArrayAdapter<SummaryItem> {
 	private long mNow;
+
+	private static int VOC_VIEW = 0;
+	private static int VC_VIEW = 1;
+	private static int SUN_DEGREE_VIEW = 2;
+	private static int MOON_SIGN_VIEW = 3;
+	private static int ASPECT_VIEW = 4;
+	private static int PLANET_HOUR_VIEW = 5;
+	private static int MOON_MOVE_VIEW = 6;
+	private static int TITHI_VIEW = 7;
+	private static int SUN_MOON_DAY_VIEW = 8;
+
+	private static int VIEW_COUNT = 9;
 
 	public SummaryAdapter(Context context, ArrayList<SummaryItem> eventCache,
 			long now) {
@@ -32,5 +46,37 @@ public class SummaryAdapter extends ArrayAdapter<SummaryItem> {
 		holder.calculateActiveEvent(mNow);
 		holder.fillLayout();
 		return v;
+	}
+
+	@Override
+	public int getViewTypeCount() {
+		return VIEW_COUNT;
+	}
+
+	@Override
+	public int getItemViewType(int position) {
+		SummaryItem si = getItem(position);
+		switch (si.mKey) {
+		case Event.EV_VOC:
+			return VOC_VIEW;
+		case Event.EV_VIA_COMBUSTA:
+			return VC_VIEW;
+		case Event.EV_SUN_DEGREE:
+			return SUN_DEGREE_VIEW;
+		case Event.EV_MOON_SIGN:
+			return MOON_SIGN_VIEW;
+		case Event.EV_ASP_EXACT:
+			return ASPECT_VIEW;
+		case Event.EV_PLANET_HOUR:
+			return PLANET_HOUR_VIEW;
+		case Event.EV_MOON_MOVE:
+			return MOON_MOVE_VIEW;
+		case Event.EV_TITHI:
+			return TITHI_VIEW;
+		case Event.EV_SUN_DAY:
+		case Event.EV_MOON_DAY:
+			return SUN_MOON_DAY_VIEW;
+		}
+		return VIEW_COUNT;
 	}
 }
