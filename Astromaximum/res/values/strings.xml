@@ -110,13 +110,14 @@
     <string name="start_page_layout">Start Page Layout</string>
 
     <string-array name="startpage_items">
-        <item>Moon Void of Course (VOC)</item>
-        <item>Moon on Burnt Path (VC)</item>
-        <item>Degree of Sun</item>
         <item>Sign of Moon</item>
-        <item>Planetary Hour</item>
         <item>Moon Motion</item>
         <item>Tithi</item>
+        <item>Planetary Hour</item>
+        <item>Degree of Sun</item>
         <item>Aspects</item>
+        <item>Moon Void of Course (VOC)</item>
+        <item>Moon on Burnt Path (VC)</item>
     </string-array>
+
 </resources>

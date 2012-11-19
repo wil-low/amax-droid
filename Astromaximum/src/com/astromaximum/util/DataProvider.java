@@ -87,14 +87,14 @@ public class DataProvider {
 	
 	// Keep in sync with string-array name="startpage_items"
 	static final int[] START_PAGE_ITEM_SEQ = new int[] {
+		Event.EV_MOON_SIGN,
+		Event.EV_MOON_MOVE,
+		Event.EV_PLANET_HOUR,
+		Event.EV_TITHI,
+		Event.EV_SUN_DEGREE,
+		Event.EV_ASP_EXACT,
 		Event.EV_VOC,
 		Event.EV_VIA_COMBUSTA,
-		Event.EV_SUN_DEGREE,
-		Event.EV_MOON_SIGN,
-		Event.EV_PLANET_HOUR,
-		Event.EV_MOON_MOVE,
-		Event.EV_TITHI,
-		Event.EV_ASP_EXACT,
 	};
 
 	private DataProvider(Context context) {

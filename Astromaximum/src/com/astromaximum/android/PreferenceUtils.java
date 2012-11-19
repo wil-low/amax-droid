@@ -53,18 +53,18 @@ public final class PreferenceUtils {
 
 	public static ArrayList<StartPageItem> getStartPageLayout(Context context) {
 		ArrayList<StartPageItem> result = new ArrayList<StartPageItem>();
-		String[] mCaptions = context.getResources().getStringArray(
+		String[] captions = context.getResources().getStringArray(
 				R.array.startpage_items);
-		for (int i = 0; i < mCaptions.length; ++i)
+		for (int i = 0; i < captions.length; ++i)
 			result.add(null);
 
 		SharedPreferences settings = PreferenceManager
 				.getDefaultSharedPreferences(context);
-		for (int i = 0; i < mCaptions.length; ++i) {
+		for (int i = 0; i < captions.length; ++i) {
 			int index = settings.getInt(KEY_STARTPAGE_ITEM_INDEX + i, i);
 			boolean isEnabled = settings.getBoolean(KEY_STARTPAGE_ITEM_ENABLED
 					+ i, true);
-			StartPageItem item = new StartPageItem(mCaptions[i], i, isEnabled);
+			StartPageItem item = new StartPageItem(captions[i], i, isEnabled);
 			result.set(index, item);
 		}
 		return result;

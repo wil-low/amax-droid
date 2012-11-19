@@ -106,14 +106,14 @@
     <string name="start_page_layout">Вид стартового экрана</string>
 
     <string-array name="startpage_items">
+        <item>Знак Луны</item>
+        <item>Движение Луны</item>
+        <item>Планетарный час</item>
+        <item>Титхи</item>
+        <item>Градус Солнца</item>
+        <item>Аспекты</item>
         <item>Луна без курса (VOC)</item>
         <item>Луна на сожженном пути (VC)</item>
-        <item>Градус Солнца</item>
-        <item>Знак Луны</item>
-        <item>Планетарный час</item>
-        <item>Движение Луны</item>
-        <item>Титхи</item>
-        <item>Аспекты</item>
     </string-array>
 
 </resources>
