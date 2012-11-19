@@ -47,8 +47,10 @@ public abstract class ViewHolder implements OnClickListener {
 	protected static int LAYOUT_FLAG_ZODIAC = 1 << 8;
 
 	protected static Context mContext;
+	
 	protected static int mDefaultTextColor;
 	protected static int mBlueMarkColor;
+
 	protected SummaryItem mSummaryItem;
 	public Event mActiveEvent;
 	protected boolean mIsSummaryMode = true;
@@ -61,6 +63,10 @@ public abstract class ViewHolder implements OnClickListener {
 
 	public static ViewHolder makeHolder(SummaryItem si, boolean isSummaryMode) {
 		ViewHolder holder = null;
+		
+		if (si.mEvents.isEmpty())
+			return new EmptyHolder(si);
+
 		switch (si.mKey) {
 		case Event.EV_VOC:
 			holder = new VocHolder(si);

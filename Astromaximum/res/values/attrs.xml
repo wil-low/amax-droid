@@ -9,7 +9,8 @@
 
     <color name="main_text">#FFFFFF</color>
     <color name="blue_mark">#1794F7</color>
-
+    <color name="events_missing">#585858</color>
+    
     <dimen name="interp_title_text_size">24sp</dimen>
     <dimen name="interp_text_size">18sp</dimen>
 

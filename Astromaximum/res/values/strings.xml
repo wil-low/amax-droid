@@ -32,7 +32,11 @@
     <string name="pref_custom_time">Use custom time</string>
     <string name="use_custom_time">Highlight events at</string>
     <string name="use_current_time">Highlight events at current time</string>
-
+    
+    <string name="no_aspects">No aspects</string>
+    <string name="no_vc">No VC</string>
+    <string name="no_voc">No VOC</string>
+    
     <string-array name="planets">
         <item>Sun</item>
         <item>Moon</item>

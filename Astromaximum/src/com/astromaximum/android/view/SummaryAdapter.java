@@ -20,8 +20,9 @@ public class SummaryAdapter extends ArrayAdapter<SummaryItem> {
 	private static int PLANET_HOUR_VIEW = 5;
 	private static int MOON_MOVE_VIEW = 6;
 	private static int TITHI_VIEW = 7;
+	private static int EMPTY_VIEW = 8;
 
-	private static int VIEW_COUNT = 8;
+	private static int VIEW_COUNT = 9;
 
 	public SummaryAdapter(Context context, ArrayList<SummaryItem> eventCache,
 			long now) {
@@ -55,6 +56,10 @@ public class SummaryAdapter extends ArrayAdapter<SummaryItem> {
 	@Override
 	public int getItemViewType(int position) {
 		SummaryItem si = getItem(position);
+		
+		if (si.mEvents.isEmpty())
+			return EMPTY_VIEW;
+		
 		switch (si.mKey) {
 		case Event.EV_VOC:
 			return VOC_VIEW;

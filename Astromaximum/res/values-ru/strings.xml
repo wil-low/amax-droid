@@ -32,7 +32,11 @@
     <string name="pref_custom_time">Произвольное время</string>
     <string name="use_custom_time">Выделить события на</string>
     <string name="use_current_time">Выделить события на текущее время</string>
-
+    
+    <string name="no_aspects">Нет аспектов</string>
+    <string name="no_vc">Нет VC</string>
+    <string name="no_voc">Нет VOC</string>
+    
     <string-array name="planets">
         <item>Солнце</item>
         <item>Луна</item>
