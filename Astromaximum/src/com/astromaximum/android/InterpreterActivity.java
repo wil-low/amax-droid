@@ -106,15 +106,6 @@ public class InterpreterActivity extends Activity {
 		case Event.EV_TITHI:
 			return getStr(R.string.si_key_tithi) + " "
 					+ Integer.toString(ev.getDegree());
-		case Event.EV_NAVROZ:
-			int day = ev.getDegree();
-			if (day >= 360)
-				day = 359 - day;
-			return getStr(R.string.si_sun_day) + " "
-					+ Integer.toString(day);
-		case Event.EV_MOON_DAY:
-			return getStr(R.string.si_moon_day) + " "
-					+ Integer.toString(ev.getDegree());
 		}
 		return getStr(id);
 	}

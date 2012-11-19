@@ -46,7 +46,7 @@ final public class Event implements Parcelable {
 	public static final int EV_NAKSHATRA = 9;
 	public static final int EV_SET = 10; // rising & setting
 	public static final int EV_DECL_EXACT = 11; // declination
-	public static final int EV_NAVROZ = 12; // Navroz
+	//public static final int EV_NAVROZ = 12; // Navroz
 	public static final int EV_TOP_DAY = 13; // week days
 	public static final int EV_PLANET_HOUR = 14; // planetary hours
 	public static final int EV_STATUS = 15;
@@ -56,8 +56,8 @@ final public class Event implements Parcelable {
 	public static final int EV_SEL_DEGREES = 19;
 	public static final int EV_DAY_HOURS = 20;
 	public static final int EV_NIGHT_HOURS = 21;
-	public static final int EV_SUN_DAY = 22;
-	public static final int EV_MOON_DAY = 23;
+	//public static final int EV_SUN_DAY = 22;
+	//public static final int EV_MOON_DAY = 23;
 	public static final int EV_TOP_MONTH = 24;
 	public static final int EV_MOON_PHASE = 25;
 	public static final int EV_ZODIAC_SIGN = 26;

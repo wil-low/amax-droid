@@ -5,7 +5,6 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.astromaximum.android.R;
-import com.astromaximum.util.MyLog;
 import com.astromaximum.util.StartPageItem;
 
 public class StartPageLayoutHolder {

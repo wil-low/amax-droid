@@ -99,13 +99,8 @@ public class InterpretationProvider {
 			break;
 		case Event.EV_TITHI:
 		case Event.EV_SIGN_ENTER:
-		case Event.EV_MOON_DAY:
 			planet = ev.mPlanet0;
 			param0 = ev.getDegree();
-			break;
-		case Event.EV_NAVROZ:
-			planet = ev.mPlanet0;
-			param0 = ev.getDegree() + 1;
 			break;
 		case Event.EV_VOC:
 		case Event.EV_VIA_COMBUSTA:

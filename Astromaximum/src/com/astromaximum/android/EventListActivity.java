@@ -160,12 +160,6 @@ public class EventListActivity extends Activity {
 		case Event.EV_ASP_EXACT:
 			id = R.string.si_aspect;
 			break;
-		case Event.EV_SUN_DAY:
-			id = R.string.si_sun_day;
-			break;
-		case Event.EV_MOON_DAY:
-			id = R.string.si_moon_day;
-			break;
 		}
 		return mContext.getResources().getString(id);
 	}

@@ -89,10 +89,6 @@ public abstract class ViewHolder implements OnClickListener {
 		case Event.EV_TITHI:
 			holder = new TithiHolder(si);
 			break;
-		case Event.EV_SUN_DAY:
-		case Event.EV_MOON_DAY:
-			holder = new SunMoonDayHolder(si);
-			break;
 		default:
 			return null;
 		}

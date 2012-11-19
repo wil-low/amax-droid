@@ -25,8 +25,6 @@
     <string name="si_key_moon_move">Движение Луны</string>
     <string name="si_key_tithi">Титхи</string>
     <string name="si_aspect">Аспект</string>
-    <string name="si_sun_day">Солнечный день</string>
-    <string name="si_moon_day">Лунный день</string>
     <string name="interp_key_degree_pass">Планета в градусе</string>
     <string name="interp_key_sign_enter">Планета в знаке</string>
     <string name="interp_key_moon_aspect">Аспект Луны</string>
@@ -116,8 +114,6 @@
         <item>Движение Луны</item>
         <item>Титхи</item>
         <item>Аспекты</item>
-        <item>Солнечный день</item>
-        <item>Лунный день</item>
     </string-array>
 
 </resources>

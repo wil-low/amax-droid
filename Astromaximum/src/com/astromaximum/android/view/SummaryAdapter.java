@@ -20,9 +20,8 @@ public class SummaryAdapter extends ArrayAdapter<SummaryItem> {
 	private static int PLANET_HOUR_VIEW = 5;
 	private static int MOON_MOVE_VIEW = 6;
 	private static int TITHI_VIEW = 7;
-	private static int SUN_MOON_DAY_VIEW = 8;
 
-	private static int VIEW_COUNT = 9;
+	private static int VIEW_COUNT = 8;
 
 	public SummaryAdapter(Context context, ArrayList<SummaryItem> eventCache,
 			long now) {
@@ -73,9 +72,6 @@ public class SummaryAdapter extends ArrayAdapter<SummaryItem> {
 			return MOON_MOVE_VIEW;
 		case Event.EV_TITHI:
 			return TITHI_VIEW;
-		case Event.EV_SUN_DAY:
-		case Event.EV_MOON_DAY:
-			return SUN_MOON_DAY_VIEW;
 		}
 		return VIEW_COUNT;
 	}

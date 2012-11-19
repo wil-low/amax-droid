@@ -83,7 +83,6 @@ public class DataProvider {
 	private int mCustomMinute = 0;
 	private String mTitleDateFormat;
 	private boolean mUseCustomTime = false;
-	private Event[] mNavroz = new Event[2];
 	private ArrayList<StartPageItem> mStartPageLayout;
 	
 	// Keep in sync with string-array name="startpage_items"
@@ -96,8 +95,6 @@ public class DataProvider {
 		Event.EV_MOON_MOVE,
 		Event.EV_TITHI,
 		Event.EV_ASP_EXACT,
-		Event.EV_SUN_DAY,
-		Event.EV_MOON_DAY,
 	};
 
 	private DataProvider(Context context) {
@@ -280,7 +277,6 @@ public class DataProvider {
 		case Event.EV_ASTROSET:
 		case Event.EV_RISE:
 		case Event.EV_SET:
-		case Event.EV_NAVROZ:
 		case Event.EV_ASCAPHETICS:
 			return readSubData(mLocationDatafile.mData, evtype, planet, false,
 					dayStart, dayEnd);
@@ -385,12 +381,6 @@ public class DataProvider {
 		mStartJD = mCalendar.getTime().getTime();
 		mFinalJD = mStartJD + mLocationDatafile.mDayCount * MSECINDAY;
 		Event.setTimeZone(mLocationDatafile.mTimezone);
-		int navrozCount = getEvents(Event.EV_NAVROZ, Event.SE_SUN, 0, mFinalJD);
-		if (navrozCount != 2)
-			MyLog.e(TAG, "Navroz count = " + navrozCount);
-		System.arraycopy(mEvents, 0, mNavroz, 0, navrozCount);
-		MyLog.d(TAG, "mNavroz0 " + mNavroz[0].toString());
-		MyLog.d(TAG, "mNavroz1 " + mNavroz[1].toString());
 	}
 
 	private String unbundleLocationAsset() {
@@ -495,12 +485,6 @@ public class DataProvider {
 		case Event.EV_TITHI:
 			events = calculateTithis();
 			break;
-		case Event.EV_SUN_DAY:
-			events = calculateSunDays();
-			break;
-		case Event.EV_MOON_DAY:
-			events = calculateMoonDays();
-			break;
 		default:
 			return null;
 		}
@@ -511,37 +495,6 @@ public class DataProvider {
 		// getRiseSet(Event.SE_SUN)));
 		// v.add(new SummaryItem(Event.EV_MOON_RISESET,
 		// getRiseSet(Event.SE_MOON)));
-	}
-
-	private ArrayList<Event> calculateMoonDays() {
-		ArrayList<Event> result = getEventsOnPeriod(Event.EV_RISE, Event.SE_MOON, false,
-				mStartTime, mEndTime, 0);
-		for (Event e : result)
-			e.mEvtype = Event.EV_MOON_DAY;
-		return result;
-	}
-
-	private ArrayList<Event> calculateSunDays() {
-		ArrayList<Event> result = getEventsOnPeriod(Event.EV_RISE,
-				Event.SE_SUN, false, mStartTime, mEndTime, 0);
-		long navroz = mNavroz[1].mDate[0];
-		final long sunrise = mEvents[0].mDate[0];
-		if (sunrise < navroz) {
-			navroz = mNavroz[0].mDate[0];
-		}
-		int pltDaySun1 = (int) ((sunrise - navroz) * 1000 / MSECINDAY + 500) / 1000;
-		int pltDaySun2 = pltDaySun1 + 1;
-		if (pltDaySun1 < 360) {
-			pltDaySun1 = pltDaySun1 % 30 + 1;
-		}
-		result.get(0).mDegree = (short) pltDaySun1;
-		result.get(0).mEvtype = Event.EV_NAVROZ;
-		if (pltDaySun2 < 360) {
-			pltDaySun2 = pltDaySun2 % 30 + 1;
-		}
-		result.get(1).mDegree = (short) pltDaySun2;
-		result.get(1).mEvtype = Event.EV_NAVROZ;
-		return result;
 	}
 
 	private ArrayList<Event> calculateVOCs() {
