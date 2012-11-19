@@ -4,6 +4,7 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="@android:drawable/list_selector_background"
+    android:minHeight="@dimen/list_item_height"
     android:orientation="horizontal" >
 
     <view

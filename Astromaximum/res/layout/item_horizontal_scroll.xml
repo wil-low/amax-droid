@@ -3,6 +3,7 @@
     android:id="@+id/LinearLayout1"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:minHeight="@dimen/list_item_height"
     android:orientation="horizontal" >
 
     <HorizontalScrollView
