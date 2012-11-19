@@ -117,7 +117,6 @@ public class EventListActivity extends Activity {
 			mDataProvider.prepareCalculation();
 			mDataProvider.calculate(mKey);
 		}
-
 		for (SummaryItem si : mDataProvider.mEventCache) {
 			if (si.mKey == mKey) {
 				v = si.mEvents;
@@ -128,9 +127,20 @@ public class EventListActivity extends Activity {
 		if (v == null)
 			MyLog.e(TAG, "No events: key=" + mKey);
 
+		long highlightTime = mDataProvider.getHighlightTime();
 		EventListAdapter adapter = new EventListAdapter(this, v, mKey,
-				mDataProvider.getHighlightTime());
+				highlightTime);
 		mEventList.setAdapter(adapter);
+		int pos = 0;
+		for (Event e : v) {
+			// TODO: this is calculateActiveEvent() - may take wrong active event for some types
+			if (Event.dateBetween(highlightTime, e.mDate[0], e.mDate[1]) == 0) {
+				mEventList.setSelection(pos);
+				//MyLog.d(TAG, "Selection pos " + pos);
+				break;
+			}
+			++pos;
+		}
 	}
 
 	private String getKeyDescription(int key) {
