@@ -87,6 +87,12 @@ public abstract class ViewHolder implements OnClickListener {
 			else
 				holder = new AspectHolder(si);
 			break;
+		case Event.EV_RETROGRADE:
+			if (isSummaryMode)
+				holder = new RetrogradeScrollHolder(si);
+			else
+				holder = new RetrogradeHolder(si);
+			break;
 		case Event.EV_PLANET_HOUR:
 			holder = new PlanetHourHolder(si);
 			break;

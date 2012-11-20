@@ -106,6 +106,11 @@ public class InterpreterActivity extends Activity {
 		case Event.EV_TITHI:
 			return getStr(R.string.si_key_tithi) + " "
 					+ Integer.toString(ev.getDegree());
+		case Event.EV_RETROGRADE:
+			return String
+					.format(getStr(R.string.fmt_retrograde_motion),
+							mContext.getResources().getStringArray(
+									R.array.planets_genitive)[ev.mPlanet0]);
 		}
 		return getStr(id);
 	}
@@ -116,14 +121,13 @@ public class InterpreterActivity extends Activity {
 		switch (e.mEvtype) {
 		case Event.EV_ASP_EXACT_MOON:
 		case Event.EV_ASP_EXACT:
-			result.append(
-					Event.long2String(e.mDate[0], Event.mMonthAbbrDayDateFormat,
-							false));
+			result.append(Event.long2String(e.mDate[0],
+					Event.mMonthAbbrDayDateFormat, false));
 			break;
 		default:
 			result.append(
-					Event.long2String(e.mDate[0], Event.mMonthAbbrDayDateFormat,
-							false))
+					Event.long2String(e.mDate[0],
+							Event.mMonthAbbrDayDateFormat, false))
 					.append(" - ")
 					.append(Event.long2String(e.mDate[1],
 							Event.mMonthAbbrDayDateFormat, true));

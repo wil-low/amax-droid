@@ -93,6 +93,7 @@ public class DataProvider {
 		Event.EV_TITHI,
 		Event.EV_SUN_DEGREE,
 		Event.EV_ASP_EXACT,
+		Event.EV_RETROGRADE,
 		Event.EV_VOC,
 		Event.EV_VIA_COMBUSTA,
 	};
@@ -485,6 +486,9 @@ public class DataProvider {
 		case Event.EV_TITHI:
 			events = calculateTithis();
 			break;
+		case Event.EV_RETROGRADE:
+			events = calculateRetrogrades();
+			break;
 		default:
 			return null;
 		}
@@ -650,9 +654,9 @@ public class DataProvider {
 		}
 	}
 
-	private ArrayList<Event> getRetrogrades() {
+	private ArrayList<Event> calculateRetrogrades() {
 		ArrayList<Event> result = new ArrayList<Event>();
-		for (int planet = Event.SE_SUN; planet <= Event.SE_PLUTO; ++planet) {
+		for (int planet = Event.SE_MERCURY; planet <= Event.SE_PLUTO; ++planet) {
 			ArrayList<Event> v = getEventsOnPeriod(Event.EV_RETROGRADE, planet,
 					false, mStartTime, mEndTime, 0);
 			if (!v.isEmpty())

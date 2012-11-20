@@ -4,13 +4,15 @@ public class AstroFont {
 	public static final int TYPE_PLANET = 0;
 	public static final int TYPE_ASPECT = 1;
 	public static final int TYPE_ZODIAC = 2;
+	public static final int TYPE_RETROGRADE = 3;
 	
 	public static String getSymbol(int type, int id) {
 		byte[] result = new byte[]{'?'};
-		if (type == TYPE_PLANET) {
+		switch (type) {
+		case TYPE_PLANET:
 			result[0] = (byte) (0x50 + id);
-		}
-		else if (type == TYPE_ASPECT) {
+			break;
+		case TYPE_ASPECT:
 			switch (id) {
 			case 0: result[0] = 0x60; break;
 			case 180: result[0] = 0x64; break;
@@ -19,9 +21,13 @@ public class AstroFont {
 			case 60: result[0] = 0x61; break;
 			case 45: result[0] = 0x65; break;
 			}
-		}
-		else if (type == TYPE_ZODIAC) {
+			break;
+		case TYPE_ZODIAC:
 			result[0] = (byte) (0x40 + id);
+			break;
+		case TYPE_RETROGRADE:
+			result[0] = 0x24;
+			break;
 		}
 		return new String(result);
 	}

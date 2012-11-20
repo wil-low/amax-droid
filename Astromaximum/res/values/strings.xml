@@ -17,6 +17,7 @@
     <string name="time_uses_24h">N</string>
     <string name="norm_range_whole_day">whole day</string>
     <string name="norm_range_arrow">⇨</string>
+    
     <string name="si_key_voc">Moon \"Void of Course\"</string>
     <string name="si_key_vc">\"Via Combusta\"</string>
     <string name="si_key_sun_degree">Degree of Sun</string>
@@ -25,6 +26,8 @@
     <string name="si_key_moon_move">Moon Motion</string>
     <string name="si_key_tithi">Tithi</string>
     <string name="si_aspect">Aspect</string>
+    <string name="si_retrograde">Retrograde Motion</string>
+    
     <string name="interp_key_degree_pass">Planet in Degree</string>
     <string name="interp_key_sign_enter">Planet in Sign</string>
     <string name="interp_key_moon_aspect">Aspect of Moon</string>
@@ -34,6 +37,7 @@
     <string name="use_current_time">Highlight events at current time</string>
     
     <string name="no_aspects">No aspects</string>
+    <string name="no_retrograde">No retrograde planets</string>
     <string name="no_vc">No VC</string>
     <string name="no_voc">No VOC</string>
     
@@ -50,6 +54,7 @@
         <item>Pluto</item>
     </string-array>
 
+    <string name="fmt_retrograde_motion">Retrograde motion of %1$s</string>
     <string name="fmt_planet_in_degree">%1$s in %2$d\u00b0 of %3$s</string>
 
     <string-array name="constell_genitive">
@@ -120,6 +125,7 @@
         <item>Planetary Hour</item>
         <item>Degree of Sun</item>
         <item>Aspects</item>
+        <item>Retrograde Planets</item>
         <item>Moon Void of Course (VOC)</item>
         <item>Moon on Burnt Path (VC)</item>
     </string-array>

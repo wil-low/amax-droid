@@ -17,6 +17,7 @@
     <string name="time_uses_24h">Y</string>
     <string name="norm_range_whole_day">весь день</string>
     <string name="norm_range_arrow">⇨</string>
+    
     <string name="si_key_voc">Луна \"без курса\"</string>
     <string name="si_key_vc">\"Сожженный путь\"</string>
     <string name="si_key_sun_degree">Градус Солнца</string>
@@ -25,6 +26,8 @@
     <string name="si_key_moon_move">Движение Луны</string>
     <string name="si_key_tithi">Титхи</string>
     <string name="si_aspect">Аспект</string>
+    <string name="si_retrograde">Ретроградное движение</string>
+    
     <string name="interp_key_degree_pass">Планета в градусе</string>
     <string name="interp_key_sign_enter">Планета в знаке</string>
     <string name="interp_key_moon_aspect">Аспект Луны</string>
@@ -34,6 +37,7 @@
     <string name="use_current_time">Выделить события на текущее время</string>
     
     <string name="no_aspects">Нет аспектов</string>
+    <string name="no_retrograde">Нет ретроградных планет</string>
     <string name="no_vc">Нет VC</string>
     <string name="no_voc">Нет VOC</string>
     
@@ -50,6 +54,7 @@
         <item>Плутон</item>
     </string-array>
 
+    <string name="fmt_retrograde_motion">Ретроградное движение %1$s</string>
     <string name="fmt_planet_in_degree">%1$s в %2$d\u00b0 %3$s</string>
 
     <string-array name="constell_genitive">
@@ -116,6 +121,7 @@
         <item>Титхи</item>
         <item>Градус Солнца</item>
         <item>Аспекты</item>
+        <item>Ретроградные планеты</item>
         <item>Луна без курса (VOC)</item>
         <item>Луна на сожженном пути (VC)</item>
     </string-array>

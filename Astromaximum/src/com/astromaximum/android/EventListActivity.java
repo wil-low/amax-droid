@@ -167,6 +167,9 @@ public class EventListActivity extends Activity {
 		case Event.EV_ASP_EXACT:
 			id = R.string.si_aspect;
 			break;
+		case Event.EV_RETROGRADE:
+			id = R.string.si_retrograde;
+			break;
 		}
 		return mContext.getResources().getString(id);
 	}
