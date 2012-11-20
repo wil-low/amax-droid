@@ -47,9 +47,10 @@ public abstract class ViewHolder implements OnClickListener {
 	protected static int LAYOUT_FLAG_ZODIAC = 1 << 8;
 
 	protected static Context mContext;
-	
+
 	protected static int mDefaultTextColor;
 	protected static int mBlueMarkColor;
+	protected static int mRedMarkColor;
 
 	protected SummaryItem mSummaryItem;
 	public Event mActiveEvent;
@@ -63,7 +64,7 @@ public abstract class ViewHolder implements OnClickListener {
 
 	public static ViewHolder makeHolder(SummaryItem si, boolean isSummaryMode) {
 		ViewHolder holder = null;
-		
+
 		if (si.mEvents.isEmpty())
 			return new EmptyHolder(si);
 
@@ -136,6 +137,7 @@ public abstract class ViewHolder implements OnClickListener {
 		mResources = mContext.getResources();
 		mDefaultTextColor = mResources.getColor(R.color.main_text);
 		mBlueMarkColor = mResources.getColor(R.color.blue_mark);
+		mRedMarkColor = mResources.getColor(R.color.red_mark);
 		AstroTextView.assignTypeface(Typeface.createFromAsset(
 				mContext.getAssets(), "fonts/Astronom.ttf"));
 	}
@@ -197,8 +199,8 @@ public abstract class ViewHolder implements OnClickListener {
 		}
 	}
 
-	public final void calculateActiveEvent(long now) {
-		int pos = mSummaryItem.getActiveEventPosition(now);
+	public final void calculateActiveEvent(long now, boolean useCustomTime) {
+		int pos = mSummaryItem.getActiveEventPosition(now, useCustomTime);
 		mActiveEvent = (pos == -1) ? null : mSummaryItem.mEvents.get(pos);
 	}
 
@@ -206,4 +208,18 @@ public abstract class ViewHolder implements OnClickListener {
 		return mIsSummaryMode ? mActiveEvent : mSummaryItem.mEvents.get(0);
 	}
 
+	protected void setColorByEventMode(TextView tv, Event e) {
+		int color = mDefaultTextColor;
+		if (e == mActiveEvent) {
+			switch (mSummaryItem.mEventMode) {
+			case SummaryItem.EVENT_MODE_CURRENT_TIME:
+				color = mRedMarkColor;
+				break;
+			case SummaryItem.EVENT_MODE_CUSTOM_TIME:
+				color = mBlueMarkColor;
+				break;
+			}
+		}
+		tv.setTextColor(color);
+	}
 }

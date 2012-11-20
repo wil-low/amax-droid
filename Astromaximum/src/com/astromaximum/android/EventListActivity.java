@@ -129,10 +129,11 @@ public class EventListActivity extends Activity {
 			MyLog.e(TAG, "No events: key=" + mKey);
 
 		long highlightTime = mDataProvider.getHighlightTime();
+		boolean useCustomTime = mDataProvider.getUseCustomTime();
 		EventListAdapter adapter = new EventListAdapter(this, item.mEvents,
-				mKey, highlightTime);
+				mKey, highlightTime, useCustomTime);
 		mEventList.setAdapter(adapter);
-		int pos = item.getActiveEventPosition(highlightTime);
+		int pos = item.getActiveEventPosition(highlightTime, useCustomTime);
 		if (pos != -1) {
 			mEventList.setSelection(pos);
 			MyLog.d(TAG, "Selection pos " + pos);

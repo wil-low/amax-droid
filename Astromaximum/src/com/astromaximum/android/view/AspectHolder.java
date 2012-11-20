@@ -27,7 +27,7 @@ public class AspectHolder extends ViewHolder {
 				mInfo.setVisibility(View.GONE);
 			} else {
 				mText0.setText(Event.long2String(e.mDate[0], Event.mMonthAbbrDayDateFormat, false));
-				mText0.setTextColor(mBlueMarkColor);
+				setColorByEventMode(mText0, e);
 				mInfo.setVisibility(View.INVISIBLE);
 			}
 		}

@@ -779,4 +779,8 @@ public class DataProvider {
 	public boolean isInCurrentDay(long date) {
 		return Event.dateBetween(date, mStartTime, mEndTime) == 0;
 	}
+
+	public boolean getUseCustomTime() {
+		return mUseCustomTime;
+	}
 }

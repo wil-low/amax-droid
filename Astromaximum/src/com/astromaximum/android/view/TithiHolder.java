@@ -16,7 +16,7 @@ public class TithiHolder extends ViewHolder {
 		if (e != null) {
 			mDegree.setText(Integer.toString(e.getDegree()));
 			mText0.setText(e.normalizedRangeString());
-			mText0.setTextColor(e == mActiveEvent ? mBlueMarkColor : mDefaultTextColor);
+			setColorByEventMode(mText0, e);
 		} else {
 			mDegree.setText("");
 			mText0.setText("");

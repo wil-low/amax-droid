@@ -18,7 +18,7 @@ public class PlanetHourHolder extends ViewHolder {
 			mPlanet0.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET,
 					e.mPlanet0));
 			mText0.setText(e.normalizedRangeString());
-			mText0.setTextColor(e == mActiveEvent ? mBlueMarkColor : mDefaultTextColor);
+			setColorByEventMode(mText0, e);
 		} else {
 			mPlanet0.setText("");
 			mText0.setText("");

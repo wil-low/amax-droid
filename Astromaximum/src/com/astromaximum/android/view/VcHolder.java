@@ -14,7 +14,7 @@ public class VcHolder extends ViewHolder {
 		Event e = getActiveEvent();
 		if (e != null) {
 			mText0.setText(e.normalizedRangeString());
-			mText0.setTextColor(e == mActiveEvent ? mBlueMarkColor : mDefaultTextColor);
+			setColorByEventMode(mText0, e);
 		} else {
 			mText0.setText("");
 		}

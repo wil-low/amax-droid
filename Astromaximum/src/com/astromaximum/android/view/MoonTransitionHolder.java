@@ -44,8 +44,7 @@ public class MoonTransitionHolder extends ViewHolder {
 					mText1.setVisibility(View.GONE);
 				}
 				mText0.setText(e.normalizedRangeString());
-				if (e == mActiveEvent)
-					mText0.setTextColor(mBlueMarkColor);
+				setColorByEventMode(mText0, e);
 				mPlanet0.setVisibility(View.VISIBLE);
 				mTransitionSignView.setVisibility(View.VISIBLE);
 				break;

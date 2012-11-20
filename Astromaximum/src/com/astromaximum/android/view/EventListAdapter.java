@@ -12,11 +12,13 @@ import com.astromaximum.util.Event;
 public class EventListAdapter extends ArrayAdapter<Event> {
 	private int mKey;
 	private long mNow;
+	private boolean mUseCustomTime;
 
-	public EventListAdapter(Context context, ArrayList<Event> v, int key, long now) {
+	public EventListAdapter(Context context, ArrayList<Event> v, int key, long now, boolean useCustomTime) {
 		super(context, 0, v);
 		mKey = key;
 		mNow = now;
+		mUseCustomTime = useCustomTime;
 	}
 
 	@Override
@@ -34,7 +36,7 @@ public class EventListAdapter extends ArrayAdapter<Event> {
 			holder = (ViewHolder) v.getTag();
 			holder.mSummaryItem.mEvents.set(0, e);
 		}
-		holder.calculateActiveEvent(mNow);
+		holder.calculateActiveEvent(mNow, mUseCustomTime);
 		holder.fillLayout();
 		return v;
 	}

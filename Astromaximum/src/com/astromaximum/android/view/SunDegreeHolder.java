@@ -22,7 +22,7 @@ public class SunDegreeHolder extends ViewHolder {
 					e.getDegree() / 30));
 			mPlanet0.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET,
 					e.mPlanet0));
-			mText0.setTextColor(e == mActiveEvent ? mBlueMarkColor : mDefaultTextColor);
+			setColorByEventMode(mText0, e);
 		} else {
 			mText0.setText("");
 			mText1.setText("");

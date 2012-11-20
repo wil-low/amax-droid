@@ -12,6 +12,8 @@ import com.astromaximum.util.Event;
 public class SummaryAdapter extends ArrayAdapter<SummaryItem> {
 	private long mNow;
 
+	private boolean mUseCustomTime;
+
 	private static int VOC_VIEW = 0;
 	private static int VC_VIEW = 1;
 	private static int SUN_DEGREE_VIEW = 2;
@@ -25,9 +27,10 @@ public class SummaryAdapter extends ArrayAdapter<SummaryItem> {
 	private static int VIEW_COUNT = 9;
 
 	public SummaryAdapter(Context context, ArrayList<SummaryItem> eventCache,
-			long now) {
+			long now, boolean useCustomTime) {
 		super(context, 0, eventCache);
 		mNow = now;
+		mUseCustomTime = useCustomTime;
 	}
 
 	@Override
@@ -43,7 +46,7 @@ public class SummaryAdapter extends ArrayAdapter<SummaryItem> {
 		} else {
 			holder = (ViewHolder) v.getTag();
 		}
-		holder.calculateActiveEvent(mNow);
+		holder.calculateActiveEvent(mNow, mUseCustomTime);
 		holder.fillLayout();
 		return v;
 	}

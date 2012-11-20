@@ -20,7 +20,7 @@ public class MoonSignHolder extends ViewHolder {
 					e.getDegree()));
 			mPlanet0.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET,
 					e.mPlanet0));
-			mText0.setTextColor(e == mActiveEvent ? mBlueMarkColor : mDefaultTextColor);
+			setColorByEventMode(mText0, e);
 		} else {
 			mText0.setText("");
 			mZodiac.setText("");
