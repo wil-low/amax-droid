@@ -60,7 +60,7 @@ public class Preferences extends PreferenceActivity {
 				.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 					public boolean onPreferenceChange(Preference preference,
 							Object newValue) {
-						setListSummary((ListPreference) preference,
+						setListTitle((ListPreference) preference,
 								PreferenceUtils.KEY_LOCATION_ID,
 								(String) newValue);
 						return true;
@@ -114,13 +114,25 @@ public class Preferences extends PreferenceActivity {
 		}
 	};
 
+	private void setListTitle(ListPreference preference, String key,
+			String value) {
+		if (value != null) {
+			preference.setTitle(preference.getEntries()[preference
+					.findIndexOfValue(value)]);
+			SharedPreferences.Editor editor = PreferenceManager
+					.getDefaultSharedPreferences(this).edit();
+			editor.putString(key, value);
+			editor.commit();
+		}
+	};
+
 	@Override
 	protected void onResume() {
 		super.onResume();
 		MyLog.d(TAG, "OnResume");
 		String locationId = PreferenceUtils.getLocationId(this);
 		try {
-			setListSummary(mLocationsPreference,
+			setListTitle(mLocationsPreference,
 					PreferenceUtils.KEY_LOCATION_ID, locationId);
 			mLocationsPreference.setValue(locationId);
 		} catch (ArrayIndexOutOfBoundsException ex) {

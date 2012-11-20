@@ -5,8 +5,7 @@
     <ListPreference
         android:key="current_location_id"
         android:persistent="false"
-        android:summary="OK"
-        android:title="@string/pref_current_city" >
+        android:summary="@string/pref_current_city">
     </ListPreference>
 
     <CheckBoxPreference
