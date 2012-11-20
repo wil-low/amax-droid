@@ -1,8 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu
-  xmlns:android="http://schemas.android.com/apk/res/android">
-<item android:title="@string/today_title" android:id="@+id/menu_today"></item>
-<item android:id="@+id/menu_pick_date" android:title="@string/pick_date"></item>
-<item android:id="@+id/menu_options" android:title="@string/prefs_title"></item>
-<item android:title="@string/help_title" android:id="@+id/menu_help"></item>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menu_today"
+        android:icon="@+drawable/ic_menu_today"
+        android:title="@string/today_title">
+    </item>
+    <item
+        android:id="@+id/menu_pick_date"
+        android:icon="@+drawable/ic_menu_my_calendar"
+        android:title="@string/pick_date">
+    </item>
+    <item
+        android:id="@+id/menu_options"
+        android:icon="@+drawable/ic_menu_preferences"
+        android:title="@string/prefs_title">
+    </item>
+    <item
+        android:id="@+id/menu_help"
+        android:icon="@+drawable/ic_menu_help"
+        android:title="@string/help_title">
+    </item>
+
 </menu>
