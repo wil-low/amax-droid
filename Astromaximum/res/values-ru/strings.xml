@@ -8,7 +8,7 @@
     <string name="pref_show_all_texts">Показывать все тексты</string>
     <string name="app_name">Astromaximum</string>
     <string name="pick_date">Выбрать дату</string>
-    <string name="title_date_format">d MMMM, EEEE</string>
+    <string name="title_date_format">d MMM, EEE</string>
     <string name="month_abbr_day_date_format">d MMM</string>
     <string name="interpretation_dir">ru</string>
     <string name="hour_of">Час</string>

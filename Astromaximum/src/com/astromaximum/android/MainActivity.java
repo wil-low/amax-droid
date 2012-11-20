@@ -180,7 +180,7 @@ public class MainActivity extends Activity {
 	private void updateTitle() {
 		mTitleDate = mDataProvider.getCurrentDateString();
 		setTitle(mDataProvider.getLocationName()
-				+ " : "
+				+ ": "
 				+ mTitleDate
 				+ " "
 				+ mDataProvider.getHighlightTimeString());
