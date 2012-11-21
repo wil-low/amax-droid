@@ -26,6 +26,8 @@
         android:id="@+id/ShowEventList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@android:drawable/list_selector_background"
         android:paddingLeft="@dimen/show_list_padding"
         android:src="@drawable/item_list" />
 
