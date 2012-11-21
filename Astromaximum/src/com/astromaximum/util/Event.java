@@ -318,7 +318,7 @@ final public class Event implements Parcelable {
 		if (date0 < start) {
 			return -1;
 		}
-		if (date0 >= end) {
+		if (date0 > end) {
 			return 1;
 		}
 		return 0;
