@@ -205,8 +205,8 @@ public abstract class ViewHolder implements OnClickListener {
 		}
 	}
 
-	public final void calculateActiveEvent(long now, boolean useCustomTime) {
-		int pos = mSummaryItem.getActiveEventPosition(now, useCustomTime);
+	public final void calculateActiveEvent(long customTime, long currentTime) {
+		int pos = mSummaryItem.getActiveEventPosition(customTime, currentTime);
 		mActiveEvent = (pos == -1) ? null : mSummaryItem.mEvents.get(pos);
 	}
 

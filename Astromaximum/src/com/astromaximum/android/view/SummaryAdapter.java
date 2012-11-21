@@ -10,9 +10,8 @@ import android.widget.ArrayAdapter;
 import com.astromaximum.util.Event;
 
 public class SummaryAdapter extends ArrayAdapter<SummaryItem> {
-	private long mNow;
-
-	private boolean mUseCustomTime;
+	private long mCustomTime;
+	private long mCurrentTime;
 
 	private static int VOC_VIEW = 0;
 	private static int VC_VIEW = 1;
@@ -27,10 +26,10 @@ public class SummaryAdapter extends ArrayAdapter<SummaryItem> {
 	private static int VIEW_COUNT = 9;
 
 	public SummaryAdapter(Context context, ArrayList<SummaryItem> eventCache,
-			long now, boolean useCustomTime) {
+			long customTime, long currentTime) {
 		super(context, 0, eventCache);
-		mNow = now;
-		mUseCustomTime = useCustomTime;
+		mCustomTime = customTime;
+		mCurrentTime = currentTime;
 	}
 
 	@Override
@@ -46,7 +45,7 @@ public class SummaryAdapter extends ArrayAdapter<SummaryItem> {
 		} else {
 			holder = (ViewHolder) v.getTag();
 		}
-		holder.calculateActiveEvent(mNow, mUseCustomTime);
+		holder.calculateActiveEvent(mCustomTime, mCurrentTime);
 		holder.fillLayout();
 		return v;
 	}

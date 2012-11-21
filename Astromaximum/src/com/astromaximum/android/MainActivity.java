@@ -150,7 +150,7 @@ public class MainActivity extends Activity {
 		mDataProvider.prepareCalculation();
 		mDataProvider.calculateAll();
 		SummaryAdapter adapter = new SummaryAdapter(this, mDataProvider.mEventCache,
-				mDataProvider.getHighlightTime(), mDataProvider.getUseCustomTime());
+				mDataProvider.getCustomTime(), mDataProvider.getCurrentTime());
 		mEventList.setAdapter(adapter);
 		updateTitle();
 	}

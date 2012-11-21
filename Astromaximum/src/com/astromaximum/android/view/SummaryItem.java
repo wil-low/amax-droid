@@ -3,6 +3,7 @@ package com.astromaximum.android.view;
 import java.util.ArrayList;
 
 import com.astromaximum.util.Event;
+import com.astromaximum.util.MyLog;
 
 public class SummaryItem {
 
@@ -28,15 +29,19 @@ public class SummaryItem {
 		mEventMode = EVENT_MODE_NONE;
 	}
 
-	public int getActiveEventPosition(long now, boolean useCustomTime) {
+	public int getActiveEventPosition(long customTime, long currentTime) {
 		int index = 0;
 		switch (mKey) {
 		case Event.EV_MOON_MOVE:
 			for (Event e : mEvents) {
-				if (e.mEvtype == Event.EV_MOON_MOVE
-						&& Event.dateBetween(now, e.mDate[0], e.mDate[1]) == 0) {
-					mEventMode = useCustomTime ? EVENT_MODE_CUSTOM_TIME : EVENT_MODE_CURRENT_TIME;
-					return index;
+				if (e.mEvtype == Event.EV_MOON_MOVE) {
+					if (Event.dateBetween(currentTime, e.mDate[0], e.mDate[1]) == 0) {
+						mEventMode = EVENT_MODE_CURRENT_TIME;
+						return index;
+					} else if (Event.dateBetween(customTime, e.mDate[0], e.mDate[1]) == 0) {
+						mEventMode = currentTime == 0 ? EVENT_MODE_CUSTOM_TIME : EVENT_MODE_NONE;
+						return index;
+					}
 				}
 				++index;
 			}
@@ -45,9 +50,12 @@ public class SummaryItem {
 		case Event.EV_VIA_COMBUSTA:
 			int prev = -1;
 			for (Event e : mEvents) {
-				int between = Event.dateBetween(now, e.mDate[0], e.mDate[1]);
+				int between = Event.dateBetween(currentTime, e.mDate[0], e.mDate[1]);
 				if (between == 0) {
-					mEventMode = useCustomTime ? EVENT_MODE_CUSTOM_TIME : EVENT_MODE_CURRENT_TIME;
+					mEventMode = EVENT_MODE_CURRENT_TIME;
+					return index;
+				} else if (Event.dateBetween(customTime, e.mDate[0], e.mDate[1]) == 0) {
+					mEventMode = currentTime == 0 ? EVENT_MODE_CUSTOM_TIME : EVENT_MODE_NONE;
 					return index;
 				} else if (between == 1) {
 					mEventMode = EVENT_MODE_NONE;
@@ -59,8 +67,11 @@ public class SummaryItem {
 			return prev;
 		default:
 			for (Event e : mEvents) {
-				if (Event.dateBetween(now, e.mDate[0], e.mDate[1]) == 0) {
-					mEventMode = useCustomTime ? EVENT_MODE_CUSTOM_TIME : EVENT_MODE_CURRENT_TIME;
+				if (Event.dateBetween(currentTime, e.mDate[0], e.mDate[1]) == 0) {
+					mEventMode = EVENT_MODE_CURRENT_TIME;
+					return index;
+				} else if (Event.dateBetween(customTime, e.mDate[0], e.mDate[1]) == 0) {
+					mEventMode = currentTime == 0 ? EVENT_MODE_CUSTOM_TIME : EVENT_MODE_NONE;
 					return index;
 				}
 				++index;

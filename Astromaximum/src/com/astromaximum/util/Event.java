@@ -278,6 +278,9 @@ final public class Event implements Parcelable {
 			hh = 24;
 		}
 		s.append(to2String(hh)).append(":").append(to2String(mm));
+		//int ss = mCalendar.get(Calendar.SECOND);
+		//s.append(":").append(to2String(ss));
+
 		// if(!hoursOnly)
 		// s.append("/");
 

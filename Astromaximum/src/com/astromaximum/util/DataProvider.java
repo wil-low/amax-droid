@@ -447,7 +447,6 @@ public class DataProvider {
 		mCalendar.set(Calendar.MILLISECOND, 0);
 		mStartTime = mCalendar.getTimeInMillis();
 		mEndTime = mStartTime + MSECINDAY - Event.ROUNDING_MSEC;
-		MyLog.d(TAG, new Date(mStartTime) + " / " + new Date(mEndTime));
 		Event.setTimeRange(mStartTime, mEndTime);
 		mEventCache.clear();
 	}
@@ -548,10 +547,11 @@ public class DataProvider {
 		final long nightHour = (nextSunRise.mDate[0] - currentSunRise.mDate[1]) / 12;
 		long st = currentSunRise.mDate[0];
 		for (int i = 0; i < 24; ++i) {
-			Event ev = new Event(st, PLANET_HOUR_SEQUENCE[startHour % 7]);
+			Event ev = new Event(st - (st % Event.ROUNDING_MSEC), PLANET_HOUR_SEQUENCE[startHour % 7]);
 			ev.mEvtype = Event.EV_PLANET_HOUR;
 			st += i < 12 ? dayHour : nightHour;
 			ev.mDate[1] = st - Event.ROUNDING_MSEC; // exclude last minute
+			ev.mDate[1] -= (ev.mDate[1] % Event.ROUNDING_MSEC);
 			if (ev.isInPeriod(mStartTime, mEndTime, false))
 				result.add(ev);
 			++startHour;
@@ -739,7 +739,7 @@ public class DataProvider {
 		return (String) DateFormat.format(mTitleDateFormat, mCalendar);
 	}
 
-	public long getHighlightTime() {
+	public long getCustomTime() {
 		Calendar calendar = Calendar.getInstance(mCalendar.getTimeZone());
 		if (mUseCustomTime) {
 			calendar.set(mYear, mMonth, mDay, mCustomHour, mCustomMinute);
@@ -752,12 +752,23 @@ public class DataProvider {
 			mCurrentHour = calendar.get(Calendar.HOUR_OF_DAY);
 			mCurrentMinute = calendar.get(Calendar.MINUTE);
 		}
-
-		MyLog.d("getHightlightTime",
-				(String) DateFormat.format("dd MMMM yyyy, kk:mm", calendar));
+		MyLog.d("getCustomTime",
+				(String) DateFormat.format("dd MMMM yyyy, kk:mm:ss", calendar));
 		return calendar.getTimeInMillis();
 	}
 
+	public long getCurrentTime() {
+		if (!mUseCustomTime) {
+			Calendar calendar = Calendar.getInstance(mCalendar.getTimeZone());
+			mCurrentHour = calendar.get(Calendar.HOUR_OF_DAY);
+			mCurrentMinute = calendar.get(Calendar.MINUTE);
+			MyLog.d("getCurrentTime",
+					(String) DateFormat.format("dd MMMM yyyy, kk:mm:ss", calendar));
+			return calendar.getTimeInMillis();
+		}
+		return 0;
+	}
+	
 	// mStartJD = calendar.getTime().getTime();
 	// mFinalJD = mStartJD + mDayCount * MSECINDAY;
 
