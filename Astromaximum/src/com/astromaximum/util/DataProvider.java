@@ -400,7 +400,7 @@ public class DataProvider {
 				buffer = locBundle.extractLocation(index);
 				LocationsDataFile datafile = new LocationsDataFile(
 						new ByteArrayInputStream(buffer));
-				lastLocationId = Integer.toHexString(datafile.mCityId);
+				lastLocationId = String.format("%08X", datafile.mCityId);
 				MyLog.i(TAG, index + ": " + lastLocationId + " "
 						+ datafile.mCity);
 				File locFile = new File(mLocationDir, lastLocationId + ".dat");
