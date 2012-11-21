@@ -30,7 +30,7 @@ final public class CommonDataFile {
         try {
             DataInputStream is = new DataInputStream(stream);
             mStartYear = is.readShort();
-            mStartMonth = is.readUnsignedByte();
+            mStartMonth = is.readUnsignedByte() - 1;
             mStartDay = is.readUnsignedByte();
             
             int customDataLen = is.readUnsignedShort(); // customData length

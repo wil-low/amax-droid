@@ -340,8 +340,9 @@ public class DataProvider {
 				locationId = unbundleLocationAsset();
 		}
 		loadLocation(locationId, sharedPref);
+	
 		mStartTime = sharedPref.getLong(PreferenceUtils.KEY_START_TIME,
-				mCalendar.getTimeInMillis());
+				Calendar.getInstance(mCalendar.getTimeZone()).getTimeInMillis());
 		MyLog.i(TAG, "Restored mStartTime " + mStartTime);
 		mUseCustomTime = sharedPref.getBoolean(
 				PreferenceUtils.KEY_USE_CUSTOM_TIME, false);

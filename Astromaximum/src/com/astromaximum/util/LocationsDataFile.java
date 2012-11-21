@@ -44,7 +44,7 @@ final public class LocationsDataFile {
             byte version = dis.readByte();
             if (version == 2) {
                 mStartYear = dis.readShort();
-                mStartMonth = dis.readUnsignedByte();
+                mStartMonth = dis.readUnsignedByte() - 1;
                 mStartDay = dis.readUnsignedByte();
                 mDayCount = dis.readShort();
                 mCityId = dis.readInt(); // city id
