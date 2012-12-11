@@ -71,7 +71,6 @@ public class MainActivity extends Activity {
 		 * mEventList.setOnTouchListener(gestureListener);
 		 */
 		// setTitle(getVersionedTitle());
-		updateTitle();
 		updateDisplay();
 	}
 

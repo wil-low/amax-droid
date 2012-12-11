@@ -130,7 +130,6 @@ public class EventListActivity extends Activity {
 
 		long customTime = mDataProvider.getCustomTime();
 		long currentTime = mDataProvider.getCurrentTime();
-		boolean useCustomTime = mDataProvider.getUseCustomTime();
 		EventListAdapter adapter = new EventListAdapter(this, item.mEvents,
 				mKey, customTime, currentTime);
 		mEventList.setAdapter(adapter);

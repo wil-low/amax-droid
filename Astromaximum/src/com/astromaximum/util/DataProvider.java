@@ -13,7 +13,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
@@ -470,6 +469,8 @@ public class DataProvider {
 			break;
 		case Event.EV_SUN_DEGREE:
 			events = calculateSunDegree();
+			Event e = events.get(0);
+			MyLog.d(TAG, e.toString() + "; " + e.mDate[0] / 1000 + "/" + e.mDate[1] / 1000);
 			break;
 		case Event.EV_MOON_SIGN:
 			events = calculateMoonSign();
@@ -794,9 +795,5 @@ public class DataProvider {
 
 	public boolean isInCurrentDay(long date) {
 		return Event.dateBetween(date, mStartTime, mEndTime) == 0;
-	}
-
-	public boolean getUseCustomTime() {
-		return mUseCustomTime;
 	}
 }
