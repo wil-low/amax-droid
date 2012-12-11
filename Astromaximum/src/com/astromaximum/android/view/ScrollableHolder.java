@@ -34,7 +34,7 @@ public abstract class ScrollableHolder extends ViewHolder {
 				View v = makeChildHolder(e);
 				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 						mLayout.getLayoutParams());
-				params.setMargins(10, 0, 10, 0);
+				//params.setMargins(10, 0, 10, 0);
 				mLayout.addView(v, params);
 				v.setOnClickListener(this);
 			}

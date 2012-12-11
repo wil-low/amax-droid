@@ -5,7 +5,10 @@
     android:layout_height="fill_parent"
     android:background="@android:drawable/list_selector_background"
     android:gravity="center"
-    android:orientation="horizontal" >
+    android:minHeight="@dimen/list_item_height"
+    android:orientation="horizontal"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp" >
 
     <com.astromaximum.android.view.AstroTextView
         xmlns:android="http://schemas.android.com/apk/res/android"
