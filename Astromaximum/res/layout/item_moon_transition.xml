@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/LinearLayout02"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@android:drawable/list_selector_background"
-    android:gravity="center"
     android:minHeight="@dimen/list_item_height"
     android:orientation="horizontal" >
 
@@ -13,10 +12,14 @@
         android:id="@+id/EventListItemPlanet0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/EventListItemText1"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
         android:layout_gravity="center_vertical|center"
-        android:layout_weight="1"
         class="com.astromaximum.android.view.AstroTextView"
         android:paddingTop="@dimen/astro_item_top_padding"
+        android:paddingLeft="@dimen/list_item_side_padding"
+        android:paddingRight="@dimen/list_item_side_padding"
         android:textSize="@dimen/astro_item_text_size" />
 
     <TextView
@@ -24,8 +27,12 @@
         android:id="@+id/EventListTransitionSign"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/EventListItemText1"
+        android:layout_centerVertical="true"
         android:layout_gravity="center"
-        android:layout_weight="1"
+        android:layout_toRightOf="@id/EventListItemPlanet0"
+        android:paddingLeft="@dimen/list_item_side_padding"
+        android:paddingRight="@dimen/list_item_side_padding"
         android:gravity="center"
         android:text=">"
         android:textSize="@dimen/list_item_text_size" />
@@ -35,8 +42,11 @@
         android:id="@+id/EventListItemText1"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
+        android:layout_centerVertical="true"
         android:layout_gravity="center"
-        android:layout_weight="1"
+        android:layout_toRightOf="@id/EventListTransitionSign"
+        android:paddingLeft="@dimen/list_item_side_padding"
+        android:paddingRight="@dimen/list_item_side_padding"
         android:gravity="center"
         android:text="VOC"
         android:textSize="@dimen/list_item_text_size" />
@@ -46,10 +56,14 @@
         android:id="@+id/EventListItemPlanet1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/EventListItemText1"
+        android:layout_centerVertical="true"
         android:layout_gravity="center"
-        android:layout_weight="1"
+        android:layout_toRightOf="@id/EventListItemText1"
         android:gravity="center"
         android:paddingTop="@dimen/astro_item_top_padding"
+        android:paddingLeft="@dimen/list_item_side_padding"
+        android:paddingRight="@dimen/list_item_side_padding"
         android:textSize="@dimen/astro_item_text_size" />
 
     <TextView
@@ -57,8 +71,9 @@
         android:id="@+id/EventListItemText0"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
+        android:layout_centerVertical="true"
         android:layout_gravity="center"
-        android:layout_weight="6"
+        android:layout_toLeftOf="@+id/ShowEventList"
         android:gravity="right|center"
         android:text="Text0"
         android:textSize="@dimen/list_item_text_size" />
@@ -67,9 +82,11 @@
         android:id="@+id/ShowEventList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
         android:layout_gravity="center"
         android:background="@android:drawable/list_selector_background"
         android:paddingLeft="@dimen/show_list_padding"
         android:src="@drawable/item_list" />
 
-</LinearLayout>
+</RelativeLayout>

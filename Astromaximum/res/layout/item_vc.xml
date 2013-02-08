@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/LinearLayout02"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="@android:drawable/list_selector_background"
@@ -12,19 +12,23 @@
         android:id="@+id/EventListItemType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
         android:layout_gravity="center"
-        android:layout_weight="3"
         android:gravity="center"
         android:text="VC"
+        android:paddingLeft="@dimen/list_item_side_padding"
+        android:paddingRight="@dimen/list_item_side_padding"
         android:textSize="@dimen/list_item_text_size" />
 
     <TextView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/EventListItemText0"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
         android:layout_gravity="center"
-        android:layout_weight="9"
+        android:layout_toLeftOf="@+id/ShowEventList"
         android:gravity="right"
         android:text="Text0"
         android:textSize="@dimen/list_item_text_size" />
@@ -33,9 +37,11 @@
         android:id="@+id/ShowEventList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
         android:layout_gravity="center"
         android:background="@android:drawable/list_selector_background"
         android:paddingLeft="@dimen/show_list_padding"
         android:src="@drawable/item_list" />
 
-</LinearLayout>
+</RelativeLayout>

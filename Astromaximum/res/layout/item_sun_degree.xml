@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/LinearLayout02"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="@android:drawable/list_selector_background"
@@ -12,9 +12,12 @@
         android:id="@+id/EventListItemPlanet0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
         android:layout_gravity="center_vertical|center"
-        android:layout_weight="1"
         android:paddingTop="@dimen/astro_item_top_padding"
+        android:paddingLeft="@dimen/list_item_side_padding"
+        android:paddingRight="@dimen/list_item_side_padding"
         android:textSize="@dimen/astro_item_text_size" />
 
     <TextView
@@ -22,8 +25,11 @@
         android:id="@+id/EventListItemText1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
         android:layout_gravity="center_vertical"
-        android:layout_weight="1"
+        android:layout_toRightOf="@id/EventListItemPlanet0"
+        android:paddingLeft="@dimen/list_item_side_padding"
+        android:paddingRight="@dimen/list_item_side_padding"
         android:text="dgr"
         android:textSize="@dimen/list_item_text_size" />
 
@@ -31,18 +37,22 @@
         android:id="@+id/EventListItemZodiac"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
         android:layout_gravity="center_vertical|center"
-        android:layout_weight="1"
+        android:layout_toRightOf="@+id/EventListItemText1"
         android:paddingTop="@dimen/astro_item_top_padding"
+        android:paddingLeft="@dimen/list_item_side_padding"
+        android:paddingRight="@dimen/list_item_side_padding"
         android:textSize="@dimen/astro_item_text_size" />
 
     <TextView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/EventListItemText0"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
         android:layout_gravity="center"
-        android:layout_weight="10"
+        android:layout_toLeftOf="@+id/ShowEventList"
         android:gravity="right"
         android:text="Text0"
         android:textSize="@dimen/list_item_text_size" />
@@ -51,9 +61,11 @@
         android:id="@+id/ShowEventList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
         android:layout_gravity="center"
         android:background="@android:drawable/list_selector_background"
         android:paddingLeft="@dimen/show_list_padding"
         android:src="@drawable/item_list" />
 
-</LinearLayout>
+</RelativeLayout>
