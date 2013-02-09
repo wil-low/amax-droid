@@ -15,9 +15,9 @@
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:layout_gravity="center_vertical|center"
-        android:paddingTop="@dimen/astro_item_top_padding"
         android:paddingLeft="@dimen/list_item_side_padding"
         android:paddingRight="@dimen/list_item_side_padding"
+        android:paddingTop="@dimen/astro_item_top_padding"
         android:textSize="@dimen/astro_item_text_size" />
 
     <TextView
@@ -40,9 +40,9 @@
         android:layout_centerVertical="true"
         android:layout_gravity="center_vertical|center"
         android:layout_toRightOf="@+id/EventListItemText1"
-        android:paddingTop="@dimen/astro_item_top_padding"
         android:paddingLeft="@dimen/list_item_side_padding"
         android:paddingRight="@dimen/list_item_side_padding"
+        android:paddingTop="@dimen/astro_item_top_padding"
         android:textSize="@dimen/astro_item_text_size" />
 
     <TextView
@@ -55,6 +55,7 @@
         android:layout_toLeftOf="@+id/ShowEventList"
         android:gravity="right"
         android:text="Text0"
+        android:paddingRight="@dimen/show_list_padding"
         android:textSize="@dimen/list_item_text_size" />
 
     <ImageView
@@ -65,7 +66,6 @@
         android:layout_centerVertical="true"
         android:layout_gravity="center"
         android:background="@android:drawable/list_selector_background"
-        android:paddingLeft="@dimen/show_list_padding"
         android:src="@drawable/item_list" />
 
 </RelativeLayout>

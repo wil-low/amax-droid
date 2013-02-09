@@ -36,7 +36,7 @@ foreach my $infile (@interpret_files) {
 		$line =~ s/\/\/.+//is;
 		next if $line !~ /%[\d\s\,\-]+%/;
 		$line =~ s/\s*\Z//is;
-		$line =~ s/\.+\Z//is if $evt ne 'EV_MSG';
+		#$line =~ s/\.+\Z//is if $evt ne 'EV_MSG';
 		$line =~ s/.*?%(.*?)%\s*//is;
 		my @param = split (/,/, $1);
 		for (my $i = 0; $i < 3; ++$i) {

@@ -17,9 +17,9 @@
         android:layout_centerVertical="true"
         android:layout_gravity="center_vertical|center"
         class="com.astromaximum.android.view.AstroTextView"
-        android:paddingTop="@dimen/astro_item_top_padding"
         android:paddingLeft="@dimen/list_item_side_padding"
         android:paddingRight="@dimen/list_item_side_padding"
+        android:paddingTop="@dimen/astro_item_top_padding"
         android:textSize="@dimen/astro_item_text_size" />
 
     <TextView
@@ -31,9 +31,9 @@
         android:layout_centerVertical="true"
         android:layout_gravity="center"
         android:layout_toRightOf="@id/EventListItemPlanet0"
+        android:gravity="center"
         android:paddingLeft="@dimen/list_item_side_padding"
         android:paddingRight="@dimen/list_item_side_padding"
-        android:gravity="center"
         android:text=">"
         android:textSize="@dimen/list_item_text_size" />
 
@@ -45,9 +45,9 @@
         android:layout_centerVertical="true"
         android:layout_gravity="center"
         android:layout_toRightOf="@id/EventListTransitionSign"
+        android:gravity="center"
         android:paddingLeft="@dimen/list_item_side_padding"
         android:paddingRight="@dimen/list_item_side_padding"
-        android:gravity="center"
         android:text="VOC"
         android:textSize="@dimen/list_item_text_size" />
 
@@ -61,9 +61,9 @@
         android:layout_gravity="center"
         android:layout_toRightOf="@id/EventListItemText1"
         android:gravity="center"
-        android:paddingTop="@dimen/astro_item_top_padding"
         android:paddingLeft="@dimen/list_item_side_padding"
         android:paddingRight="@dimen/list_item_side_padding"
+        android:paddingTop="@dimen/astro_item_top_padding"
         android:textSize="@dimen/astro_item_text_size" />
 
     <TextView
@@ -75,6 +75,7 @@
         android:layout_gravity="center"
         android:layout_toLeftOf="@+id/ShowEventList"
         android:gravity="right|center"
+        android:paddingRight="@dimen/show_list_padding"
         android:text="Text0"
         android:textSize="@dimen/list_item_text_size" />
 
@@ -86,7 +87,6 @@
         android:layout_centerVertical="true"
         android:layout_gravity="center"
         android:background="@android:drawable/list_selector_background"
-        android:paddingLeft="@dimen/show_list_padding"
         android:src="@drawable/item_list" />
 
 </RelativeLayout>

@@ -1,6 +1,5 @@
 package com.astromaximum.android;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -8,16 +7,13 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.widget.DatePicker;
 import android.widget.ListView;
 
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.astromaximum.android.view.SummaryAdapter;
 import com.astromaximum.android.view.ViewHolder;
 import com.astromaximum.util.DataProvider;
@@ -25,15 +21,11 @@ import com.astromaximum.util.Event;
 import com.astromaximum.util.InterpretationProvider;
 import com.astromaximum.util.MyLog;
 
-public class MainActivity extends Activity {
+public class MainActivity extends SherlockActivity {
 	static final int DATE_DIALOG_ID = 0;
 
 	private final String TAG = "MainActivity";
 	private ListView mEventList = null;
-
-	private int REL_SWIPE_MIN_DISTANCE;
-	private int REL_SWIPE_MAX_OFF_PATH;
-	private int REL_SWIPE_THRESHOLD_VELOCITY;
 
 	private DataProvider mDataProvider;
 	private String mTitleDate;
@@ -51,16 +43,10 @@ public class MainActivity extends Activity {
 		Event.setContext(mContext);
 		ViewHolder.initialize(mContext);
 
-		// As paiego pointed out, it's better to use density-aware measurements.
-		DisplayMetrics dm = getResources().getDisplayMetrics();
-		REL_SWIPE_MIN_DISTANCE = (int) (120.0f * dm.densityDpi / 160.0f + 0.5);
-		REL_SWIPE_MAX_OFF_PATH = (int) (250.0f * dm.densityDpi / 160.0f + 0.5);
-		REL_SWIPE_THRESHOLD_VELOCITY = (int) (200.0f * dm.densityDpi / 160.0f + 0.5);
-
 		mDataProvider = DataProvider.getInstance(this);
 		InterpretationProvider.getInstance(this);
 
-		setContentView(R.layout.main);
+		setContentView(R.layout.activity_main);
 
 		mEventList = (ListView) findViewById(R.id.ListViewEvents);
 		/*
@@ -70,7 +56,7 @@ public class MainActivity extends Activity {
 		 * event) { return gestureDetector.onTouchEvent(event); } };
 		 * mEventList.setOnTouchListener(gestureListener);
 		 */
-		// setTitle(getVersionedTitle());
+		getSupportActionBar().setDisplayShowHomeEnabled(false);
 		updateDisplay();
 	}
 
@@ -86,8 +72,7 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.main, menu);
+		getSupportMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
 
@@ -95,6 +80,14 @@ public class MainActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
 		switch (item.getItemId()) {
+		case R.id.menu_prev: {
+			previousDate();
+			break;
+		}
+		case R.id.menu_next: {
+			nextDate();
+			break;
+		}
 		case R.id.menu_today: {
 			mDataProvider.setTodayDate();
 			updateDisplay();
@@ -178,41 +171,20 @@ public class MainActivity extends Activity {
 
 	private void updateTitle() {
 		mTitleDate = mDataProvider.getCurrentDateString();
-		setTitle(mDataProvider.getLocationName()
-				+ ": "
-				+ mTitleDate
-				+ " "
-				+ mDataProvider.getHighlightTimeString());
+		getSupportActionBar().setTitle(mTitleDate);
+		getSupportActionBar().setSubtitle(mDataProvider.getLocationName());
 	}
 
 	private void previousDate() {
 		MyLog.d(TAG, "previousDate");
 		mDataProvider.changeDate(-1);
 		updateDisplay();
-		// Toast.makeText(this, "Left-to-right fling",
-		// Toast.LENGTH_SHORT).show();
 	}
 
 	private void nextDate() {
 		MyLog.d(TAG, "nextDate");
 		mDataProvider.changeDate(1);
 		updateDisplay();
-		// Toast.makeText(this, "Right-to-left fling",
-		// Toast.LENGTH_SHORT).show();
-	}
-
-	public void onEventItemClick(int position) {
-		MyLog.d(TAG, "onItemClick " + position);
-		/*
-		 * SummaryItem si = (SummaryItem)
-		 * mEventList.getItemAtPosition(position); Event e =
-		 * si.getActiveEvent(); String text =
-		 * InterpretationProvider.getInstance().getText(e); if (text != null) {
-		 * Intent intent = new Intent(this, InterpreterActivity.class);
-		 * intent.putExtra( SummaryItem.LISTKEY_INTERPRETER_TEXT, text);
-		 * intent.putExtra( SummaryItem.LISTKEY_INTERPRETER_EVENT, e);
-		 * startActivity(intent); }
-		 */
 	}
 
 	@Override
@@ -228,35 +200,5 @@ public class MainActivity extends Activity {
 			return true;
 		}
 		return super.dispatchKeyEvent(event);
-	}
-
-	class MyGestureDetector extends SimpleOnGestureListener {
-
-		// Detect a single-click and call my own handler.
-		@Override
-		public boolean onSingleTapUp(MotionEvent e) {
-			int pos = mEventList
-					.pointToPosition((int) e.getX(), (int) e.getY());
-			onEventItemClick(pos);
-			return false;
-		}
-
-		@Override
-		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-				float velocityY) {
-			if (e1 == null || e2 == null)
-				return false;
-			if (Math.abs(e1.getY() - e2.getY()) > REL_SWIPE_MAX_OFF_PATH)
-				return false;
-			if (e1.getX() - e2.getX() > REL_SWIPE_MIN_DISTANCE
-					&& Math.abs(velocityX) > REL_SWIPE_THRESHOLD_VELOCITY) {
-				nextDate();
-			} else if (e2.getX() - e1.getX() > REL_SWIPE_MIN_DISTANCE
-					&& Math.abs(velocityX) > REL_SWIPE_THRESHOLD_VELOCITY) {
-				previousDate();
-			}
-			return false;
-		}
-
 	}
 }

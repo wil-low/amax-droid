@@ -22,6 +22,9 @@ public class EmptyHolder extends ViewHolder {
 		case Event.EV_ASP_EXACT:
 			textId = R.string.no_aspects;
 			break;
+		case Event.EV_RETROGRADE:
+			textId = R.string.no_retrograde;
+			break;
 		}
 		if (textId == 0)
 			mText0.setText("");

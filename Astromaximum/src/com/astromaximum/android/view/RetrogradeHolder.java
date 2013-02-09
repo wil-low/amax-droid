@@ -9,7 +9,7 @@ import com.astromaximum.util.Event;
 public class RetrogradeHolder extends ViewHolder {
 	public RetrogradeHolder(SummaryItem si) {
 		super(si, R.layout.item_retrograde, LAYOUT_FLAG_PLANET0
-				| LAYOUT_FLAG_TEXT0 | LAYOUT_FLAG_INFO);
+				| LAYOUT_FLAG_TEXT0);
 	}
 
 	@Override
@@ -20,14 +20,12 @@ public class RetrogradeHolder extends ViewHolder {
 					e.mPlanet0) + AstroFont.getSymbol(AstroFont.TYPE_RETROGRADE, 0));
 			if (mIsSummaryMode) {
 				mText0.setVisibility(View.GONE);
-				mInfo.setVisibility(View.GONE);
 			} else {
 				mText0.setText(Event.long2String(e.mDate[0],
-						Event.mMonthAbbrDayDateFormat, false) + " - " + 
+						Event.mMonthAbbrDayDateFormat, false) + "\n" + 
 						Event.long2String(e.mDate[1],
 								Event.mMonthAbbrDayDateFormat, false));
 				setColorByEventMode(mText0, e);
-				mInfo.setVisibility(View.GONE);
 			}
 		}
 	}

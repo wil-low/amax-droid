@@ -15,9 +15,9 @@
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:layout_gravity="center"
-        android:text="@+string/hour_of"
         android:paddingLeft="@dimen/list_item_side_padding"
         android:paddingRight="@dimen/list_item_side_padding"
+        android:text="@+string/hour_of"
         android:textSize="@dimen/list_item_text_size" />
 
     <com.astromaximum.android.view.AstroTextView
@@ -28,9 +28,9 @@
         android:layout_centerVertical="true"
         android:layout_gravity="center"
         android:layout_toRightOf="@id/EventListItemType"
-        android:paddingTop="@dimen/astro_item_top_padding"
         android:paddingLeft="@dimen/list_item_side_padding"
         android:paddingRight="@dimen/list_item_side_padding"
+        android:paddingTop="@dimen/astro_item_top_padding"
         android:textSize="@dimen/astro_item_text_size" />
 
     <TextView
@@ -42,6 +42,7 @@
         android:layout_gravity="center"
         android:layout_toLeftOf="@+id/ShowEventList"
         android:gravity="right"
+        android:paddingRight="@dimen/show_list_padding"
         android:text="Text0"
         android:textSize="@dimen/list_item_text_size" />
 
@@ -53,7 +54,6 @@
         android:layout_centerVertical="true"
         android:layout_gravity="center"
         android:background="@android:drawable/list_selector_background"
-        android:paddingLeft="@dimen/show_list_padding"
         android:src="@drawable/item_list" />
 
 </RelativeLayout>

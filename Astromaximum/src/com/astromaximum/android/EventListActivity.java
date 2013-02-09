@@ -1,8 +1,5 @@
 package com.astromaximum.android;
 
-import java.util.ArrayList;
-
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +8,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.astromaximum.android.view.EventListAdapter;
 import com.astromaximum.android.view.SummaryItem;
 import com.astromaximum.android.view.ViewHolder;
@@ -19,7 +19,7 @@ import com.astromaximum.util.Event;
 import com.astromaximum.util.InterpretationProvider;
 import com.astromaximum.util.MyLog;
 
-public class EventListActivity extends Activity {
+public class EventListActivity extends SherlockActivity {
 	private final String TAG = "EventListActivity";
 	private ListView mEventList;
 	private DataProvider mDataProvider;
@@ -32,7 +32,7 @@ public class EventListActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		MyLog.d(TAG, "OnCreate: ");
 		mContext = this;
-		setContentView(R.layout.event_list_activity);
+		setContentView(R.layout.activity_event_list);
 		ViewHolder.initialize(mContext);
 		mEventList = (ListView) findViewById(R.id.event_list_view);
 		mEventList
@@ -63,7 +63,29 @@ public class EventListActivity extends Activity {
 		mKey = getIntent().getIntExtra(PreferenceUtils.LISTKEY_EVENT_KEY,
 				Event.EV_LAST);
 		mKeyDescription = getKeyDescription(mKey);
+		getSupportActionBar().setDisplayShowHomeEnabled(false);
 		updateDisplay();
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		getSupportMenuInflater().inflate(R.menu.event_list, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		super.onOptionsItemSelected(item);
+		switch (item.getItemId()) {
+		case R.id.menu_prev:
+			previousDate();
+			break;
+		case R.id.menu_next:
+			nextDate();
+			break;
+		}
+		return true;
 	}
 
 	@Override
@@ -111,7 +133,8 @@ public class EventListActivity extends Activity {
 	}
 
 	private void updateDisplay() {
-		setTitle(mKeyDescription + ": " + mDataProvider.getCurrentDateString());
+		getSupportActionBar().setTitle(mDataProvider.getCurrentDateString());
+		getSupportActionBar().setSubtitle(mKeyDescription);
 		SummaryItem item = null;
 		if (mDataProvider.mEventCache.isEmpty()) {
 			mDataProvider.prepareCalculation();

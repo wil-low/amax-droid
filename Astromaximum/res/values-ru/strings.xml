@@ -8,7 +8,7 @@
     <string name="pref_show_all_texts">Показывать все тексты</string>
     <string name="app_name">Astromaximum</string>
     <string name="pick_date">Выбрать дату</string>
-    <string name="title_date_format">d MMM, EEE</string>
+    <string name="title_date_format">EEE d MMM yyyy</string>
     <string name="month_abbr_day_date_format">d MMM</string>
     <string name="interpretation_dir">ru</string>
     <string name="hour_of">Час</string>
@@ -35,11 +35,15 @@
     <string name="pref_custom_time">Произвольное время</string>
     <string name="use_custom_time">Выделить события на</string>
     <string name="use_current_time">Выделить события на текущее время</string>
+    <string name="pref_volume_button_navigation">Навигация клавишами громкости</string>
     
     <string name="no_aspects">Нет аспектов</string>
     <string name="no_retrograde">Нет ретроградных планет</string>
     <string name="no_vc">Нет VC</string>
     <string name="no_voc">Нет VOC</string>
+    
+    <string name="previous_day">Предыдущий день</string>
+    <string name="next_day">Следующий день</string>
     
     <string-array name="planets">
         <item>Солнце</item>
@@ -54,7 +58,19 @@
         <item>Плутон</item>
     </string-array>
 
-    <string name="fmt_retrograde_motion">Ретроградное движение %1$s</string>
+    <string-array name="planets_retrograde">
+        <item>NA</item>
+        <item>NA</item>
+        <item>Ретроградный Меркурий</item>
+        <item>Ретроградная Венера</item>
+        <item>Ретроградный Марс</item>
+        <item>Ретроградный Юпитер</item>
+        <item>Ретроградный Сатурн</item>
+        <item>Ретроградный Уран</item>
+        <item>Ретроградный Нептун</item>
+        <item>Ретроградный Плутон</item>
+    </string-array>
+    
     <string name="fmt_planet_in_degree">%1$s в %2$d\u00b0 %3$s</string>
 
     <string-array name="constell_genitive">

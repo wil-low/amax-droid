@@ -9,7 +9,7 @@ import com.astromaximum.util.Event;
 public class AspectHolder extends ViewHolder {
 	public AspectHolder(SummaryItem si) {
 		super(si, R.layout.item_aspect, LAYOUT_FLAG_PLANET0
-				| LAYOUT_FLAG_ASPECT | LAYOUT_FLAG_PLANET1 | LAYOUT_FLAG_TEXT0 | LAYOUT_FLAG_INFO);
+				| LAYOUT_FLAG_ASPECT | LAYOUT_FLAG_PLANET1 | LAYOUT_FLAG_TEXT0);
 	}
 
 	@Override
@@ -24,11 +24,9 @@ public class AspectHolder extends ViewHolder {
 					e.mPlanet1));
 			if (mIsSummaryMode) {
 				mText0.setVisibility(View.GONE);
-				mInfo.setVisibility(View.GONE);
 			} else {
 				mText0.setText(Event.long2String(e.mDate[0], Event.mMonthAbbrDayDateFormat, false));
 				setColorByEventMode(mText0, e);
-				mInfo.setVisibility(View.INVISIBLE);
 			}
 		}
 	}

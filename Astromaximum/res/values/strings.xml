@@ -8,7 +8,7 @@
     <string name="pref_show_all_texts">Show all texts</string>
     <string name="app_name">Astromaximum</string>
     <string name="pick_date">Select date</string>
-    <string name="title_date_format">MMM d, EEE</string>
+    <string name="title_date_format">EEE MMM d, yyyy</string>
     <string name="month_abbr_day_date_format">MMM d</string>
     <string name="interpretation_dir">en</string>
     <string name="hour_of">Hour of</string>
@@ -35,11 +35,15 @@
     <string name="pref_custom_time">Use custom time</string>
     <string name="use_custom_time">Highlight events at</string>
     <string name="use_current_time">Highlight events at current time</string>
+    <string name="pref_volume_button_navigation">Navigate with volume buttons</string>
     
     <string name="no_aspects">No aspects</string>
     <string name="no_retrograde">No retrograde planets</string>
     <string name="no_vc">No VC</string>
     <string name="no_voc">No VOC</string>
+    
+    <string name="previous_day">Previous day</string>
+    <string name="next_day">Next day</string>
     
     <string-array name="planets">
         <item>Sun</item>
@@ -54,7 +58,19 @@
         <item>Pluto</item>
     </string-array>
 
-    <string name="fmt_retrograde_motion">Retrograde motion of %1$s</string>
+    <string-array name="planets_retrograde">
+        <item>NA</item>
+        <item>NA</item>
+        <item>Retrograde Mercury</item>
+        <item>Retrograde Venus</item>
+        <item>Retrograde Mars</item>
+        <item>Retrograde Jupiter</item>
+        <item>Retrograde Saturn</item>
+        <item>Retrograde Uranus</item>
+        <item>Retrograde Neptun</item>
+        <item>Retrograde Pluto</item>
+    </string-array>
+    
     <string name="fmt_planet_in_degree">%1$s in %2$d\u00b0 of %3$s</string>
 
     <string-array name="constell_genitive">

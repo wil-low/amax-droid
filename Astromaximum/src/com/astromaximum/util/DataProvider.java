@@ -738,7 +738,8 @@ public class DataProvider {
 	}
 
 	public String getCurrentDateString() {
-		return (String) DateFormat.format(mTitleDateFormat, mCalendar);
+		String s = (String) DateFormat.format(mTitleDateFormat, mCalendar);
+		return Character.toUpperCase(s.charAt(0)) + s.substring(1);
 	}
 
 	public long getCustomTime() {

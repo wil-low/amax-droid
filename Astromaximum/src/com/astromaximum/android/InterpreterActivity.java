@@ -1,16 +1,16 @@
 package com.astromaximum.android;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.Html;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.SherlockActivity;
 import com.astromaximum.util.DataProvider;
 import com.astromaximum.util.Event;
 import com.astromaximum.util.MyLog;
 
-public class InterpreterActivity extends Activity {
+public class InterpreterActivity extends SherlockActivity {
 
 	private static String TAG = "InterpreterActivity";
 	private Context mContext;
@@ -20,6 +20,7 @@ public class InterpreterActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		mContext = this;
 		setContentView(R.layout.activity_interpreter);
+		getSupportActionBar().setDisplayShowHomeEnabled(false);
 
 		DataProvider.getInstance(getApplicationContext());
 
@@ -28,10 +29,8 @@ public class InterpreterActivity extends Activity {
 		Event ev = getIntent().getParcelableExtra(
 				PreferenceUtils.LISTKEY_INTERPRETER_EVENT);
 
-		setTitle(makeTitle(ev));
-
-		TextView header = (TextView) findViewById(R.id.textHeader);
-		header.setText(makeHeader(ev));
+		getSupportActionBar().setTitle(makeTitle(ev));
+		getSupportActionBar().setSubtitle(makeSubTitle(ev));
 
 		TextView interpreter = (TextView) findViewById(R.id.textInterpretation);
 		if (text != null)
@@ -60,7 +59,7 @@ public class InterpreterActivity extends Activity {
 		return mContext.getResources().getString(id);
 	}
 
-	private String makeTitle(Event ev) {
+	private String makeSubTitle(Event ev) {
 		int id = 0;
 		switch (ev.mEvtype) {
 		case Event.EV_VOC:
@@ -107,15 +106,12 @@ public class InterpreterActivity extends Activity {
 			return getStr(R.string.si_key_tithi) + " "
 					+ Integer.toString(ev.getDegree());
 		case Event.EV_RETROGRADE:
-			return String
-					.format(getStr(R.string.fmt_retrograde_motion),
-							mContext.getResources().getStringArray(
-									R.array.planets_genitive)[ev.mPlanet0]);
+			return mContext.getResources().getStringArray(R.array.planets_retrograde)[ev.mPlanet0];
 		}
 		return getStr(id);
 	}
 
-	private String makeHeader(Event e) {
+	private String makeTitle(Event e) {
 		StringBuilder result = new StringBuilder();
 
 		switch (e.mEvtype) {
