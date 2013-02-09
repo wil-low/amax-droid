@@ -1,11 +1,14 @@
 package com.astromaximum.android;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.astromaximum.util.DataProvider;
 import com.astromaximum.util.Event;
 import com.astromaximum.util.MyLog;
@@ -14,6 +17,7 @@ public class InterpreterActivity extends SherlockActivity {
 
 	private static String TAG = "InterpreterActivity";
 	private Context mContext;
+	private TextView mInterpreter;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -32,9 +36,32 @@ public class InterpreterActivity extends SherlockActivity {
 		getSupportActionBar().setTitle(makeTitle(ev));
 		getSupportActionBar().setSubtitle(makeSubTitle(ev));
 
-		TextView interpreter = (TextView) findViewById(R.id.textInterpretation);
+		mInterpreter = (TextView) findViewById(R.id.textInterpretation);
 		if (text != null)
-			interpreter.setText(Html.fromHtml(text));
+			mInterpreter.setText(Html.fromHtml(text));
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		getSupportMenuInflater().inflate(R.menu.interpreter, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		super.onOptionsItemSelected(item);
+		switch (item.getItemId()) {
+		case R.id.menu_share:
+			Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+			emailIntent.setType("text/plain");
+			emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Astromaximum: " + getSupportActionBar().getSubtitle());
+			String text = getSupportActionBar().getSubtitle() + "\n" + getSupportActionBar().getTitle() + "\n\n" + mInterpreter.getText();
+			emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, text);
+			startActivity(emailIntent);
+			break;
+		}
+		return true;
 	}
 
 	@Override
@@ -96,8 +123,8 @@ public class InterpreterActivity extends SherlockActivity {
 			return String
 					.format(getStr(R.string.fmt_aspect),
 							mContext.getResources().getStringArray(
-									R.array.aspect)[Event.ASPECT_MAP
-									.get(ev.getDegree())],
+									R.array.aspect)[Event.ASPECT_MAP.get(ev
+									.getDegree())],
 							mContext.getResources().getStringArray(
 									R.array.planets)[ev.mPlanet0],
 							mContext.getResources().getStringArray(
@@ -106,7 +133,8 @@ public class InterpreterActivity extends SherlockActivity {
 			return getStr(R.string.si_key_tithi) + " "
 					+ Integer.toString(ev.getDegree());
 		case Event.EV_RETROGRADE:
-			return mContext.getResources().getStringArray(R.array.planets_retrograde)[ev.mPlanet0];
+			return mContext.getResources().getStringArray(
+					R.array.planets_retrograde)[ev.mPlanet0];
 		}
 		return getStr(id);
 	}
