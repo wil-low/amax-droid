@@ -9,11 +9,6 @@
     <dimen name="list_item_side_padding">4sp</dimen>
     <dimen name="event_list_item_right_padding">40sp</dimen>
         
-    <color name="main_text">#FFFFFF</color>
-    <color name="blue_mark">#1794F7</color>
-    <color name="red_mark">#FF1800</color>
-    <color name="events_missing">#585858</color>
-    
     <dimen name="interp_text_size">18sp</dimen>
     <dimen name="interp_margin">5sp</dimen>
     
