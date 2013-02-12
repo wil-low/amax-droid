@@ -42,7 +42,7 @@
         android:layout_gravity="center"
         android:layout_toLeftOf="@+id/ShowEventList"
         android:gravity="right"
-        android:paddingRight="@dimen/show_list_padding"
+        android:paddingRight="@dimen/date_padding_right"
         android:text="Text0"
         android:textSize="@dimen/list_item_text_size" />
 
@@ -54,6 +54,7 @@
         android:layout_centerVertical="true"
         android:layout_gravity="center"
         android:background="@android:drawable/list_selector_background"
+        android:padding="@dimen/show_list_padding"
         android:src="@drawable/item_list" />
 
 </RelativeLayout>

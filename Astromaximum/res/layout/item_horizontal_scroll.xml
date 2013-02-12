@@ -11,8 +11,8 @@
         android:id="@+id/HorizontalScrollView"
         android:layout_width="0dip"
         android:layout_height="fill_parent"
-                android:paddingRight="@dimen/show_list_padding"
-        android:layout_weight="1" >
+        android:layout_weight="1"
+        android:paddingRight="@dimen/date_padding_right" >
 
         <LinearLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
@@ -29,6 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:background="@android:drawable/list_selector_background"
+        android:padding="@dimen/show_list_padding"
         android:src="@drawable/item_list" />
 
 </LinearLayout>
