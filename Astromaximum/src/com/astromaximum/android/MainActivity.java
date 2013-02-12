@@ -172,7 +172,7 @@ public class MainActivity extends SherlockActivity {
 	private void updateTitle() {
 		mTitleDate = mDataProvider.getCurrentDateString();
 		getSupportActionBar().setTitle(mTitleDate);
-		getSupportActionBar().setSubtitle(mDataProvider.getLocationName());
+		getSupportActionBar().setSubtitle(mDataProvider.getHighlightTimeString() + ", " + mDataProvider.getLocationName());
 	}
 
 	private void previousDate() {
