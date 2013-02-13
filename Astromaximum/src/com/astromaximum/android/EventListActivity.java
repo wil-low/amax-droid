@@ -26,6 +26,7 @@ public class EventListActivity extends SherlockActivity {
 	private Context mContext;
 	private int mKey;
 	private String mKeyDescription;
+	private boolean mUseVolumeButtons;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -98,6 +99,7 @@ public class EventListActivity extends SherlockActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		mUseVolumeButtons = PreferenceUtils.getUseVolumeButtons(mContext);
 		MyLog.d(TAG, "OnResume");
 	}
 
@@ -111,11 +113,11 @@ public class EventListActivity extends SherlockActivity {
 	public boolean dispatchKeyEvent(KeyEvent event) {
 		switch (event.getKeyCode()) {
 		case KeyEvent.KEYCODE_VOLUME_DOWN:
-			if (event.getAction() == KeyEvent.ACTION_DOWN)
+			if (mUseVolumeButtons && event.getAction() == KeyEvent.ACTION_DOWN)
 				previousDate();
 			return true;
 		case KeyEvent.KEYCODE_VOLUME_UP:
-			if (event.getAction() == KeyEvent.ACTION_DOWN)
+			if (mUseVolumeButtons && event.getAction() == KeyEvent.ACTION_DOWN)
 				nextDate();
 			return true;
 		}

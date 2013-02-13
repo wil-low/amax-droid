@@ -10,13 +10,14 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
+import com.actionbarsherlock.app.SherlockPreferenceActivity;
+import com.actionbarsherlock.view.MenuItem;
 import com.astromaximum.util.DataProvider;
 import com.astromaximum.util.MyLog;
 
-public class Preferences extends PreferenceActivity {
+public class Preferences extends SherlockPreferenceActivity {
 	private final String TAG = "Preferences";
 	private ListPreference mLocationsPreference;
 	private CheckBoxPreference mUseCustomTimePreference;
@@ -29,6 +30,11 @@ public class Preferences extends PreferenceActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.preferences);
+		
+		getSupportActionBar().setTitle(R.string.prefs_title);
+		getSupportActionBar().setDisplayShowHomeEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		
 		mDataProvider = DataProvider.getInstance(this);
 
 		mLocationsPreference = (ListPreference) findPreference(PreferenceUtils.KEY_LOCATION_ID);
@@ -60,7 +66,7 @@ public class Preferences extends PreferenceActivity {
 				.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 					public boolean onPreferenceChange(Preference preference,
 							Object newValue) {
-						setListTitle((ListPreference) preference,
+						setListSummary((ListPreference) preference,
 								PreferenceUtils.KEY_LOCATION_ID,
 								(String) newValue);
 						return true;
@@ -84,6 +90,17 @@ public class Preferences extends PreferenceActivity {
 						return true;
 					}
 				});
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		super.onOptionsItemSelected(item);
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			break;
+		}
+		return true;
 	}
 
 	private void populateCitiesList() {
@@ -114,25 +131,13 @@ public class Preferences extends PreferenceActivity {
 		}
 	};
 
-	private void setListTitle(ListPreference preference, String key,
-			String value) {
-		if (value != null) {
-			preference.setTitle(preference.getEntries()[preference
-					.findIndexOfValue(value)]);
-			SharedPreferences.Editor editor = PreferenceManager
-					.getDefaultSharedPreferences(this).edit();
-			editor.putString(key, value);
-			editor.commit();
-		}
-	};
-
 	@Override
 	protected void onResume() {
 		super.onResume();
 		MyLog.d(TAG, "OnResume");
 		String locationId = PreferenceUtils.getLocationId(this);
 		try {
-			setListTitle(mLocationsPreference,
+			setListSummary(mLocationsPreference,
 					PreferenceUtils.KEY_LOCATION_ID, locationId);
 			mLocationsPreference.setValue(locationId);
 		} catch (ArrayIndexOutOfBoundsException ex) {

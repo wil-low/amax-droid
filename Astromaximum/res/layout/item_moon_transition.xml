@@ -34,7 +34,7 @@
         android:gravity="center"
         android:paddingLeft="@dimen/list_item_side_padding"
         android:paddingRight="@dimen/list_item_side_padding"
-        android:text=">"
+        android:text="@string/norm_range_arrow"
         android:textSize="@dimen/list_item_text_size" />
 
     <TextView

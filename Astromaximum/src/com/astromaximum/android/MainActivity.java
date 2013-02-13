@@ -30,6 +30,7 @@ public class MainActivity extends SherlockActivity {
 	private DataProvider mDataProvider;
 	private String mTitleDate;
 	private Context mContext;
+	private boolean mUseVolumeButtons;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -127,6 +128,7 @@ public class MainActivity extends SherlockActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		mUseVolumeButtons = PreferenceUtils.getUseVolumeButtons(mContext);
 		MyLog.d(TAG, "OnResume");
 	}
 
@@ -191,11 +193,11 @@ public class MainActivity extends SherlockActivity {
 	public boolean dispatchKeyEvent(KeyEvent event) {
 		switch (event.getKeyCode()) {
 		case KeyEvent.KEYCODE_VOLUME_DOWN:
-			if (event.getAction() == KeyEvent.ACTION_DOWN)
+			if (mUseVolumeButtons && event.getAction() == KeyEvent.ACTION_DOWN)
 				previousDate();
 			return true;
 		case KeyEvent.KEYCODE_VOLUME_UP:
-			if (event.getAction() == KeyEvent.ACTION_DOWN)
+			if (mUseVolumeButtons && event.getAction() == KeyEvent.ACTION_DOWN)
 				nextDate();
 			return true;
 		}

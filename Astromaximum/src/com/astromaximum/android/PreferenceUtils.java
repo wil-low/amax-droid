@@ -24,6 +24,7 @@ public final class PreferenceUtils {
 	public static final String KEY_USE_CUSTOM_TIME = "use_custom_time";
 	public static final String KEY_CUSTOM_TIME = "custom_time";
 	public static final String KEY_START_PAGE_LAYOUT = "start_page_layout";
+	public static final String KEY_USE_VOLUME_BUTTONS = "use_volume_buttons";
 	static final String KEY_STARTPAGE_ITEM_INDEX = "startpage_item_index";
 	static final String KEY_STARTPAGE_ITEM_ENABLED = "startpage_item_enabled";
 	private static final String TAG = "PreferenceUtils";
@@ -39,6 +40,13 @@ public final class PreferenceUtils {
 				.getDefaultSharedPreferences(context);
 		return sharedPref
 				.getBoolean(PreferenceUtils.KEY_USE_CUSTOM_TIME, false);
+	}
+
+	public static boolean getUseVolumeButtons(Context context) {
+		SharedPreferences sharedPref = PreferenceManager
+				.getDefaultSharedPreferences(context);
+		return sharedPref
+				.getBoolean(PreferenceUtils.KEY_USE_VOLUME_BUTTONS, false);
 	}
 
 	public static TreeMap<String, String> getSortedLocations(Context context) {

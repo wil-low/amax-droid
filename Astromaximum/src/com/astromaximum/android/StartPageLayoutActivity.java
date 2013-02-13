@@ -2,18 +2,19 @@ package com.astromaximum.android;
 
 import java.util.ArrayList;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.MenuItem;
 import com.astromaximum.android.view.StartPageLayoutAdapter;
 import com.astromaximum.android.view.ViewHolder;
 import com.astromaximum.util.MyLog;
 import com.astromaximum.util.StartPageItem;
 import com.mobeta.android.dslv.DragSortListView;
 
-public class StartPageLayoutActivity extends Activity {
+public class StartPageLayoutActivity extends SherlockActivity {
 
 	protected static final String TAG = "StartPageLayoutActivity";
 	private StartPageLayoutAdapter mAdapter;
@@ -22,6 +23,11 @@ public class StartPageLayoutActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_start_page_layout);
+
+		getSupportActionBar().setTitle(R.string.start_page_layout);
+		getSupportActionBar().setDisplayShowHomeEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		
 		ViewHolder.initialize(this);
 
 		ArrayList<StartPageItem> checkList = PreferenceUtils.getStartPageLayout(this);
@@ -39,6 +45,17 @@ public class StartPageLayoutActivity extends Activity {
 				mAdapter.notifyDataSetChanged();
 			}
 		});
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		super.onOptionsItemSelected(item);
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			break;
+		}
+		return true;
 	}
 
 	@Override

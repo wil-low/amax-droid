@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="pref_current_city">Выбрать текущий город</string>
+    <string name="pref_current_city">Текущий город</string>
     <string name="prefs_title">Настройки</string>
     <string name="today_title">Сегодня</string>
     <string name="help_title">Помощь</string>
@@ -36,7 +36,8 @@
     <string name="pref_custom_time">Произвольное время</string>
     <string name="use_custom_time">Выделить события на</string>
     <string name="use_current_time">Выделить события на текущее время</string>
-    <string name="pref_volume_button_navigation">Навигация клавишами громкости</string>
+    <string name="pref_volume_button_navigation">Клавиши громкости</string>
+    <string name="pref_volume_button_navigation_summary">Листать клавишами громкости</string>
     
     <string name="no_aspects">Нет аспектов</string>
     <string name="no_retrograde">Нет ретроградных планет</string>
