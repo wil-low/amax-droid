@@ -113,11 +113,15 @@ public class EventListActivity extends SherlockActivity {
 	public boolean dispatchKeyEvent(KeyEvent event) {
 		switch (event.getKeyCode()) {
 		case KeyEvent.KEYCODE_VOLUME_DOWN:
-			if (mUseVolumeButtons && event.getAction() == KeyEvent.ACTION_DOWN)
+			if (!mUseVolumeButtons)
+				break;
+			if (event.getAction() == KeyEvent.ACTION_DOWN)
 				previousDate();
 			return true;
 		case KeyEvent.KEYCODE_VOLUME_UP:
-			if (mUseVolumeButtons && event.getAction() == KeyEvent.ACTION_DOWN)
+			if (!mUseVolumeButtons)
+				break;
+			if (event.getAction() == KeyEvent.ACTION_DOWN)
 				nextDate();
 			return true;
 		}
