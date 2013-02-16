@@ -1,6 +1,7 @@
 package com.astromaximum.android;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -12,7 +13,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.SectionIndexer;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockActivity;
@@ -22,10 +23,12 @@ import com.androidquery.callback.AjaxStatus;
 import com.astromaximum.android.view.ViewHolder;
 import com.astromaximum.util.DataProvider;
 import com.astromaximum.util.MyLog;
+import com.woozzu.android.util.StringMatcher;
+import com.woozzu.android.widget.IndexableListView;
 
 public class LocationListActivity extends SherlockActivity {
 	private final String TAG = "LocationListActivity";
-	private ListView mEventList;
+	private IndexableListView mEventList;
 	private DataProvider mDataProvider;
 	private Context mContext;
 	private ProgressDialog mProgressDialog;
@@ -48,7 +51,7 @@ public class LocationListActivity extends SherlockActivity {
 		mAQuery = new AQuery(mContext);
 		setContentView(R.layout.activity_location_list);
 		ViewHolder.initialize(mContext);
-		mEventList = (ListView) findViewById(R.id.ListViewEvents);
+		mEventList = (IndexableListView) findViewById(R.id.ListViewEvents);
 
 		findViewById(R.id.btn_download).setOnClickListener(
 				new View.OnClickListener() {
@@ -83,6 +86,7 @@ public class LocationListActivity extends SherlockActivity {
 					}
 
 				});
+		mEventList.setFastScrollEnabled(true);
 	}
 
 	@Override
@@ -144,7 +148,7 @@ public class LocationListActivity extends SherlockActivity {
 					mIdentifierList.add(arr1.getInt(0));
 					mNameList.add(arr1.getString(1));
 				}
-				ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+				ContentAdapter adapter = new ContentAdapter(
 						mContext, android.R.layout.simple_list_item_1,
 						mNameList);
 				mEventList.setAdapter(adapter);
@@ -155,7 +159,49 @@ public class LocationListActivity extends SherlockActivity {
 		} else {
 			// ajax error, show error code
 			Toast.makeText(mAQuery.getContext(), "Error:" + status.getCode(),
-					Toast.LENGTH_LONG).show();
+					Toast.LENGTH_SHORT).show();
 		}
 	}
+
+    private class ContentAdapter extends ArrayAdapter<String> implements SectionIndexer {
+    	
+    	private String mSections = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    	
+		public ContentAdapter(Context context, int textViewResourceId,
+				List<String> objects) {
+			super(context, textViewResourceId, objects);
+		}
+
+		public int getPositionForSection(int section) {
+			// If there is no item for current section, previous section will be selected
+			for (int i = section; i >= 0; i--) {
+				for (int j = 0; j < getCount(); j++) {
+					if (i == 0) {
+						// For numeric section
+						for (int k = 0; k <= 9; k++) {
+							if (StringMatcher.match(String.valueOf(getItem(j).charAt(0)), String.valueOf(k)))
+								return j;
+						}
+					} else {
+						if (StringMatcher.match(String.valueOf(getItem(j).charAt(0)), String.valueOf(mSections.charAt(i))))
+							return j;
+					}
+				}
+			}
+			return 0;
+		}
+
+		public int getSectionForPosition(int position) {
+			return 0;
+		}
+
+		public Object[] getSections() {
+			String[] sections = new String[mSections.length()];
+			for (int i = 0; i < mSections.length(); i++)
+				sections[i] = String.valueOf(mSections.charAt(i));
+			return sections;
+		}
+    }
 }
+
+	

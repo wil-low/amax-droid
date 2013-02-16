@@ -6,15 +6,14 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <ListView
+    <com.woozzu.android.widget.IndexableListView
         android:id="@+id/ListViewEvents"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_above="@+id/btn_download"
         android:layout_alignParentLeft="true"
         android:minHeight="@dimen/list_item_height"
-        tools:listitem="@android:layout/simple_list_item_1" >
-    </ListView>
+        tools:listitem="@android:layout/simple_list_item_1" />
 
     <Button
         android:id="@+id/btn_download"
