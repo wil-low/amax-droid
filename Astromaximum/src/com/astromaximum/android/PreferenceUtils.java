@@ -25,6 +25,7 @@ public final class PreferenceUtils {
 	public static final String KEY_CUSTOM_TIME = "custom_time";
 	public static final String KEY_START_PAGE_LAYOUT = "start_page_layout";
 	public static final String KEY_USE_VOLUME_BUTTONS = "use_volume_buttons";
+	public static final String KEY_DOWNLOAD_MORE = "download_more";
 	static final String KEY_STARTPAGE_ITEM_INDEX = "startpage_item_index";
 	static final String KEY_STARTPAGE_ITEM_ENABLED = "startpage_item_enabled";
 	private static final String TAG = "PreferenceUtils";

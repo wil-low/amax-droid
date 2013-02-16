@@ -8,6 +8,10 @@
         android:title="@string/pref_current_city" >
     </ListPreference>
 
+    <Preference
+        android:key="download_more"
+        android:title="@string/pref_download_more" />
+    
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="use_custom_time"

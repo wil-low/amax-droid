@@ -23,27 +23,27 @@ public class Preferences extends SherlockPreferenceActivity {
 	private CheckBoxPreference mUseCustomTimePreference;
 	private DataProvider mDataProvider;
 	private TimePreference mCustomTimePreference;
-	private Preference mStartPageLayout;
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.preferences);
-		
+
 		getSupportActionBar().setTitle(R.string.prefs_title);
 		getSupportActionBar().setDisplayShowHomeEnabled(true);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		
+
 		mDataProvider = DataProvider.getInstance(this);
 
 		mLocationsPreference = (ListPreference) findPreference(PreferenceUtils.KEY_LOCATION_ID);
 		mUseCustomTimePreference = (CheckBoxPreference) findPreference(PreferenceUtils.KEY_USE_CUSTOM_TIME);
 		mCustomTimePreference = (TimePreference) findPreference(PreferenceUtils.KEY_CUSTOM_TIME);
-		mStartPageLayout = (Preference) findPreference(PreferenceUtils.KEY_START_PAGE_LAYOUT);
+		Preference startPageLayout = (Preference) findPreference(PreferenceUtils.KEY_START_PAGE_LAYOUT);
+		Preference downloadMore = (Preference) findPreference(PreferenceUtils.KEY_DOWNLOAD_MORE);
 
 		final Context context = this;
-		mStartPageLayout
+		startPageLayout
 				.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 					public boolean onPreferenceClick(Preference preference) {
 						Intent intent = new Intent(context,
@@ -52,6 +52,16 @@ public class Preferences extends SherlockPreferenceActivity {
 						return true;
 					}
 				});
+		downloadMore
+				.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+					public boolean onPreferenceClick(Preference preference) {
+						Intent intent = new Intent(context,
+								LocationListActivity.class);
+						startActivity(intent);
+						return true;
+					}
+				});
+		
 		populateCitiesList();
 
 		SharedPreferences pref = PreferenceManager
