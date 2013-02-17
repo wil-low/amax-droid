@@ -286,11 +286,11 @@ public class DataProvider {
 		}
 	}
 
-	long getStartJD() {
+	public long getStartJD() {
 		return mStartJD;
 	}
 
-	long getFinalJD() {
+	public long getFinalJD() {
 		return mFinalJD;
 	}
 
@@ -422,12 +422,18 @@ public class DataProvider {
 		return lastLocationId;
 	}
 
-	public void changeDate(int deltaDays) {
+	public boolean changeDate(int deltaDays) {
 		// stick to noon to determine date
+		long newDate = mStartTime + MSECINDAY * deltaDays + MSECINDAY / 2;
+		if (deltaDays < 0 && newDate < mStartJD)
+			return false;
+		if (deltaDays > 0 && newDate > mFinalJD)
+			return false;
 		mEventCache.clear();
-		mStartTime += MSECINDAY * deltaDays + MSECINDAY / 2;
+		mStartTime = newDate;
 		mCalendar.setTimeInMillis(mStartTime);
 		setDateFromCalendar();
+		return true;
 	}
 
 	public void setDate(int year, int month, int day) {

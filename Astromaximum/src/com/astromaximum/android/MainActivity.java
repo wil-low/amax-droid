@@ -1,14 +1,14 @@
 package com.astromaximum.android;
 
-import android.app.DatePickerDialog;
+import net.simonvt.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.widget.DatePicker;
 import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockActivity;
@@ -63,8 +63,8 @@ public class MainActivity extends SherlockActivity {
 
 	// the callback received when the user "sets" the date in the dialog
 	private DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
-		public void onDateSet(DatePicker view, int year, int monthOfYear,
-				int dayOfMonth) {
+		public void onDateSet(net.simonvt.widget.DatePicker view, int year,
+				int monthOfYear, int dayOfMonth) {
 			DataProvider.getInstance().setDate(year, monthOfYear, dayOfMonth);
 			updateDisplay();
 		}
@@ -105,14 +105,23 @@ public class MainActivity extends SherlockActivity {
 		}
 		return true;
 	}
-
+	
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
 		case DATE_DIALOG_ID:
-			return new DatePickerDialog(this, mDateSetListener,
+			DatePickerDialog dlg = new DatePickerDialog(this, mDateSetListener,
 					mDataProvider.getYear(), mDataProvider.getMonth(),
 					mDataProvider.getDay());
+			dlg.getDatePicker().setMinDate(mDataProvider.getStartJD());
+			dlg.getDatePicker().setMaxDate(mDataProvider.getFinalJD());
+			dlg.setTitle(R.string.pick_date);
+	        dlg.setButton(Dialog.BUTTON_POSITIVE, mContext.getText(android.R.string.ok), dlg);
+	        dlg.setButton(Dialog.BUTTON_NEGATIVE, mContext.getText(android.R.string.cancel), (OnClickListener) null);
+
+			//dlg.getButton(Dialog.BUTTON).setText(android.R.string.ok);
+			//dlg.getButton(Dialog.BUTTON_NEGATIVE).setText(android.R.string.cancel);
+			return dlg;
 		default:
 			return null;
 		}
@@ -179,14 +188,14 @@ public class MainActivity extends SherlockActivity {
 
 	private void previousDate() {
 		MyLog.d(TAG, "previousDate");
-		mDataProvider.changeDate(-1);
-		updateDisplay();
+		if (mDataProvider.changeDate(-1))
+			updateDisplay();
 	}
 
 	private void nextDate() {
 		MyLog.d(TAG, "nextDate");
-		mDataProvider.changeDate(1);
-		updateDisplay();
+		if (mDataProvider.changeDate(1))
+			updateDisplay();
 	}
 
 	@Override
