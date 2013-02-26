@@ -6,7 +6,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.astromaximum.android.R;
-import com.astromaximum.util.Event;
+import com.astromaximum.android.util.Event;
 
 public abstract class ScrollableHolder extends ViewHolder {
 

@@ -1,4 +1,4 @@
-package com.astromaximum.util;
+package com.astromaximum.android.util;
 
 import java.util.ArrayList;
 

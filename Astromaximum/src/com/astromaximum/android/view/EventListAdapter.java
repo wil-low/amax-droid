@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
-import com.astromaximum.util.Event;
+import com.astromaximum.android.util.Event;
 
 public class EventListAdapter extends ArrayAdapter<Event> {
 	private int mKey;

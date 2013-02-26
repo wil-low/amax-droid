@@ -8,8 +8,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.astromaximum.util.MyLog;
-import com.astromaximum.util.StartPageItem;
+import com.astromaximum.android.util.StartPageItem;
 
 public final class PreferenceUtils {
 	public static final int ID_PREFERENCE = 1;

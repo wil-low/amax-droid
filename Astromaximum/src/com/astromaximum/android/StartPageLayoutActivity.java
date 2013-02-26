@@ -8,10 +8,10 @@ import android.preference.PreferenceManager;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.MenuItem;
+import com.astromaximum.android.util.MyLog;
+import com.astromaximum.android.util.StartPageItem;
 import com.astromaximum.android.view.StartPageLayoutAdapter;
 import com.astromaximum.android.view.ViewHolder;
-import com.astromaximum.util.MyLog;
-import com.astromaximum.util.StartPageItem;
 import com.mobeta.android.dslv.DragSortListView;
 
 public class StartPageLayoutActivity extends SherlockActivity {

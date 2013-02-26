@@ -20,9 +20,9 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Window;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxStatus;
+import com.astromaximum.android.util.DataProvider;
+import com.astromaximum.android.util.MyLog;
 import com.astromaximum.android.view.ViewHolder;
-import com.astromaximum.util.DataProvider;
-import com.astromaximum.util.MyLog;
 import com.woozzu.android.util.StringMatcher;
 import com.woozzu.android.widget.IndexableListView;
 

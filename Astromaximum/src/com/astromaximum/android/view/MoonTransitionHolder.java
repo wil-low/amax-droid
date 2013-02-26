@@ -4,9 +4,9 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.astromaximum.android.R;
-import com.astromaximum.util.AstroFont;
-import com.astromaximum.util.DataProvider;
-import com.astromaximum.util.Event;
+import com.astromaximum.android.util.AstroFont;
+import com.astromaximum.android.util.DataProvider;
+import com.astromaximum.android.util.Event;
 
 public class MoonTransitionHolder extends ViewHolder {
 	private TextView mTransitionSignView;

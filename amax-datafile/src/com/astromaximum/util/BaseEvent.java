@@ -1,19 +1,6 @@
 package com.astromaximum.util;
 
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
-
-import android.content.Context;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.text.format.DateFormat;
-import android.util.SparseIntArray;
-
-import com.astromaximum.android.R;
-
-final public class Event implements Parcelable {
+public class BaseEvent {
 	public static final byte SE_SUN = 0;
 	public static final byte SE_MOON = 1;
 	public static final byte SE_MERCURY = 2;
@@ -27,12 +14,6 @@ final public class Event implements Parcelable {
 	public static final byte SE_TRUE_NODE = 10;
 	public static final byte SE_MEAN_APOG = 11;
 	public static final byte SE_WHITE_MOON = 12;
-
-	private static final String[] PLANET_STR = { "??", "SO", "MO", "ME", "VE",
-			"MA", "JU", "SA", "UR", "NE", "PL", "TN", "AP", "WM" };
-
-	public static final String[] CONSTELL_STR = { "Ari", "Tau", "Gem", "Cnc",
-			"Leo", "Vir", "Lib", "Sco", "Sgr", "Cap", "Aqu", "Psc" };
 
 	public static final int EV_VOC = 0; // void of course
 	public static final int EV_SIGN_ENTER = 1; // enter into sign
@@ -152,58 +133,28 @@ final public class Event implements Parcelable {
 	// Any changes above must be synched with %eventType in tools.pm
 	// and EventType in mutter2/events.h !!!
 
-	// angle: (ordinal number, aspect goodness(0 - conjunction, 1 - bad, 2 -
-	// good))
-	// ASPECT = {0: (0, 0), 180: (1, 1), 120: (2, 2), 90: (3, 1), 60: (4, 2),
-	// 45: (5, 2)}
-	public static final SparseIntArray ASPECT_GOODNESS = new SparseIntArray();
-	static {
-		ASPECT_GOODNESS.put(0, 0);
-		ASPECT_GOODNESS.put(180, 1);
-		ASPECT_GOODNESS.put(120, 2);
-		ASPECT_GOODNESS.put(90, 1);
-		ASPECT_GOODNESS.put(60, 2);
-		ASPECT_GOODNESS.put(45, 2);
-	}
-
-	public static final SparseIntArray ASPECT_MAP = new SparseIntArray();
-	static {
-		ASPECT_MAP.put(0, 0);
-		ASPECT_MAP.put(180, 1);
-		ASPECT_MAP.put(120, 2);
-		ASPECT_MAP.put(90, 3);
-		ASPECT_MAP.put(60, 4);
-		ASPECT_MAP.put(45, 5);
-	}
-
 	public static final long ROUNDING_MSEC = 60 * 1000;
-
-	// TODO Move USE_EXACT_RANGE to settings
-	private static final boolean USE_EXACT_RANGE = false;
-	public static final String DEFAULT_DATE_FORMAT = "yyyy-MMM-dd";
 
 	public int mEvtype = 0;
 	public byte mPlanet0;
 	public byte mPlanet1 = -1;
 	public long[] mDate = new long[2];
-	short mDegree = 127;
+	public short mDegree = 127;
 
-	private static long mPeriod0;
-	private static long mPeriod1;
-	private static Calendar mCalendar;
-	private static Context mContext;
-	public static String mMonthAbbrDayDateFormat;
-
+	public BaseEvent() {
+		
+	}
+	
 	/**
 	 * @param dat
 	 * @param planet
 	 */
-	Event(long date, int planet) {
+	protected BaseEvent(long date, int planet) {
 		mPlanet0 = (byte) planet;
 		mDate[0] = mDate[1] = date;
 	}
 
-	public Event(int evType, long date0, long date1, int planet0, int planet1,
+	public BaseEvent(int evType, long date0, long date1, int planet0, int planet1,
 			int degree) {
 		mEvtype = evType;
 		mDate[0] = date0;
@@ -242,50 +193,13 @@ final public class Event implements Parcelable {
 	 * @param event
 	 *            Event
 	 */
-	public Event(Event event) {
+	public BaseEvent(BaseEvent event) {
 		mPlanet0 = event.mPlanet0;
 		mPlanet1 = event.mPlanet1;
 		mDate[0] = event.mDate[0];
 		mDate[1] = event.mDate[1];
 		mDegree = event.mDegree;
 		mEvtype = event.mEvtype;
-	}
-
-	public String toString() {
-		return "Event: (" + mEvtype + " " + getEvTypeStr() + " "
-				+ long2String(mDate[0], DEFAULT_DATE_FORMAT, false) + " - "
-				+ long2String(mDate[1], DEFAULT_DATE_FORMAT, false) + " "
-				+ getPlanetName(mPlanet0) + "-" + getPlanetName(mPlanet1)
-				+ " d " + mDegree + ")";
-	}
-
-	public static String getPlanetName(byte planet) {
-		return PLANET_STR[planet + 1];
-	}
-
-	public static String long2String(long date0, String dateFormat, boolean h24) {
-		mCalendar.setTimeInMillis(date0);
-		final StringBuffer s = new StringBuffer();
-		if (dateFormat != null) {
-			s.append(DateFormat.format(dateFormat, mCalendar));
-			s.append(" ");
-		}
-		int hh = 0, mm = 0;
-		hh = mCalendar.get(Calendar.HOUR_OF_DAY);
-		mm = mCalendar.get(Calendar.MINUTE);
-
-		if (h24 && hh + mm == 0) {
-			hh = 24;
-		}
-		s.append(to2String(hh)).append(":").append(to2String(mm));
-		//int ss = mCalendar.get(Calendar.SECOND);
-		//s.append(":").append(to2String(ss));
-
-		// if(!hoursOnly)
-		// s.append("/");
-
-		// s+=to2String(date0[index])+":"+to2String(date0[index]);
-		return s.toString();
 	}
 
 	public short getFullDegree() {
@@ -327,100 +241,8 @@ final public class Event implements Parcelable {
 		return 0;
 	}
 
-	boolean isDateBetween(int index, long start, long end) {
+	public boolean isDateBetween(int index, long start, long end) {
 		long dat = mDate[index];
 		return start <= dat && dat < end;
 	}
-
-	public int describeContents() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public void writeToParcel(Parcel out, int flags) {
-		out.writeInt(mEvtype);
-		out.writeByte(mPlanet0);
-		out.writeByte(mPlanet1);
-		out.writeLong(mDate[0]);
-		out.writeLong(mDate[1]);
-		out.writeInt(mDegree);
-	}
-
-	private Event(Parcel in) {
-		mEvtype = in.readInt();
-		mPlanet0 = in.readByte();
-		mPlanet1 = in.readByte();
-		mDate[0] = in.readLong();
-		mDate[1] = in.readLong();
-		mDegree = (short) in.readInt();
-	}
-
-	public static final Parcelable.Creator<Event> CREATOR = new Parcelable.Creator<Event>() {
-		public Event createFromParcel(Parcel in) {
-			return new Event(in);
-		}
-
-		public Event[] newArray(int size) {
-			return new Event[size];
-		}
-	};
-
-	public static void setTimeZone(String timezone) {
-		mCalendar = new GregorianCalendar(TimeZone.getTimeZone(timezone));
-	}
-
-	public static class EventDate0Comparator implements Comparator<Event> {
-		public int compare(Event o1, Event o2) {
-			return (int) (o1.mDate[0] - o2.mDate[0]);
-		}
-	}
-
-	public static void setTimeRange(long date0, long date1) {
-		mPeriod0 = date0;
-		mPeriod1 = date1;
-	}
-
-	public String normalizedRangeString() {
-		long date0 = mDate[0], date1 = mDate[1];
-		if (USE_EXACT_RANGE) {
-			if (date0 < mPeriod0)
-				date0 = mPeriod0;
-			/*
-			if (date0 > mPeriod1)
-				date0 = mPeriod1;
-
-			if (date1 < mPeriod0)
-				date1 = mPeriod0;
-			 */
-			if (date1 > mPeriod1)
-				date1 = mPeriod1;
-
-			return Event.long2String(date0, null, false) + " - "
-					+ Event.long2String(date1, null, true);
-		}
-
-		boolean isTillRequired = date0 < mPeriod0;
-		boolean isSinceRequired = date1 > mPeriod1;
-
-		if (isTillRequired && isSinceRequired)
-			return mContext.getString(R.string.norm_range_whole_day);
-
-		if (isTillRequired)
-			return mContext.getString(R.string.norm_range_arrow) + " "
-					+ Event.long2String(date1, null, true);
-
-		if (isSinceRequired)
-			return Event.long2String(date0, null, false) + " "
-					+ mContext.getString(R.string.norm_range_arrow);
-
-		return Event.long2String(date0, null, false) + " - "
-				+ Event.long2String(date1, null, true);
-	}
-
-	public static void setContext(Context context) {
-		mContext = context;
-		mMonthAbbrDayDateFormat = mContext
-				.getString(R.string.month_abbr_day_date_format);
-	}
-
 }

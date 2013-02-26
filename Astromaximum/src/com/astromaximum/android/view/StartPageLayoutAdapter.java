@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
 import com.astromaximum.android.R;
-import com.astromaximum.util.StartPageItem;
+import com.astromaximum.android.util.StartPageItem;
 
 public class StartPageLayoutAdapter extends ArrayAdapter<StartPageItem> {
 

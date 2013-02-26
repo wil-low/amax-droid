@@ -1,8 +1,8 @@
 package com.astromaximum.android.view;
 
 import com.astromaximum.android.R;
-import com.astromaximum.util.AstroFont;
-import com.astromaximum.util.Event;
+import com.astromaximum.android.util.AstroFont;
+import com.astromaximum.android.util.Event;
 
 public class MoonSignHolder extends ViewHolder {
 

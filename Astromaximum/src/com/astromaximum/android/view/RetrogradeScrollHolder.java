@@ -2,7 +2,7 @@ package com.astromaximum.android.view;
 
 import android.view.View;
 
-import com.astromaximum.util.Event;
+import com.astromaximum.android.util.Event;
 
 public class RetrogradeScrollHolder extends ScrollableHolder {
 

@@ -14,8 +14,8 @@ import android.preference.PreferenceManager;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
-import com.astromaximum.util.DataProvider;
-import com.astromaximum.util.MyLog;
+import com.astromaximum.android.util.DataProvider;
+import com.astromaximum.android.util.MyLog;
 
 public class Preferences extends SherlockPreferenceActivity {
 	private final String TAG = "Preferences";

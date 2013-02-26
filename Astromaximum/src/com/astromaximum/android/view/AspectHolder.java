@@ -3,8 +3,8 @@ package com.astromaximum.android.view;
 import android.view.View;
 
 import com.astromaximum.android.R;
-import com.astromaximum.util.AstroFont;
-import com.astromaximum.util.Event;
+import com.astromaximum.android.util.AstroFont;
+import com.astromaximum.android.util.Event;
 
 public class AspectHolder extends ViewHolder {
 	public AspectHolder(SummaryItem si) {

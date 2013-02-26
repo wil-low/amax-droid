@@ -1,4 +1,4 @@
-package com.astromaximum.util;
+package com.astromaximum.android.util;
 
 public class StartPageItem {
 	public String mCaption;

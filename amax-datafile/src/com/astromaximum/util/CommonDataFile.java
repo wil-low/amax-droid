@@ -24,7 +24,7 @@ final public class CommonDataFile {
 	int mStartDay;
 	byte[] mCustomData;
 	int mDayCount;
-	DataInputStream mData;
+	public DataInputStream mData;
 
 	public CommonDataFile(InputStream stream) {
         try {

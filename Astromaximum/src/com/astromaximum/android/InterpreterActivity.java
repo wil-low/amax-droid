@@ -9,9 +9,9 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.astromaximum.util.DataProvider;
-import com.astromaximum.util.Event;
-import com.astromaximum.util.MyLog;
+import com.astromaximum.android.util.DataProvider;
+import com.astromaximum.android.util.Event;
+import com.astromaximum.android.util.MyLog;
 
 public class InterpreterActivity extends SherlockActivity {
 

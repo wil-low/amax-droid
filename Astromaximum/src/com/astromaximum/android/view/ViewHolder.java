@@ -15,8 +15,8 @@ import com.astromaximum.android.EventListActivity;
 import com.astromaximum.android.InterpreterActivity;
 import com.astromaximum.android.PreferenceUtils;
 import com.astromaximum.android.R;
-import com.astromaximum.util.Event;
-import com.astromaximum.util.InterpretationProvider;
+import com.astromaximum.android.util.Event;
+import com.astromaximum.android.util.InterpretationProvider;
 
 public abstract class ViewHolder implements OnClickListener {
 	private static final String TAG = "ViewHolder";

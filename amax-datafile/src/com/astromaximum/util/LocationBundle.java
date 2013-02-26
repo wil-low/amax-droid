@@ -26,7 +26,7 @@ import java.io.InputStream;
  * @version 1.0
  */
 final public class LocationBundle {
-	int mRecordCount;
+	public int mRecordCount;
 	private int[] mRecordLengths;
 	private DataInputStream mLocStream;
 
@@ -47,7 +47,7 @@ final public class LocationBundle {
 		}
 	}
 
-	byte[] extractLocation(int index) {
+	public byte[] extractLocation(int index) {
 		byte[] res = null;
 		try {
 			mLocStream.reset();

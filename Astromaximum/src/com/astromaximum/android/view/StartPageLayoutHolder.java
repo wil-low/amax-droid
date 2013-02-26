@@ -5,7 +5,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.astromaximum.android.R;
-import com.astromaximum.util.StartPageItem;
+import com.astromaximum.android.util.StartPageItem;
 
 public class StartPageLayoutHolder {
 	protected static final String TAG = "StartPageLayoutHolder";

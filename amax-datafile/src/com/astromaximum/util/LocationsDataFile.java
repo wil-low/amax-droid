@@ -20,19 +20,19 @@ import java.io.InputStream;
  */
 final public class LocationsDataFile {
 	static final String TAG = "LocationsDataFile";
-	int mStartYear;
-	int mStartMonth;
-	int mStartDay;
-	int mDayCount;
-	int mCityId;
+	public int mStartYear;
+	public int mStartMonth;
+	public int mStartDay;
+	public int mDayCount;
+	public int mCityId;
 	int[] mCoords = new int[3];
-	String mCity;
+	public String mCity;
 	String mState;
 	String mCountry;
-	String mTimezone;
+	public String mTimezone;
 	String mCustomData;
 	TimezoneTransition[] mTransitions;
-	DataInputStream mData;
+	public DataInputStream mData;
 
     /**
      * DataFile

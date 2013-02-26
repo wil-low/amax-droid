@@ -14,12 +14,12 @@ import android.widget.ListView;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.astromaximum.android.util.DataProvider;
+import com.astromaximum.android.util.Event;
+import com.astromaximum.android.util.InterpretationProvider;
+import com.astromaximum.android.util.MyLog;
 import com.astromaximum.android.view.SummaryAdapter;
 import com.astromaximum.android.view.ViewHolder;
-import com.astromaximum.util.DataProvider;
-import com.astromaximum.util.Event;
-import com.astromaximum.util.InterpretationProvider;
-import com.astromaximum.util.MyLog;
 
 public class MainActivity extends SherlockActivity {
 	static final int DATE_DIALOG_ID = 0;

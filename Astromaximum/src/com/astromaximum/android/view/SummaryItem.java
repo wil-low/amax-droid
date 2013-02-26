@@ -2,8 +2,7 @@ package com.astromaximum.android.view;
 
 import java.util.ArrayList;
 
-import com.astromaximum.util.Event;
-import com.astromaximum.util.MyLog;
+import com.astromaximum.android.util.Event;
 
 public class SummaryItem {
 

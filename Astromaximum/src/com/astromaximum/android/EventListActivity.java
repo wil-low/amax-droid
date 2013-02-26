@@ -11,13 +11,13 @@ import android.widget.ListView;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.astromaximum.android.util.DataProvider;
+import com.astromaximum.android.util.Event;
+import com.astromaximum.android.util.InterpretationProvider;
+import com.astromaximum.android.util.MyLog;
 import com.astromaximum.android.view.EventListAdapter;
 import com.astromaximum.android.view.SummaryItem;
 import com.astromaximum.android.view.ViewHolder;
-import com.astromaximum.util.DataProvider;
-import com.astromaximum.util.Event;
-import com.astromaximum.util.InterpretationProvider;
-import com.astromaximum.util.MyLog;
 
 public class EventListActivity extends SherlockActivity {
 	private final String TAG = "EventListActivity";
