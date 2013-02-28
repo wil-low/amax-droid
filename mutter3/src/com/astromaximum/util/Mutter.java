@@ -1,7 +1,5 @@
 package com.astromaximum.util;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.Map;
 
 public class Mutter {
@@ -21,14 +19,23 @@ public class Mutter {
 			System.out.println("common " + inputFile);
 			CommonFilter filter = new CommonFilter(year, inputFile);
 			filter.dumpToFile(startMonth, monthCount, outFile);
-		}
-		else if (args[0].equals("location")) {
-			System.out.println("location " + args[4]);
-		}
-		else {
-			System.out.println("Usage:\n\tcommon <year> <start month> <month count> <output> - generate common file");
-			System.out.println("\tlocation <year> <start month> <end month> <city id> <output> - generate location file");
+		} else if (args[0].equals("location")) {
+			int year = Integer.parseInt(args[1]);
+			int startMonth = Integer.parseInt(args[2]);
+			int monthCount = Integer.parseInt(args[3]);
+			String country = args[4];
+			String cityId = args[5];
+			String inputFile = calculationsDir + "/archive/" + year + "/"
+					+ country + "/" + cityId + ".dat";
+			String outFile = args[6];
+			System.out.println("location " + inputFile);
+			LocationFilter filter = new LocationFilter(year, inputFile);
+			filter.dumpToFile(startMonth, monthCount, outFile);
+		} else {
+			System.out
+					.println("Usage:\n\tcommon <year> <start month> <month count> <output> - generate common file");
+			System.out
+					.println("\tlocation <year> <start month> <end month> <country> <city id> <output> - generate location file");
 		}
 	}
-
 }

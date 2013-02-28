@@ -29,9 +29,9 @@ import com.astromaximum.util.BaseEvent;
 import com.astromaximum.util.CommonDataFile;
 import com.astromaximum.util.LocationBundle;
 import com.astromaximum.util.LocationsDataFile;
-import com.astromaximum.util.SubDataReader;
+import com.astromaximum.util.SubDataProcessor;
 
-public class DataProvider extends SubDataReader {
+public class DataProvider extends SubDataProcessor {
 	private static DataProvider mInstance;
 	private final static String TAG = "DataProvider";
 
@@ -60,7 +60,6 @@ public class DataProvider extends SubDataReader {
 	public static final Event[] mEvents = new Event[100];
 	private Context mContext;
 
-	public static final long MSECINDAY = 86400 * 1000;
 	protected long mStartJD, mFinalJD;
 	private Calendar mCalendar = Calendar.getInstance(TimeZone
 			.getTimeZone("UTC"));
@@ -152,6 +151,7 @@ public class DataProvider extends SubDataReader {
 	}
 
 	int getEvents(int evtype, int planet, long dayStart, long dayEnd) {
+		MyLog.i("getEvents", BaseEvent.EVENT_TYPE_STR[evtype]);
 		switch (evtype) {
 		case Event.EV_ASTRORISE:
 		case Event.EV_ASTROSET:
@@ -159,10 +159,10 @@ public class DataProvider extends SubDataReader {
 		case Event.EV_SET:
 		case Event.EV_ASCAPHETICS:
 			return read(mLocationDatafile.mData, evtype, planet, false,
-					dayStart, dayEnd, mFinalJD);
+					dayStart, dayEnd, mFinalJD, null);
 		default:
 			return read(mCommonDatafile.mData, evtype, planet, true,
-					dayStart, dayEnd, mFinalJD);
+					dayStart, dayEnd, mFinalJD, null);
 		}
 	}
 
