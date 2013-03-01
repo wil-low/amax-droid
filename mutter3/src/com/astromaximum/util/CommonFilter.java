@@ -1,7 +1,5 @@
 package com.astromaximum.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -9,8 +7,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Calendar;
-
-import javax.xml.bind.DataBindingException;
 
 class CommonFilter extends SubDataProcessor {
 	final BaseEvent[] mEvents = new BaseEvent[3000];
@@ -108,14 +104,14 @@ class CommonFilter extends SubDataProcessor {
 		try {
 			RandomAccessFile raf = new RandomAccessFile(outFile, "rw");
 			raf.writeShort(mYear);
-			raf.writeByte(mStartMonth);
+			raf.writeByte(mStartMonth + 1);
 			raf.writeByte(1);  // day of month
 			raf.writeShort(0); // custom data length
 			raf.writeShort(diffDays);
 			File[] tempFiles = new File(tempPath).listFiles();
 			
 			for (File tempFile : tempFiles) {
-				raf.writeByte(1);
+				raf.writeByte(0xFE);
 				FileInputStream fis = new FileInputStream(tempFile);
 				byte[] buffer = new byte[(int) tempFile.length()];
 				fis.read(buffer);

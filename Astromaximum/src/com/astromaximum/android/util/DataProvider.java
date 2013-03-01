@@ -338,6 +338,7 @@ public class DataProvider extends SubDataProcessor {
 	}
 
 	public void calculateAll() {
+		MyLog.d(TAG, "Calculate all for " + mYear + "-" + mMonth + "-" + mDay);
 		for (StartPageItem item : mStartPageLayout) {
 			if (item.mIsEnabled)
 				calculate(START_PAGE_ITEM_SEQ[item.mIndex]);

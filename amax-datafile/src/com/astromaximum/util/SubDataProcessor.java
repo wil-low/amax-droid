@@ -153,7 +153,7 @@ public abstract class SubDataProcessor {
 			raf.writeByte(info.mEventType);
 			long start = raf.getFilePointer();
 			long cumul = events[0].mDate[0];
-			raf.skipBytes(2);
+			int skipped = raf.skipBytes(2);
 			raf.writeShort(info.mFlags);
 			raf.writeByte(info.mPlanet);
 			raf.writeShort(eventCount);
@@ -169,9 +169,7 @@ public abstract class SubDataProcessor {
 				if (((info.mFlags & EF_CUMUL_DATE_W) != 0) && (i > 0)) {
 					int delta = (int) ((ev.mDate[0] - cumul - PERIOD) / 60);
 					if (Math.abs(delta) > 32767) {
-						//System.out.println("\nError overflow " + delta + " at:");
-						// ev.dump();
-						// printf("\n");
+						System.out.println("Error overflow " + delta);
 						raf.setLength(start);
 						raf.close();
 						return false;
@@ -181,9 +179,7 @@ public abstract class SubDataProcessor {
 				} else if (((info.mFlags & EF_CUMUL_DATE_B) != 0) && (i > 0)) {
 					int delta = (int) ((ev.mDate[0] - cumul - PERIOD) / 60);
 					if (Math.abs(delta) > 127) {
-						//System.out.println("\nError overflow " + delta + " at:");
-						// ev.dump();
-						// printf("\n");
+						System.out.println("Error overflow " + delta);
 						raf.setLength(start);
 						raf.close();
 						return false;

@@ -69,22 +69,31 @@ public class LocationFilter extends SubDataProcessor {
 					int eventCount = read(mLocationsDataFile.mData, evtype,
 							planet, false, mStartTime, mEndTime, mFinalJD, info);
 					if (eventCount > 0) {
+						info.mFlags &= ~(EF_CUMUL_DATE_B | EF_CUMUL_DATE_W);
+						info.mFlags |= EF_CUMUL_DATE_B;
+
 						System.out.println("dumpToFile: "
 								+ BaseEvent.EVENT_TYPE_STR[evtype] + ", "
 								+ planet + " = " + eventCount + "; "
 								+ "total events=" + info.mTotalCount
 								+ " flags=" + info.mFlags);
-						info.mFlags &= ~(EF_CUMUL_DATE_B | EF_CUMUL_DATE_W);
-
-						info.mFlags |= EF_CUMUL_DATE_B;
-
 						if (!writeToTempFile(tempPath, info, mEvents,
 								eventCount)) {
 							info.mFlags &= ~EF_CUMUL_DATE_B;
 							info.mFlags |= EF_CUMUL_DATE_W;
+							System.out.println("dumpToFile: "
+									+ BaseEvent.EVENT_TYPE_STR[evtype] + ", "
+									+ planet + " = " + eventCount + "; "
+									+ "total events=" + info.mTotalCount
+									+ " flags=" + info.mFlags);
 							if (!writeToTempFile(tempPath, info, mEvents,
 									eventCount)) {
 								info.mFlags &= ~EF_CUMUL_DATE_W;
+								System.out.println("dumpToFile: "
+										+ BaseEvent.EVENT_TYPE_STR[evtype] + ", "
+										+ planet + " = " + eventCount + "; "
+										+ "total events=" + info.mTotalCount
+										+ " flags=" + info.mFlags);
 								writeToTempFile(tempPath, info, mEvents,
 										eventCount);
 							}
@@ -110,7 +119,7 @@ public class LocationFilter extends SubDataProcessor {
 			raf.writeBytes("S&WA");
 			raf.writeByte(2); // version
 			raf.writeShort(mYear);
-			raf.writeByte(mStartMonth);
+			raf.writeByte(mStartMonth + 1);
 			raf.writeByte(1); // day of month
 			raf.writeShort(diffDays);
 			raf.writeInt(mLocationsDataFile.mCityId);
