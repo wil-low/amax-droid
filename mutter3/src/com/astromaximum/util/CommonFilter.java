@@ -88,6 +88,7 @@ class CommonFilter extends SubDataProcessor {
 								writeToTempFile(tempPath, info, mEvents, eventCount);
 							}
 						}
+						System.out.println("Written with flags " + info.mFlags + "\n");
 					}
 				}
 			}
