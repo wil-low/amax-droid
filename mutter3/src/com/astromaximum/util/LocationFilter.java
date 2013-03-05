@@ -113,8 +113,9 @@ public class LocationFilter extends SubDataProcessor {
 		int diffDays = (int) ((mEndTime - mStartTime) / (24 * 60 * 60 * 1000));
 		try {
 			RandomAccessFile raf = new RandomAccessFile(outFile, "rw");
-			raf.setLength(6);  // write location bundle header later
-			raf.seek(6);
+			raf.writeShort(0);  // fake year
+			raf.writeShort(0);  // fake record count
+			raf.writeShort(0);  // fake location data
 			long dataPos = raf.getFilePointer();
 			raf.writeBytes("S&WA");
 			raf.writeByte(2); // version

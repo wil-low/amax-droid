@@ -153,7 +153,7 @@ public abstract class SubDataProcessor {
 			raf.writeByte(info.mEventType);
 			long start = raf.getFilePointer();
 			long cumul = events[0].mDate[0] / 1000;
-			int skipped = raf.skipBytes(2);
+			raf.writeShort(0); // data size placeholder
 			raf.writeShort(info.mFlags);
 			raf.writeByte(info.mPlanet);
 			raf.writeShort(eventCount);
