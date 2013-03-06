@@ -3,7 +3,6 @@ package com.astromaximum.util;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Calendar;
@@ -54,56 +53,52 @@ class CommonFilter extends SubDataProcessor {
 		mCalendar.add(Calendar.DAY_OF_MONTH, -1);
 		mEndTime = mCalendar.getTimeInMillis();
 
-		try {
-			FileOutputStream fos = new FileOutputStream(outFile);
-			SubDataInfo info = new SubDataInfo();
+		SubDataInfo info = new SubDataInfo();
 
-			String tempPath = "/tmp/common_" + mYear;
-			File path = new File(tempPath);
-			path.mkdir();
-			File[] tempFiles = path.listFiles();
-			for (File tempFile : tempFiles) {
-				tempFile.delete();
-			}
-
-			for (int evtype : EVENT_TYPES) {
-				for (int planet = -1; planet <= BaseEvent.SE_PLUTO; ++planet) {
-					int eventCount = read(mCommonDataFile.mData, evtype,
-							planet, true, mStartTime, mEndTime, mFinalJD, info);
-					if (eventCount > 0) {
-						System.out.println("dumpToFile: "
-								+ BaseEvent.EVENT_TYPE_STR[evtype] + ", "
-								+ planet + " = " + eventCount + "; "
-								+ "total events=" + info.mTotalCount
-								+ " flags=" + info.mFlags);
-						info.mFlags &= ~(EF_CUMUL_DATE_B | EF_CUMUL_DATE_W);
-						
-						info.mFlags |= EF_CUMUL_DATE_B;
-						
+		String tempPath = "/tmp/common_" + mYear;
+		File path = new File(tempPath);
+		path.mkdir();
+		File[] tempFiles = path.listFiles();
+		for (File tempFile : tempFiles)
+			tempFile.delete();
+		File out = new File(outFile);
+		out.delete();
+		
+		for (int evtype : EVENT_TYPES) {
+			for (int planet = -1; planet <= BaseEvent.SE_PLUTO; ++planet) {
+				int eventCount = read(mCommonDataFile.mData, evtype,
+						planet, true, mStartTime, mEndTime, mFinalJD, info);
+				if (eventCount > 0) {
+					System.out.println("dumpToFile: "
+							+ BaseEvent.EVENT_TYPE_STR[evtype] + ", "
+							+ planet + " = " + eventCount + "; "
+							+ "total events=" + info.mTotalCount
+							+ " flags=" + info.mFlags);
+					info.mFlags &= ~(EF_CUMUL_DATE_B | EF_CUMUL_DATE_W);
+					
+					info.mFlags |= EF_CUMUL_DATE_B;
+					
+					if (!writeToTempFile(tempPath, info, mEvents, eventCount)) {
+						info.mFlags &= ~EF_CUMUL_DATE_B;
+						info.mFlags |= EF_CUMUL_DATE_W;
 						if (!writeToTempFile(tempPath, info, mEvents, eventCount)) {
-							info.mFlags &= ~EF_CUMUL_DATE_B;
-							info.mFlags |= EF_CUMUL_DATE_W;
-							if (!writeToTempFile(tempPath, info, mEvents, eventCount)) {
-								info.mFlags &= ~EF_CUMUL_DATE_W;
-								writeToTempFile(tempPath, info, mEvents, eventCount);
-							}
+							info.mFlags &= ~EF_CUMUL_DATE_W;
+							writeToTempFile(tempPath, info, mEvents, eventCount);
 						}
-						System.out.println("Written with flags " + info.mFlags + "\n");
 					}
+					System.out.println("Written with flags " + info.mFlags + "\n");
 				}
 			}
-			joinDatafiles(tempPath, outFile);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
+		joinDatafiles(tempPath, outFile);
 
 	}
 
 	private void joinDatafiles(String tempPath, String outFile) {
-		int diffDays = (int) ((mEndTime - mStartTime) / (24 * 60 * 60 * 1000));
+		int diffDays = (int) ((mEndTime - mStartTime) / MSECINDAY);
 		try {
 			RandomAccessFile raf = new RandomAccessFile(outFile, "rw");
+			raf.setLength(0);
 			raf.writeShort(mYear);
 			raf.writeByte(mStartMonth + 1);
 			raf.writeByte(1);  // day of month

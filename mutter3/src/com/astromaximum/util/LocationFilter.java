@@ -3,7 +3,6 @@ package com.astromaximum.util;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Calendar;
@@ -52,26 +51,32 @@ public class LocationFilter extends SubDataProcessor {
 		mCalendar.add(Calendar.DAY_OF_MONTH, -1);
 		mEndTime = mCalendar.getTimeInMillis();
 
-		try {
-			FileOutputStream fos = new FileOutputStream(outFile);
-			SubDataInfo info = new SubDataInfo();
+		SubDataInfo info = new SubDataInfo();
 
-			String tempPath = "/tmp/common_" + mYear;
-			File path = new File(tempPath);
-			path.mkdir();
-			File[] tempFiles = path.listFiles();
-			for (File tempFile : tempFiles) {
-				tempFile.delete();
-			}
+		String tempPath = "/tmp/common_" + mYear;
+		File path = new File(tempPath);
+		path.mkdir();
+		File[] tempFiles = path.listFiles();
+		for (File tempFile : tempFiles)
+			tempFile.delete();
 
-			for (int evtype : EVENT_TYPES) {
-				for (int planet = -1; planet <= BaseEvent.SE_PLUTO; ++planet) {
-					int eventCount = read(mLocationsDataFile.mData, evtype,
-							planet, false, mStartTime, mEndTime, mFinalJD, info);
-					if (eventCount > 0) {
-						info.mFlags &= ~(EF_CUMUL_DATE_B | EF_CUMUL_DATE_W);
-						info.mFlags |= EF_CUMUL_DATE_B;
+		for (int evtype : EVENT_TYPES) {
+			for (int planet = -1; planet <= BaseEvent.SE_PLUTO; ++planet) {
+				int eventCount = read(mLocationsDataFile.mData, evtype,
+						planet, false, mStartTime, mEndTime, mFinalJD, info);
+				if (eventCount > 0) {
+					info.mFlags &= ~(EF_CUMUL_DATE_B | EF_CUMUL_DATE_W);
+					info.mFlags |= EF_CUMUL_DATE_B;
 
+					System.out.println("dumpToFile: "
+							+ BaseEvent.EVENT_TYPE_STR[evtype] + ", "
+							+ planet + " = " + eventCount + "; "
+							+ "total events=" + info.mTotalCount
+							+ " flags=" + info.mFlags);
+					if (!writeToTempFile(tempPath, info, mEvents,
+							eventCount)) {
+						info.mFlags &= ~EF_CUMUL_DATE_B;
+						info.mFlags |= EF_CUMUL_DATE_W;
 						System.out.println("dumpToFile: "
 								+ BaseEvent.EVENT_TYPE_STR[evtype] + ", "
 								+ planet + " = " + eventCount + "; "
@@ -79,33 +84,20 @@ public class LocationFilter extends SubDataProcessor {
 								+ " flags=" + info.mFlags);
 						if (!writeToTempFile(tempPath, info, mEvents,
 								eventCount)) {
-							info.mFlags &= ~EF_CUMUL_DATE_B;
-							info.mFlags |= EF_CUMUL_DATE_W;
+							info.mFlags &= ~EF_CUMUL_DATE_W;
 							System.out.println("dumpToFile: "
 									+ BaseEvent.EVENT_TYPE_STR[evtype] + ", "
 									+ planet + " = " + eventCount + "; "
 									+ "total events=" + info.mTotalCount
 									+ " flags=" + info.mFlags);
-							if (!writeToTempFile(tempPath, info, mEvents,
-									eventCount)) {
-								info.mFlags &= ~EF_CUMUL_DATE_W;
-								System.out.println("dumpToFile: "
-										+ BaseEvent.EVENT_TYPE_STR[evtype] + ", "
-										+ planet + " = " + eventCount + "; "
-										+ "total events=" + info.mTotalCount
-										+ " flags=" + info.mFlags);
-								writeToTempFile(tempPath, info, mEvents,
-										eventCount);
-							}
+							writeToTempFile(tempPath, info, mEvents,
+									eventCount);
 						}
 					}
 				}
 			}
-			joinDatafiles(tempPath, outFile);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
+		joinDatafiles(tempPath, outFile);
 
 	}
 

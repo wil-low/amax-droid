@@ -8,9 +8,10 @@ public class Mutter {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		int argsLen = args.length;
 		Map<String, String> env = System.getenv();
 		String calculationsDir = env.get("CALCULATIONS_DIR");
-		if (args[0].equals("common")) {
+		if ((argsLen == 5) && args[0].equals("common")) {
 			int year = Integer.parseInt(args[1]);
 			int startMonth = Integer.parseInt(args[2]);
 			int monthCount = Integer.parseInt(args[3]);
@@ -19,7 +20,9 @@ public class Mutter {
 			System.out.println("common " + inputFile);
 			CommonFilter filter = new CommonFilter(year, inputFile);
 			filter.dumpToFile(startMonth, monthCount, outFile);
-		} else if (args[0].equals("location")) {
+			return;
+		}
+		if ((argsLen == 7) && args[0].equals("location")) {
 			int year = Integer.parseInt(args[1]);
 			int startMonth = Integer.parseInt(args[2]);
 			int monthCount = Integer.parseInt(args[3]);
@@ -31,11 +34,9 @@ public class Mutter {
 			System.out.println("location " + inputFile);
 			LocationFilter filter = new LocationFilter(year, inputFile);
 			filter.dumpToFile(startMonth, monthCount, outFile);
-		} else {
-			System.out
-					.println("Usage:\n\tcommon <year> <start month> <month count> <output> - generate common file");
-			System.out
-					.println("\tlocation <year> <start month> <end month> <country> <city id> <output> - generate location file");
-		}
+			return;
+		} 
+		System.out.println("Usage:\n\tcommon <year> <start month> <month count> <output> - generate common file");
+		System.out.println("\tlocation <year> <start month> <end month> <country> <city id> <output> - generate location file");
 	}
 }
