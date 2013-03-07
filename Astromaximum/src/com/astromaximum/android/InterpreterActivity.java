@@ -44,7 +44,7 @@ public class InterpreterActivity extends SherlockActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
-		getSupportMenuInflater().inflate(R.menu.interpreter, menu);
+		//getSupportMenuInflater().inflate(R.menu.interpreter, menu);
 		return true;
 	}
 
@@ -52,14 +52,14 @@ public class InterpreterActivity extends SherlockActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
 		switch (item.getItemId()) {
-		case R.id.menu_share:
+		/*case R.id.menu_share:
 			Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
 			emailIntent.setType("text/plain");
 			emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Astromaximum: " + getSupportActionBar().getSubtitle());
 			String text = getSupportActionBar().getSubtitle() + "\n" + getSupportActionBar().getTitle() + "\n\n" + mInterpreter.getText();
 			emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, text);
 			startActivity(emailIntent);
-			break;
+			break;*/
 		}
 		return true;
 	}
