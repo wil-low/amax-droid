@@ -65,9 +65,6 @@ public class DataProvider extends SubDataProcessor {
 			.getTimeZone("UTC"));
 	private static final int STREAM_BUFFER_SIZE = 10000;
 
-	boolean mExternalStorageAvailable = false;
-	boolean mExternalStorageWriteable = false;
-	private String mLocationDir = null;
 	private int mCustomHour = 0;
 	private int mCustomMinute = 0;
 	private String mTitleDateFormat;
@@ -98,35 +95,9 @@ public class DataProvider extends SubDataProcessor {
 		try {
 			is = manager.open("common.dat");
 			mCommonDatafile = new CommonDataFile(is);
-			checkStorage();
-			if (mExternalStorageAvailable) {
-				File filesDir = Environment.getExternalStorageDirectory();
-				mLocationDir = filesDir.getAbsolutePath()
-						+ "/Android/data/com.astromaximum.android/files";
-				filesDir = new File(mLocationDir);
-				filesDir.mkdirs();
-			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-	}
-
-	void checkStorage() {
-		String state = Environment.getExternalStorageState();
-
-		if (Environment.MEDIA_MOUNTED.equals(state)) {
-			// We can read and write the media
-			mExternalStorageAvailable = mExternalStorageWriteable = true;
-		} else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-			// We can only read the media
-			mExternalStorageAvailable = true;
-			mExternalStorageWriteable = false;
-		} else {
-			// Something else is wrong. It may be one of many other states, but
-			// all we need
-			// to know is we can neither read nor write
-			mExternalStorageAvailable = mExternalStorageWriteable = false;
 		}
 	}
 
@@ -215,8 +186,7 @@ public class DataProvider extends SubDataProcessor {
 		String locationId = sharedPref.getString(
 				PreferenceUtils.KEY_LOCATION_ID, "");
 		if (locationId.equals("")) { // no default location, unbundle from asset
-			if (mExternalStorageWriteable)
-				locationId = unbundleLocationAsset();
+			locationId = unbundleLocationAsset();
 		}
 		loadLocation(locationId, sharedPref);
 	
@@ -234,17 +204,15 @@ public class DataProvider extends SubDataProcessor {
 
 	private void loadLocation(String locationId, SharedPreferences sharedPref) {
 		BufferedInputStream is = null;
-		File locFile = new File(mLocationDir, locationId + ".dat");
 		try {
-			is = new BufferedInputStream(new FileInputStream(locFile),
+			is = new BufferedInputStream(mContext.openFileInput(locationId + ".dat"),
 					STREAM_BUFFER_SIZE);
 			mLocationDatafile = new LocationsDataFile(is);
 		} catch (FileNotFoundException e) {
 			locationId = PreferenceUtils.getSortedLocations(mContext)
 					.firstKey();
-			locFile = new File(mLocationDir, locationId + ".dat");
 			try {
-				is = new BufferedInputStream(new FileInputStream(locFile),
+				is = new BufferedInputStream(mContext.openFileInput(locationId + ".dat"),
 						STREAM_BUFFER_SIZE);
 				mLocationDatafile = new LocationsDataFile(is);
 			} catch (FileNotFoundException e2) {
@@ -282,11 +250,10 @@ public class DataProvider extends SubDataProcessor {
 				lastLocationId = String.format("%08X", datafile.mCityId);
 				MyLog.i(TAG, index + ": " + lastLocationId + " "
 						+ datafile.mCity);
-				File locFile = new File(mLocationDir, lastLocationId + ".dat");
 				OutputStream out = null;
 				try {
 					out = new BufferedOutputStream(
-							new FileOutputStream(locFile), STREAM_BUFFER_SIZE);
+							mContext.openFileOutput(lastLocationId + ".dat", Context.MODE_PRIVATE), STREAM_BUFFER_SIZE);
 					out.write(buffer);
 					editor.putString(lastLocationId, datafile.mCity);
 				} finally {
