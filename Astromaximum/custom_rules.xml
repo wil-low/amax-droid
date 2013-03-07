@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="custom_rules" default="debug" >
+
+    <property name="amax-datafile.link" value="../amax-datafile/src" />
+
+    <target name="-pre-build" >
+        <copy includeemptydirs="false" todir="bin/classes" >
+            <fileset dir="${amax-datafile.link}" >
+                <exclude name="**/*.java" />
+            </fileset>
+        </copy>
+     </copy>        
+    </target>
+
+</project>
