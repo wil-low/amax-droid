@@ -145,7 +145,7 @@ public abstract class ViewHolder implements OnClickListener {
 		mBlueMarkColor = mResources.getColor(R.color.blue_mark);
 		mRedMarkColor = mResources.getColor(R.color.red_mark);
 		AstroTextView.assignTypeface(Typeface.createFromAsset(
-				mContext.getAssets(), "fonts/Astronom.ttf"));
+				mContext.getAssets(), "Astronom.ttf"));
 	}
 
 	abstract public void fillLayout();
