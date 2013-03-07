@@ -1,5 +1,7 @@
 syntax: glob
 *.pyc
+*.class
+.metadata
 Astromaximum/bin
 Astromaximum/gen
 extra
