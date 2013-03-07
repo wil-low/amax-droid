@@ -59,7 +59,9 @@ public class LocationFilter extends SubDataProcessor {
 		File[] tempFiles = path.listFiles();
 		for (File tempFile : tempFiles)
 			tempFile.delete();
-
+		File out = new File(outFile);
+		out.delete();
+		
 		for (int evtype : EVENT_TYPES) {
 			for (int planet = -1; planet <= BaseEvent.SE_PLUTO; ++planet) {
 				int eventCount = read(mLocationsDataFile.mData, evtype,
