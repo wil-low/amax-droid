@@ -1,22 +1,20 @@
 package com.astromaximum.util;
 
 import java.io.DataInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 
 public abstract class SubDataProcessor {
-	protected static final int EF_DATE = 0x1; // contains 2nd date - 4b
-	protected static final int EF_PLANET1 = 0x2; // contains 1nd planet - 1b
-	protected static final int EF_PLANET2 = 0x4; // contains 2nd planet - 1b
-	protected static final int EF_DEGREE = 0x8; // contains degree or angle - 2b
-	protected static final int EF_CUMUL_DATE_B = 0x10; // date are cumulative
+	public static final int EF_DATE = 0x1; // contains 2nd date - 4b
+	public static final int EF_PLANET1 = 0x2; // contains 1nd planet - 1b
+	public static final int EF_PLANET2 = 0x4; // contains 2nd planet - 1b
+	public static final int EF_DEGREE = 0x8; // contains degree or angle - 2b
+	public static final int EF_CUMUL_DATE_B = 0x10; // date are cumulative
 														// from 1st 4b - 1b
-	protected static final int EF_CUMUL_DATE_W = 0x20; // date are cumulative
+	public static final int EF_CUMUL_DATE_W = 0x20; // date are cumulative
 														// from 1st 4b - 2b
-	protected static final int EF_SHORT_DEGREE = 0x40; // contains angle 0..180
+	public static final int EF_SHORT_DEGREE = 0x40; // contains angle 0..180
 														// - 1b
-	protected static final int EF_NEXT_DATE2 = 0x80; // 2nd date is 1st in next
+	public static final int EF_NEXT_DATE2 = 0x80; // 2nd date is 1st in next
 														// event
 
 	public static final long MSECINDAY = 86400 * 1000;
@@ -142,82 +140,6 @@ public abstract class SubDataProcessor {
 		}
 
 		return eventsCount;
-	}
-
-	protected boolean writeToTempFile(String path, SubDataInfo info,
-			BaseEvent[] events, int eventCount) {
-		RandomAccessFile raf;
-		try {
-			raf = new RandomAccessFile(path + "/tmp_"
-					+ info.mEventType + "_" + info.mPlanet, "rw");
-			raf.writeByte(info.mEventType);
-			long start = raf.getFilePointer();
-			long cumul = events[0].mDate[0] / 1000;
-			raf.writeShort(0); // data size placeholder
-			raf.writeShort(info.mFlags);
-			raf.writeByte(info.mPlanet);
-			raf.writeShort(eventCount);
-			//System.out.println(eventCount + " records");
-			int PERIOD = 24 * 60 * 60;
-			if (info.mEventType == BaseEvent.EV_ASCAPHETICS)
-				PERIOD = 2 * 60 * 60;
-			// if(evtype==EV_ASTRORISE) PERIOD=6*60*60;
-			// v[0]->dump();
-			// v[1]->dump();
-			for (int i = 0; i < eventCount; i++) {
-				BaseEvent ev = events[i];
-				ev.mDate[0] /= 1000;
-				ev.mDate[1] /= 1000;
-				if (((info.mFlags & EF_CUMUL_DATE_W) != 0) && (i > 0)) {
-					int delta = (int) ((ev.mDate[0] - cumul - PERIOD) / 60);
-					if (Math.abs(delta) > 32767) {
-						System.out.println("Error overflow EF_CUMUL_DATE_W " + delta);
-						raf.setLength(start);
-						raf.close();
-						return false;
-					}
-					cumul = ev.mDate[0];
-					raf.writeShort(delta);
-				} else if (((info.mFlags & EF_CUMUL_DATE_B) != 0) && (i > 0)) {
-					int delta = (int) ((ev.mDate[0] - cumul - PERIOD) / 60);
-					if (Math.abs(delta) > 127) {
-						System.out.println("Error overflow EF_CUMUL_DATE_B " + delta);
-						raf.setLength(start);
-						raf.close();
-						return false;
-					}
-					cumul = ev.mDate[0];
-					raf.writeByte(delta);
-				} else {
-					raf.writeInt((int) ev.mDate[0]);
-				}
-				if ((info.mFlags & EF_DATE) != 0) {
-					raf.writeInt((int) ev.mDate[1]);
-				}
-				if ((info.mFlags & EF_PLANET1) != 0)
-					raf.writeByte(ev.mPlanet0);
-				if ((info.mFlags & EF_PLANET2) != 0)
-					raf.writeByte(ev.mPlanet1);
-				if ((info.mFlags & EF_DEGREE) != 0)
-					if ((info.mFlags & EF_SHORT_DEGREE) != 0)
-						raf.writeByte(ev.getFullDegree());
-					else {
-						// TODO error - strange degree in event #7 - invalid fwrite?
-						raf.writeShort(ev.getFullDegree());
-					}
-			}
-			int fsize = (int) raf.getFilePointer();
-			raf.seek(start);
-			raf.writeShort(fsize);
-			raf.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return true;
 	}
 
 	abstract protected void addEvent(int idx, BaseEvent event);

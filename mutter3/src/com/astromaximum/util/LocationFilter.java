@@ -75,7 +75,7 @@ public class LocationFilter extends SubDataProcessor {
 							+ planet + " = " + eventCount + "; "
 							+ "total events=" + info.mTotalCount
 							+ " flags=" + info.mFlags);
-					if (!writeToTempFile(tempPath, info, mEvents,
+					if (!Mutter.writeToTempFile(tempPath, info, mEvents,
 							eventCount)) {
 						info.mFlags &= ~EF_CUMUL_DATE_B;
 						info.mFlags |= EF_CUMUL_DATE_W;
@@ -84,7 +84,7 @@ public class LocationFilter extends SubDataProcessor {
 								+ planet + " = " + eventCount + "; "
 								+ "total events=" + info.mTotalCount
 								+ " flags=" + info.mFlags);
-						if (!writeToTempFile(tempPath, info, mEvents,
+						if (!Mutter.writeToTempFile(tempPath, info, mEvents,
 								eventCount)) {
 							info.mFlags &= ~EF_CUMUL_DATE_W;
 							System.out.println("dumpToFile: "
@@ -92,7 +92,7 @@ public class LocationFilter extends SubDataProcessor {
 									+ planet + " = " + eventCount + "; "
 									+ "total events=" + info.mTotalCount
 									+ " flags=" + info.mFlags);
-							writeToTempFile(tempPath, info, mEvents,
+							Mutter.writeToTempFile(tempPath, info, mEvents,
 									eventCount);
 						}
 					}

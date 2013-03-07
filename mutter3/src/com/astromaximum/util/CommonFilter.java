@@ -78,12 +78,12 @@ class CommonFilter extends SubDataProcessor {
 					
 					info.mFlags |= EF_CUMUL_DATE_B;
 					
-					if (!writeToTempFile(tempPath, info, mEvents, eventCount)) {
+					if (!Mutter.writeToTempFile(tempPath, info, mEvents, eventCount)) {
 						info.mFlags &= ~EF_CUMUL_DATE_B;
 						info.mFlags |= EF_CUMUL_DATE_W;
-						if (!writeToTempFile(tempPath, info, mEvents, eventCount)) {
+						if (!Mutter.writeToTempFile(tempPath, info, mEvents, eventCount)) {
 							info.mFlags &= ~EF_CUMUL_DATE_W;
-							writeToTempFile(tempPath, info, mEvents, eventCount);
+							Mutter.writeToTempFile(tempPath, info, mEvents, eventCount);
 						}
 					}
 					System.out.println("Written with flags " + info.mFlags + "\n");
