@@ -118,9 +118,6 @@ public class MainActivity extends SherlockActivity {
 			dlg.setTitle(R.string.pick_date);
 	        dlg.setButton(Dialog.BUTTON_POSITIVE, mContext.getText(android.R.string.ok), dlg);
 	        dlg.setButton(Dialog.BUTTON_NEGATIVE, mContext.getText(android.R.string.cancel), (OnClickListener) null);
-
-			//dlg.getButton(Dialog.BUTTON).setText(android.R.string.ok);
-			//dlg.getButton(Dialog.BUTTON_NEGATIVE).setText(android.R.string.cancel);
 			return dlg;
 		default:
 			return null;

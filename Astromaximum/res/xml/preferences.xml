@@ -14,6 +14,14 @@
     
     <CheckBoxPreference
         android:defaultValue="false"
+        android:key="use_volume_buttons"
+        android:persistent="true"
+        android:summary="@string/pref_volume_button_navigation_summary"
+        android:title="@string/pref_volume_button_navigation" >
+    </CheckBoxPreference>
+
+    <CheckBoxPreference
+        android:defaultValue="false"
         android:key="use_custom_time"
         android:persistent="true"
         android:title="@string/pref_custom_time" >
@@ -26,13 +34,5 @@
     <Preference
         android:key="start_page_layout"
         android:title="@string/start_page_layout" />
-
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="use_volume_buttons"
-        android:persistent="true"
-        android:summary="@string/pref_volume_button_navigation_summary"
-        android:title="@string/pref_volume_button_navigation" >
-    </CheckBoxPreference>
 
 </PreferenceScreen>
