@@ -41,14 +41,13 @@ public class LocationFilter extends SubDataProcessor {
 		mEvents[idx] = new BaseEvent(event);
 	}
 
-	public void dumpToFile(int startMonth, int monthCount, String outFile) {
+	public void dumpToFile(int startMonth, int monthCount, long delta, String outFile) {
 		mStartMonth = startMonth;
 
 		mCalendar.set(mYear, mStartMonth, 1, 0, 0, 0);
 		mStartTime = mCalendar.getTimeInMillis();
 
 		mCalendar.add(Calendar.MONTH, monthCount);
-		mCalendar.add(Calendar.DAY_OF_MONTH, -1);
 		mEndTime = mCalendar.getTimeInMillis();
 
 		SubDataInfo info = new SubDataInfo();
@@ -65,7 +64,7 @@ public class LocationFilter extends SubDataProcessor {
 		for (int evtype : EVENT_TYPES) {
 			for (int planet = -1; planet <= BaseEvent.SE_PLUTO; ++planet) {
 				int eventCount = read(mLocationsDataFile.mData, evtype,
-						planet, false, mStartTime, mEndTime, mFinalJD, info);
+						planet, false, mStartTime - delta, mEndTime + delta, mFinalJD, info);
 				if (eventCount > 0) {
 					info.mFlags &= ~(EF_CUMUL_DATE_B | EF_CUMUL_DATE_W);
 					info.mFlags |= EF_CUMUL_DATE_B;
@@ -104,7 +103,7 @@ public class LocationFilter extends SubDataProcessor {
 	}
 
 	private void joinDatafiles(String tempPath, String outFile) {
-		int diffDays = (int) ((mEndTime - mStartTime) / (24 * 60 * 60 * 1000));
+		int diffDays = (int) ((mEndTime - mStartTime) / MSECINDAY + 0.5);
 		try {
 			RandomAccessFile raf = new RandomAccessFile(outFile, "rw");
 			raf.writeShort(0);  // fake year

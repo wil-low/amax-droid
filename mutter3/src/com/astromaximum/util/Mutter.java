@@ -14,6 +14,7 @@ public class Mutter {
 		int argsLen = args.length;
 		Map<String, String> env = System.getenv();
 		String calculationsDir = env.get("CALCULATIONS_DIR");
+		long delta = SubDataProcessor.MSECINDAY * 3;
 		if ((argsLen == 5) && args[0].equals("common")) {
 			int year = Integer.parseInt(args[1]);
 			int startMonth = Integer.parseInt(args[2]);
@@ -22,7 +23,7 @@ public class Mutter {
 			String outFile = args[4];
 			System.out.println("common " + inputFile);
 			CommonFilter filter = new CommonFilter(year, inputFile);
-			filter.dumpToFile(startMonth, monthCount, outFile);
+			filter.dumpToFile(startMonth, monthCount, delta, outFile);
 			return;
 		}
 		if ((argsLen == 7) && args[0].equals("location")) {
@@ -36,7 +37,7 @@ public class Mutter {
 			String outFile = args[6];
 			System.out.println("location " + inputFile);
 			LocationFilter filter = new LocationFilter(year, inputFile);
-			filter.dumpToFile(startMonth, monthCount, outFile);
+			filter.dumpToFile(startMonth, monthCount, delta, outFile);
 			return;
 		} 
 		System.out.println("Usage:\n\tcommon <year> <start month> <month count> <output> - generate common file");

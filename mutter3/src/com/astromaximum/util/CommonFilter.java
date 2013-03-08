@@ -43,16 +43,15 @@ class CommonFilter extends SubDataProcessor {
 		mEvents[idx] = new BaseEvent(event);
 	}
 
-	public void dumpToFile(int startMonth, int monthCount, String outFile) {
+	public void dumpToFile(int startMonth, int monthCount, long delta, String outFile) {
 		mStartMonth = startMonth;
 		
 		mCalendar.set(mYear, mStartMonth, 1, 0, 0, 0);
 		mStartTime = mCalendar.getTimeInMillis();
 
 		mCalendar.add(Calendar.MONTH, monthCount);
-		mCalendar.add(Calendar.DAY_OF_MONTH, -1);
 		mEndTime = mCalendar.getTimeInMillis();
-
+		
 		SubDataInfo info = new SubDataInfo();
 
 		String tempPath = "/tmp/common_" + mYear;
@@ -67,7 +66,7 @@ class CommonFilter extends SubDataProcessor {
 		for (int evtype : EVENT_TYPES) {
 			for (int planet = -1; planet <= BaseEvent.SE_PLUTO; ++planet) {
 				int eventCount = read(mCommonDataFile.mData, evtype,
-						planet, true, mStartTime, mEndTime, mFinalJD, info);
+						planet, true, mStartTime - delta, mEndTime + delta, mFinalJD, info);
 				if (eventCount > 0) {
 					System.out.println("dumpToFile: "
 							+ BaseEvent.EVENT_TYPE_STR[evtype] + ", "
@@ -95,7 +94,7 @@ class CommonFilter extends SubDataProcessor {
 	}
 
 	private void joinDatafiles(String tempPath, String outFile) {
-		int diffDays = (int) ((mEndTime - mStartTime) / MSECINDAY);
+		int diffDays = (int) ((mEndTime - mStartTime) / MSECINDAY + 0.5);
 		try {
 			RandomAccessFile raf = new RandomAccessFile(outFile, "rw");
 			raf.setLength(0);
