@@ -50,13 +50,7 @@ public class MainActivity extends SherlockActivity {
 		setContentView(R.layout.activity_main);
 
 		mEventList = (ListView) findViewById(R.id.ListViewEvents);
-		/*
-		 * final GestureDetector gestureDetector = new GestureDetector( new
-		 * MyGestureDetector()); View.OnTouchListener gestureListener = new
-		 * View.OnTouchListener() { public boolean onTouch(View v, MotionEvent
-		 * event) { return gestureDetector.onTouchEvent(event); } };
-		 * mEventList.setOnTouchListener(gestureListener);
-		 */
+
 		getSupportActionBar().setDisplayShowHomeEnabled(false);
 		updateDisplay();
 	}

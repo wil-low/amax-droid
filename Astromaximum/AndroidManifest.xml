@@ -18,12 +18,10 @@
 			</intent-filter>
 		</activity>
 		<activity android:name=".Preferences"/>
-		<activity android:name=".SummaryActivity"/>
 		<activity android:name=".EventListActivity"/>
 		<activity android:name=".InterpreterActivity"/>
 		<activity android:name=".LocationListActivity"/>
 		<activity android:name=".StartPageLayoutActivity"/>
-		<service android:name="com.codeslap.groundy.GroundyService"/>
 	</application>
 
 </manifest>
