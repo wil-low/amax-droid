@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Window;
 import com.androidquery.AQuery;
+import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.astromaximum.android.util.DataProvider;
 import com.astromaximum.android.util.MyLog;
@@ -34,7 +35,8 @@ public class LocationListActivity extends SherlockActivity {
 	private ProgressDialog mProgressDialog;
 	private AQuery mAQuery;
 	private String mTitle = "Download cities";
-	private int mYear = 2012, mMode = MODE_COUNTRIES, mCountryId, mStateId, mCityId;
+	private int mYear = 2012, mMode = MODE_COUNTRIES, mCountryId, mStateId,
+			mCityId;
 	private ArrayList<Integer> mIdentifierList = new ArrayList<Integer>();
 	private ArrayList<String> mNameList = new ArrayList<String>();
 	private final static int MODE_COUNTRIES = 0;
@@ -58,11 +60,12 @@ public class LocationListActivity extends SherlockActivity {
 					public void onClick(View view) {
 						queryLocations();
 						/*
-						mProgressDialog = new ProgressDialog(mContext);
-						mProgressDialog
-								.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-						mProgressDialog.setCancelable(true);
-						mProgressDialog.show();*/
+						 * mProgressDialog = new ProgressDialog(mContext);
+						 * mProgressDialog
+						 * .setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+						 * mProgressDialog.setCancelable(true);
+						 * mProgressDialog.show();
+						 */
 					}
 				});
 		mEventList
@@ -130,60 +133,68 @@ public class LocationListActivity extends SherlockActivity {
 			return;
 		}
 		setSupportProgressBarIndeterminateVisibility(true);
-		mAQuery.ajax(url, JSONObject.class, this, "jsonCallback");
-	}
-
-	public void jsonCallback(String url, JSONObject json, AjaxStatus status) {
-		setSupportProgressBarIndeterminateVisibility(false);
-		if (json != null) {
-			try {
-				// successful ajax call, show status code and json content
-				getSupportActionBar().setTitle(mTitle);
-				mNameList.clear();
-				mIdentifierList.clear();
-				JSONArray arr0 = json.getJSONArray("content");
-				for (int i = 0; i < arr0.length(); ++i) {
-					JSONArray arr1 = arr0.getJSONArray(i);
-					MyLog.d(TAG, arr1.toString());
-					mIdentifierList.add(arr1.getInt(0));
-					mNameList.add(arr1.getString(1));
+		mAQuery.ajax(url, JSONObject.class, new AjaxCallback<JSONObject>() {
+			@Override
+			public void callback(String url, JSONObject json, AjaxStatus status) {
+				setSupportProgressBarIndeterminateVisibility(false);
+				if (json != null) {
+					try {
+						// successful ajax call, show status code and json
+						// content
+						getSupportActionBar().setTitle(mTitle);
+						mNameList.clear();
+						mIdentifierList.clear();
+						JSONArray arr0 = json.getJSONArray("content");
+						for (int i = 0; i < arr0.length(); ++i) {
+							JSONArray arr1 = arr0.getJSONArray(i);
+							MyLog.d(TAG, arr1.toString());
+							mIdentifierList.add(arr1.getInt(0));
+							mNameList.add(arr1.getString(1));
+						}
+						ContentAdapter adapter = new ContentAdapter(mContext,
+								android.R.layout.simple_list_item_1, mNameList);
+						mEventList.setAdapter(adapter);
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} else {
+					// ajax error, show error code
+					Toast.makeText(mAQuery.getContext(),
+							"Error:" + status.getCode(), Toast.LENGTH_SHORT)
+							.show();
 				}
-				ContentAdapter adapter = new ContentAdapter(
-						mContext, android.R.layout.simple_list_item_1,
-						mNameList);
-				mEventList.setAdapter(adapter);
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
-		} else {
-			// ajax error, show error code
-			Toast.makeText(mAQuery.getContext(), "Error:" + status.getCode(),
-					Toast.LENGTH_SHORT).show();
-		}
+		});
 	}
 
-    private class ContentAdapter extends ArrayAdapter<String> implements SectionIndexer {
-    	
-    	private String mSections = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    	
+	private class ContentAdapter extends ArrayAdapter<String> implements
+			SectionIndexer {
+
+		private String mSections = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
 		public ContentAdapter(Context context, int textViewResourceId,
 				List<String> objects) {
 			super(context, textViewResourceId, objects);
 		}
 
 		public int getPositionForSection(int section) {
-			// If there is no item for current section, previous section will be selected
+			// If there is no item for current section, previous section will be
+			// selected
 			for (int i = section; i >= 0; i--) {
 				for (int j = 0; j < getCount(); j++) {
 					if (i == 0) {
 						// For numeric section
 						for (int k = 0; k <= 9; k++) {
-							if (StringMatcher.match(String.valueOf(getItem(j).charAt(0)), String.valueOf(k)))
+							if (StringMatcher.match(
+									String.valueOf(getItem(j).charAt(0)),
+									String.valueOf(k)))
 								return j;
 						}
 					} else {
-						if (StringMatcher.match(String.valueOf(getItem(j).charAt(0)), String.valueOf(mSections.charAt(i))))
+						if (StringMatcher.match(
+								String.valueOf(getItem(j).charAt(0)),
+								String.valueOf(mSections.charAt(i))))
 							return j;
 					}
 				}
@@ -201,7 +212,5 @@ public class LocationListActivity extends SherlockActivity {
 				sections[i] = String.valueOf(mSections.charAt(i));
 			return sections;
 		}
-    }
+	}
 }
-
-	
