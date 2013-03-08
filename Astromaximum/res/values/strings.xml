@@ -44,6 +44,11 @@
     <string name="no_retrograde">No retrograde planets</string>
     <string name="no_vc">No VC</string>
     <string name="no_voc">No VOC</string>
+    <string name="no_moon_sign">No Moon sign</string>
+    <string name="no_moon_move">No Moon move</string>
+    <string name="no_planet_hours">No planet hours</string>
+    <string name="no_tithi">No tithi</string>
+    <string name="no_sun_degree">No Sun degree</string>
     
     <string name="previous_day">Previous day</string>
     <string name="next_day">Next day</string>

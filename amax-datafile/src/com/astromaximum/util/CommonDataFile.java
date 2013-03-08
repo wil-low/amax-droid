@@ -19,11 +19,11 @@ import java.io.InputStream;
  */
 final public class CommonDataFile {
 
-	int mStartYear;
-	int mStartMonth;
-	int mStartDay;
+	public int mStartYear;
+	public int mStartMonth;
+	public int mStartDay;
 	byte[] mCustomData;
-	int mDayCount;
+	public int mDayCount;
 	public DataInputStream mData;
 
 	public CommonDataFile(InputStream stream) {

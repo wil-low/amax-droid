@@ -44,6 +44,11 @@
     <string name="no_retrograde">Нет ретроградных планет</string>
     <string name="no_vc">Нет VC</string>
     <string name="no_voc">Нет VOC</string>
+    <string name="no_moon_sign">Нет знака Луны</string>
+    <string name="no_moon_move">Нет движения Луны</string>
+    <string name="no_planet_hours">Нет планетарных часов</string>
+    <string name="no_tithi">Нет титхи</string>
+    <string name="no_sun_degree">Нет градуса Солнца</string>
     
     <string name="previous_day">Предыдущий день</string>
     <string name="next_day">Следующий день</string>
