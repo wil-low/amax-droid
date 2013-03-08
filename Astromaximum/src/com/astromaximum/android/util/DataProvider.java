@@ -267,7 +267,7 @@ public class DataProvider extends SubDataProcessor {
 				LocationsDataFile datafile = new LocationsDataFile(
 						new ByteArrayInputStream(buffer));
 				lastLocationId = String.format("%08X", datafile.mCityId);
-				MyLog.i(TAG, index + ": " + lastLocationId + " "
+				MyLog.i(TAG, "Unbundle: " + index + ", " + lastLocationId + " "
 						+ datafile.mCity);
 				OutputStream out = null;
 				try {
@@ -406,7 +406,7 @@ public class DataProvider extends SubDataProcessor {
 						+ MSECINDAY, 0);
 
 		ArrayList<Event> result = new ArrayList<Event>();
-		if (sunRises.size() < 3 || sunSets.size() < 3)
+		if (sunRises.size() < 3 || (sunRises.size() != sunSets.size()))
 			return result;
 		
 		for (int i = 0; i < sunRises.size(); ++i)

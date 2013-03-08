@@ -114,7 +114,7 @@ public class MainActivity extends SherlockActivity {
 					mDataProvider.getYear(), mDataProvider.getMonth(),
 					mDataProvider.getDay());
 			dlg.getDatePicker().setMinDate(mDataProvider.getStartJD());
-			dlg.getDatePicker().setMaxDate(mDataProvider.getFinalJD());
+			dlg.getDatePicker().setMaxDate(mDataProvider.getFinalJD() - 60 * 1000);
 			dlg.setTitle(R.string.pick_date);
 	        dlg.setButton(Dialog.BUTTON_POSITIVE, mContext.getText(android.R.string.ok), dlg);
 	        dlg.setButton(Dialog.BUTTON_NEGATIVE, mContext.getText(android.R.string.cancel), (OnClickListener) null);
