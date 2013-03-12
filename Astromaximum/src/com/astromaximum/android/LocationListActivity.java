@@ -1,7 +1,11 @@
 package com.astromaximum.android;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -82,12 +86,14 @@ public class LocationListActivity extends SherlockActivity {
 							break;
 						case MODE_CITIES:
 							mCityId = mIdentifierList.get(position);
-							break;
+							downloadCity(mCityId);
+							return;
+						case MODE_DOWNLOAD:
+							mCityId = mIdentifierList.get(position);
 						}
 						++mMode;
 						queryLocations();
 					}
-
 				});
 		mEventList.setFastScrollEnabled(true);
 	}
@@ -212,5 +218,36 @@ public class LocationListActivity extends SherlockActivity {
 				sections[i] = String.valueOf(mSections.charAt(i));
 			return sections;
 		}
+	}
+
+	private void downloadCity(int cityId) {
+		ProgressDialog dialog = new ProgressDialog(this);
+
+		dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+		dialog.setCancelable(true);
+		dialog.setInverseBackgroundForced(false);
+		dialog.setCanceledOnTouchOutside(true);
+		dialog.setTitle("Downloading...");
+		
+		String url = "http://astromaximum.com/44b62ab3e3165298849ac71428eca191/common.dat.gz";
+		mAQuery.progress(dialog).ajax(url, InputStream.class, new AjaxCallback<InputStream>() {
+			public void callback(String url, InputStream is, AjaxStatus status) {
+				if (is != null) {
+					GZIPInputStream zis = null;
+					try {
+						zis = new GZIPInputStream(is);
+						FileOutputStream fos = mContext.openFileOutput("common", Context.MODE_PRIVATE);
+						byte[] buffer = new byte[1024];
+						int count;
+						while ((count = zis.read(buffer)) > 0)
+							fos.write(buffer, 0, count);
+						fos.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		});
 	}
 }

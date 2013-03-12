@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Calendar;
+import java.util.Vector;
 
 public class LocationFilter extends SubDataProcessor {
 	final BaseEvent[] mEvents = new BaseEvent[3000];
@@ -14,26 +15,13 @@ public class LocationFilter extends SubDataProcessor {
 	private Calendar mCalendar = Calendar.getInstance();
 	private long mStartTime, mEndTime, mStartJD, mFinalJD;
 	private int mStartMonth;
+	private Vector<String> mInputFiles;
 
 	static final int[] EVENT_TYPES = { BaseEvent.EV_RISE, BaseEvent.EV_SET };
 
-	LocationFilter(int year, String inputFile) {
+	LocationFilter(int year, Vector<String> inputFiles) {
 		mYear = year;
-		System.out.println(inputFile);
-		try {
-			FileInputStream fis = new FileInputStream(inputFile);
-			mLocationsDataFile = new LocationsDataFile(fis);
-			mCalendar.set(mLocationsDataFile.mStartYear,
-					mLocationsDataFile.mStartMonth,
-					mLocationsDataFile.mStartDay, 0, 0, 0);
-			mStartJD = mCalendar.getTime().getTime();
-			mFinalJD = mStartJD + mLocationsDataFile.mDayCount * MSECINDAY;
-			System.out.println("Location " + mLocationsDataFile.mStartYear
-					+ " " + mLocationsDataFile.mDayCount);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		mInputFiles = inputFiles;
 	}
 
 	@Override
@@ -42,73 +30,100 @@ public class LocationFilter extends SubDataProcessor {
 	}
 
 	public void dumpToFile(int startMonth, int monthCount, long delta, String outFile) {
-		mStartMonth = startMonth;
-
-		mCalendar.set(mYear, mStartMonth, 1, 0, 0, 0);
-		mStartTime = mCalendar.getTimeInMillis();
-
-		mCalendar.add(Calendar.MONTH, monthCount);
-		mEndTime = mCalendar.getTimeInMillis();
-
-		SubDataInfo info = new SubDataInfo();
-
-		String tempPath = "/tmp/common_" + mYear;
-		File path = new File(tempPath);
-		path.mkdir();
-		File[] tempFiles = path.listFiles();
-		for (File tempFile : tempFiles)
-			tempFile.delete();
-		File out = new File(outFile);
-		out.delete();
+		RandomAccessFile raf;
+		try {
+			raf = new RandomAccessFile(outFile, "rw");
+			raf.writeShort(mYear);
+			raf.writeShort(mInputFiles.size());
+			long headerPos = raf.getFilePointer();
+			for (int i = 0; i < mInputFiles.size(); ++i)
+				raf.writeShort(0);  // fake data length
+			int fileCounter = 0;
+			for (String inputFile : mInputFiles) {
+				FileInputStream fis = new FileInputStream(inputFile);
+				mLocationsDataFile = new LocationsDataFile(fis);
+				mCalendar.set(mLocationsDataFile.mStartYear,
+						mLocationsDataFile.mStartMonth,
+						mLocationsDataFile.mStartDay, 0, 0, 0);
+				mStartJD = mCalendar.getTime().getTime();
+				mFinalJD = mStartJD + mLocationsDataFile.mDayCount * MSECINDAY;
+				System.out.println("Location " + mLocationsDataFile.mStartYear
+						+ " " + mLocationsDataFile.mDayCount);
+				mStartMonth = startMonth;
 		
-		for (int evtype : EVENT_TYPES) {
-			for (int planet = -1; planet <= BaseEvent.SE_PLUTO; ++planet) {
-				int eventCount = read(mLocationsDataFile.mData, evtype,
-						planet, false, mStartTime - delta, mEndTime + delta, mFinalJD, info);
-				if (eventCount > 0) {
-					info.mFlags &= ~(EF_CUMUL_DATE_B | EF_CUMUL_DATE_W);
-					info.mFlags |= EF_CUMUL_DATE_B;
-
-					System.out.println("dumpToFile: "
-							+ BaseEvent.EVENT_TYPE_STR[evtype] + ", "
-							+ planet + " = " + eventCount + "; "
-							+ "total events=" + info.mTotalCount
-							+ " flags=" + info.mFlags);
-					if (!Mutter.writeToTempFile(tempPath, info, mEvents,
-							eventCount)) {
-						info.mFlags &= ~EF_CUMUL_DATE_B;
-						info.mFlags |= EF_CUMUL_DATE_W;
-						System.out.println("dumpToFile: "
-								+ BaseEvent.EVENT_TYPE_STR[evtype] + ", "
-								+ planet + " = " + eventCount + "; "
-								+ "total events=" + info.mTotalCount
-								+ " flags=" + info.mFlags);
-						if (!Mutter.writeToTempFile(tempPath, info, mEvents,
-								eventCount)) {
-							info.mFlags &= ~EF_CUMUL_DATE_W;
+				mCalendar.set(mYear, mStartMonth, 1, 0, 0, 0);
+				mStartTime = mCalendar.getTimeInMillis();
+		
+				mCalendar.add(Calendar.MONTH, monthCount);
+				mEndTime = mCalendar.getTimeInMillis();
+		
+				SubDataInfo info = new SubDataInfo();
+		
+				String tempPath = "/tmp/locations_" + mYear;
+				File path = new File(tempPath);
+				path.mkdir();
+				File[] tempFiles = path.listFiles();
+				for (File tempFile : tempFiles)
+					tempFile.delete();
+				File mergeFile = new File(tempPath + "/" + fileCounter);
+				mergeFile.delete();
+				
+				for (int evtype : EVENT_TYPES) {
+					for (int planet = -1; planet <= BaseEvent.SE_PLUTO; ++planet) {
+						int eventCount = read(mLocationsDataFile.mData, evtype,
+								planet, false, mStartTime - delta, mEndTime + delta, mFinalJD, info);
+						if (eventCount > 0) {
+							info.mFlags &= ~(EF_CUMUL_DATE_B | EF_CUMUL_DATE_W);
+							info.mFlags |= EF_CUMUL_DATE_B;
+		
 							System.out.println("dumpToFile: "
 									+ BaseEvent.EVENT_TYPE_STR[evtype] + ", "
 									+ planet + " = " + eventCount + "; "
 									+ "total events=" + info.mTotalCount
 									+ " flags=" + info.mFlags);
-							Mutter.writeToTempFile(tempPath, info, mEvents,
-									eventCount);
+							if (!Mutter.writeToTempFile(tempPath, info, mEvents,
+									eventCount)) {
+								info.mFlags &= ~EF_CUMUL_DATE_B;
+								info.mFlags |= EF_CUMUL_DATE_W;
+								System.out.println("dumpToFile: "
+										+ BaseEvent.EVENT_TYPE_STR[evtype] + ", "
+										+ planet + " = " + eventCount + "; "
+										+ "total events=" + info.mTotalCount
+										+ " flags=" + info.mFlags);
+								if (!Mutter.writeToTempFile(tempPath, info, mEvents,
+										eventCount)) {
+									info.mFlags &= ~EF_CUMUL_DATE_W;
+									System.out.println("dumpToFile: "
+											+ BaseEvent.EVENT_TYPE_STR[evtype] + ", "
+											+ planet + " = " + eventCount + "; "
+											+ "total events=" + info.mTotalCount
+											+ " flags=" + info.mFlags);
+									Mutter.writeToTempFile(tempPath, info, mEvents,
+											eventCount);
+								}
+							}
 						}
 					}
 				}
+				long dataLen = joinTempfiles(tempPath, raf);
+				long posEnd = raf.getFilePointer();
+				raf.seek(headerPos);
+				raf.writeShort((int) dataLen);
+				headerPos = raf.getFilePointer();
+				raf.seek(posEnd);
+				System.out.println(inputFile);
+				++fileCounter;
 			}
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
-		joinDatafiles(tempPath, outFile);
-
 	}
 
-	private void joinDatafiles(String tempPath, String outFile) {
+	private long joinTempfiles(String tempPath, RandomAccessFile raf) {
 		int diffDays = (int) ((mEndTime - mStartTime) / MSECINDAY + 0.5);
+		long dataLen = 0;
 		try {
-			RandomAccessFile raf = new RandomAccessFile(outFile, "rw");
-			raf.writeShort(0);  // fake year
-			raf.writeShort(0);  // fake record count
-			raf.writeShort(0);  // fake location data
 			long dataPos = raf.getFilePointer();
 			raf.writeBytes("S&WA");
 			raf.writeByte(2); // version
@@ -137,12 +152,7 @@ public class LocationFilter extends SubDataProcessor {
 				fis.close();
 				raf.write(buffer);
 			}
-			long dataLen = raf.getFilePointer() - dataPos;
-			raf.seek(0);
-			raf.writeShort(mYear);
-			raf.writeShort(1);
-			raf.writeShort((int) dataLen);
-			raf.close();
+			dataLen = raf.getFilePointer() - dataPos;
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -150,5 +160,6 @@ public class LocationFilter extends SubDataProcessor {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return dataLen;
 	}
 }

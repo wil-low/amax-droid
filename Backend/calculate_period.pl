@@ -42,7 +42,7 @@ sub make_location {   # $country, $city_id
 	my ($country, $city_id) = @_;
 	my $location_file = "$DEST_DIR/$city_id.dat";
 	if (! -f $location_file) {
-		my $cmd = "java -jar Mutter3.jar location $YEAR $MONTH $MONTH_COUNT $country $city_id $location_file";
+		my $cmd = "java -jar Mutter3.jar location $YEAR $MONTH $MONTH_COUNT $country/$city_id $location_file";
 		system ($cmd);
 	}
 }

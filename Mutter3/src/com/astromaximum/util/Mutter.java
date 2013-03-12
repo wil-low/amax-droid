@@ -1,9 +1,12 @@
 package com.astromaximum.util;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Map;
+import java.util.Scanner;
+import java.util.Vector;
 
 public class Mutter {
 
@@ -26,22 +29,46 @@ public class Mutter {
 			filter.dumpToFile(startMonth, monthCount, delta, outFile);
 			return;
 		}
-		if ((argsLen == 7) && args[0].equals("location")) {
+		Vector<String> filenames = new Vector<String>();
+		if ((argsLen == 6) && args[0].equals("location")) {
 			int year = Integer.parseInt(args[1]);
 			int startMonth = Integer.parseInt(args[2]);
 			int monthCount = Integer.parseInt(args[3]);
-			String country = args[4];
-			String cityId = args[5];
-			String inputFile = calculationsDir + "/archive/" + year + "/"
-					+ country + "/" + cityId + ".dat";
-			String outFile = args[6];
-			System.out.println("location " + inputFile);
-			LocationFilter filter = new LocationFilter(year, inputFile);
+			String city = args[4];
+			filenames.add(calculationsDir + "/archive/" + year + "/" + city + ".dat");
+			String outFile = args[5];
+			LocationFilter filter = new LocationFilter(year, filenames);
 			filter.dumpToFile(startMonth, monthCount, delta, outFile);
 			return;
-		} 
+		}
+		if ((argsLen == 6) && args[0].equals("locations")) {
+			int year = Integer.parseInt(args[1]);
+			int startMonth = Integer.parseInt(args[2]);
+			int monthCount = Integer.parseInt(args[3]);
+			String locationsList = args[4];
+			String outFile = args[5];
+			Scanner input;
+			try {
+				input = new Scanner(new FileInputStream(locationsList));
+				while (input.hasNext()) {
+					String fn = input.nextLine();
+					int spacePos = fn.indexOf(" ");
+					if (spacePos != 1)
+						fn = fn.substring(0, spacePos);
+					filenames.add(calculationsDir + "/archive/" + year + "/" + fn + ".dat");
+				}
+				input.close();
+				LocationFilter filter = new LocationFilter(year, filenames);
+				filter.dumpToFile(startMonth, monthCount, delta, outFile);
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return;
+		}
 		System.out.println("Usage:\n\tcommon <year> <start month> <month count> <output> - generate common file");
-		System.out.println("\tlocation <year> <start month> <end month> <country> <city id> <output> - generate location file");
+		System.out.println("\tlocation <year> <start month> <end month> <country/city id> <output> - generate location file");
+		System.out.println("\tlocations <year> <start month> <end month> <location list file> <output> - generate multi-location file");
 	}
 	
 	static boolean writeToTempFile(String path, SubDataInfo info,
@@ -62,8 +89,6 @@ public class Mutter {
 			if (info.mEventType == BaseEvent.EV_ASCAPHETICS)
 				PERIOD = 2 * 60 * 60;
 			// if(evtype==EV_ASTRORISE) PERIOD=6*60*60;
-			// v[0]->dump();
-			// v[1]->dump();
 			for (int i = 0; i < eventCount; i++) {
 				BaseEvent ev = events[i];
 				ev.mDate[0] /= 1000;
@@ -71,7 +96,7 @@ public class Mutter {
 				if (((info.mFlags & SubDataProcessor.EF_CUMUL_DATE_W) != 0) && (i > 0)) {
 					int delta = (int) ((ev.mDate[0] - cumul - PERIOD) / 60);
 					if (Math.abs(delta) > 32767) {
-						System.out.println("Error overflow EF_CUMUL_DATE_W " + delta);
+						//System.out.println("Error overflow EF_CUMUL_DATE_W " + delta);
 						raf.setLength(start);
 						raf.close();
 						return false;
@@ -81,7 +106,7 @@ public class Mutter {
 				} else if (((info.mFlags & SubDataProcessor.EF_CUMUL_DATE_B) != 0) && (i > 0)) {
 					int delta = (int) ((ev.mDate[0] - cumul - PERIOD) / 60);
 					if (Math.abs(delta) > 127) {
-						System.out.println("Error overflow EF_CUMUL_DATE_B " + delta);
+						//System.out.println("Error overflow EF_CUMUL_DATE_B " + delta);
 						raf.setLength(start);
 						raf.close();
 						return false;
@@ -101,10 +126,8 @@ public class Mutter {
 				if ((info.mFlags & SubDataProcessor.EF_DEGREE) != 0)
 					if ((info.mFlags & SubDataProcessor.EF_SHORT_DEGREE) != 0)
 						raf.writeByte(ev.getFullDegree());
-					else {
-						// TODO error - strange degree in event #7 - invalid fwrite?
+					else
 						raf.writeShort(ev.getFullDegree());
-					}
 			}
 			int fsize = (int) raf.getFilePointer();
 			raf.seek(start);
