@@ -88,6 +88,7 @@ public class DataProvider extends SubDataProcessor {
 					+ mCommonDatafile.mStartMonth + "-"
 					+ mCommonDatafile.mStartDay + ", "
 					+ mCommonDatafile.mDayCount);
+			is.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -115,7 +116,7 @@ public class DataProvider extends SubDataProcessor {
 	}
 
 	int getEvents(int evtype, int planet, long dayStart, long dayEnd) {
-		MyLog.i("getEvents", BaseEvent.EVENT_TYPE_STR[evtype]);
+		//MyLog.i("getEvents", BaseEvent.EVENT_TYPE_STR[evtype]);
 		switch (evtype) {
 		case Event.EV_ASTRORISE:
 		case Event.EV_ASTROSET:
@@ -604,7 +605,6 @@ public class DataProvider extends SubDataProcessor {
 	}
 
 	public void setTodayDate() {
-		MyLog.d(TAG, mCalendar.getTimeZone().getDisplayName());
 		mCalendar = Calendar.getInstance(mCalendar.getTimeZone());
 		setDateFromCalendar();
 	}
