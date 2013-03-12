@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.SectionIndexer;
 import android.widget.Toast;
 
@@ -43,6 +44,7 @@ public class LocationListActivity extends SherlockActivity {
 			mCityId;
 	private ArrayList<Integer> mIdentifierList = new ArrayList<Integer>();
 	private ArrayList<String> mNameList = new ArrayList<String>();
+	private Button mRetryButton;
 	private final static int MODE_COUNTRIES = 0;
 	private final static int MODE_STATES = 1;
 	private final static int MODE_CITIES = 2;
@@ -58,20 +60,16 @@ public class LocationListActivity extends SherlockActivity {
 		setContentView(R.layout.activity_location_list);
 		ViewHolder.initialize(mContext);
 		mEventList = (IndexableListView) findViewById(R.id.ListViewEvents);
-
-		findViewById(R.id.btn_download).setOnClickListener(
+		
+		mRetryButton = (Button)findViewById(R.id.btn_retry);
+		mRetryButton.setOnClickListener(
 				new View.OnClickListener() {
 					public void onClick(View view) {
 						queryLocations();
-						/*
-						 * mProgressDialog = new ProgressDialog(mContext);
-						 * mProgressDialog
-						 * .setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-						 * mProgressDialog.setCancelable(true);
-						 * mProgressDialog.show();
-						 */
 					}
 				});
+		mRetryButton.setVisibility(View.GONE);
+		
 		mEventList
 				.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -144,6 +142,7 @@ public class LocationListActivity extends SherlockActivity {
 			public void callback(String url, JSONObject json, AjaxStatus status) {
 				setSupportProgressBarIndeterminateVisibility(false);
 				if (json != null) {
+					mRetryButton.setVisibility(View.GONE);
 					try {
 						// successful ajax call, show status code and json
 						// content
@@ -153,7 +152,7 @@ public class LocationListActivity extends SherlockActivity {
 						JSONArray arr0 = json.getJSONArray("content");
 						for (int i = 0; i < arr0.length(); ++i) {
 							JSONArray arr1 = arr0.getJSONArray(i);
-							MyLog.d(TAG, arr1.toString());
+							//MyLog.d(TAG, arr1.toString());
 							mIdentifierList.add(arr1.getInt(0));
 							mNameList.add(arr1.getString(1));
 						}
@@ -165,6 +164,7 @@ public class LocationListActivity extends SherlockActivity {
 						e.printStackTrace();
 					}
 				} else {
+					mRetryButton.setVisibility(View.VISIBLE);
 					// ajax error, show error code
 					Toast.makeText(mAQuery.getContext(),
 							"Error:" + status.getCode(), Toast.LENGTH_SHORT)
@@ -246,7 +246,12 @@ public class LocationListActivity extends SherlockActivity {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-				}
+				} else {
+					// ajax error, show error code
+					Toast.makeText(mAQuery.getContext(),
+							"Error:" + status.getCode(), Toast.LENGTH_SHORT)
+							.show();
+				}				
 			}
 		});
 	}

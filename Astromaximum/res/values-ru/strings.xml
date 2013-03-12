@@ -149,5 +149,5 @@
         <item>Луна без курса (VOC)</item>
         <item>Луна на сожженном пути (VC)</item>
     </string-array>
-
+	<string name="retry">Повторить</string> <!-- Retry download button -->
 </resources>

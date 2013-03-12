@@ -151,4 +151,5 @@
         <item>Moon on Burnt Path (VC)</item>
     </string-array>
 
+    <string name="retry">Retry</string> <!-- Retry download button -->
 </resources>
