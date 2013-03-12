@@ -66,6 +66,8 @@ public class DataProvider extends SubDataProcessor {
 	private String mTitleDateFormat;
 	private boolean mUseCustomTime = false;
 	private ArrayList<StartPageItem> mStartPageLayout;
+	public String mPeriodKey = "lcmon62h5smxa45u";
+	public String mPeriod = "2012_00_06";
 
 	// Keep in sync with string-array name="startpage_items"
 	static final int[] START_PAGE_ITEM_SEQ = new int[] { Event.EV_MOON_SIGN,

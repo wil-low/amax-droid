@@ -4,7 +4,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import org.json.JSONArray;
@@ -40,9 +42,9 @@ public class LocationListActivity extends SherlockActivity {
 	private ProgressDialog mProgressDialog;
 	private AQuery mAQuery;
 	private String mTitle = "Download cities";
-	private int mYear = 2012, mMode = MODE_COUNTRIES, mCountryId, mStateId,
-			mCityId;
-	private ArrayList<Integer> mIdentifierList = new ArrayList<Integer>();
+	private int mYear = 2012, mMode = MODE_COUNTRIES;
+	private String mCountryId, mStateId, mCityId;
+	private ArrayList<String> mIdentifierList = new ArrayList<String>();
 	private ArrayList<String> mNameList = new ArrayList<String>();
 	private Button mRetryButton;
 	private final static int MODE_COUNTRIES = 0;
@@ -56,6 +58,7 @@ public class LocationListActivity extends SherlockActivity {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		MyLog.d(TAG, "OnCreate: ");
 		mContext = this;
+		mDataProvider = DataProvider.getInstance(this);
 		mAQuery = new AQuery(mContext);
 		setContentView(R.layout.activity_location_list);
 		ViewHolder.initialize(mContext);
@@ -84,7 +87,7 @@ public class LocationListActivity extends SherlockActivity {
 							break;
 						case MODE_CITIES:
 							mCityId = mIdentifierList.get(position);
-							downloadCity(mCityId);
+							downloadCity(mDataProvider.mPeriodKey, mCityId, mNameList.get(position));
 							return;
 						case MODE_DOWNLOAD:
 							mCityId = mIdentifierList.get(position);
@@ -152,8 +155,8 @@ public class LocationListActivity extends SherlockActivity {
 						JSONArray arr0 = json.getJSONArray("content");
 						for (int i = 0; i < arr0.length(); ++i) {
 							JSONArray arr1 = arr0.getJSONArray(i);
-							//MyLog.d(TAG, arr1.toString());
-							mIdentifierList.add(arr1.getInt(0));
+							MyLog.d(TAG, arr1.toString());
+							mIdentifierList.add(arr1.getString(mMode == MODE_CITIES ? 2 : 0));
 							mNameList.add(arr1.getString(1));
 						}
 						ContentAdapter adapter = new ContentAdapter(mContext,
@@ -220,7 +223,7 @@ public class LocationListActivity extends SherlockActivity {
 		}
 	}
 
-	private void downloadCity(int cityId) {
+	private void downloadCity(final String periodKey, final String cityId, final String cityName) {
 		ProgressDialog dialog = new ProgressDialog(this);
 
 		dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -229,19 +232,22 @@ public class LocationListActivity extends SherlockActivity {
 		dialog.setCanceledOnTouchOutside(true);
 		dialog.setTitle("Downloading...");
 		
-		String url = "http://astromaximum.com/44b62ab3e3165298849ac71428eca191/common.dat.gz";
+		String url = "http://astromaximum.com/data/" + periodKey + "/" + cityId;
 		mAQuery.progress(dialog).ajax(url, InputStream.class, new AjaxCallback<InputStream>() {
 			public void callback(String url, InputStream is, AjaxStatus status) {
 				if (is != null) {
 					GZIPInputStream zis = null;
 					try {
 						zis = new GZIPInputStream(is);
-						FileOutputStream fos = mContext.openFileOutput("common", Context.MODE_PRIVATE);
+						FileOutputStream fos = mContext.openFileOutput(mDataProvider.mPeriod + "_" + cityId, Context.MODE_PRIVATE);
 						byte[] buffer = new byte[1024];
 						int count;
 						while ((count = zis.read(buffer)) > 0)
 							fos.write(buffer, 0, count);
 						fos.close();
+						Toast.makeText(mAQuery.getContext(),
+								"Download finished:" + cityName, Toast.LENGTH_SHORT)
+								.show();
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
