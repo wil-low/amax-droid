@@ -66,8 +66,8 @@ public class DataProvider extends SubDataProcessor {
 	private String mTitleDateFormat;
 	private boolean mUseCustomTime = false;
 	private ArrayList<StartPageItem> mStartPageLayout;
-	public String mPeriodKey = "lcmon62h5smxa45u";
-	public String mPeriod = "2012_00_06";
+	public String mPeriodKey = "bgh5gut9sl5pdf8b";
+	public String mPeriod = "20120006";
 
 	// Keep in sync with string-array name="startpage_items"
 	static final int[] START_PAGE_ITEM_SEQ = new int[] { Event.EV_MOON_SIGN,
@@ -118,7 +118,7 @@ public class DataProvider extends SubDataProcessor {
 	}
 
 	int getEvents(int evtype, int planet, long dayStart, long dayEnd) {
-		//MyLog.i("getEvents", BaseEvent.EVENT_TYPE_STR[evtype]);
+		// MyLog.i("getEvents", BaseEvent.EVENT_TYPE_STR[evtype]);
 		switch (evtype) {
 		case Event.EV_ASTRORISE:
 		case Event.EV_ASTROSET:
@@ -203,15 +203,15 @@ public class DataProvider extends SubDataProcessor {
 	private void loadLocation(String locationId, SharedPreferences sharedPref) {
 		BufferedInputStream is = null;
 		try {
-			is = new BufferedInputStream(mContext.openFileInput(locationId
-					+ ".dat"), STREAM_BUFFER_SIZE);
+			is = new BufferedInputStream(mContext.openFileInput(locationId),
+					STREAM_BUFFER_SIZE);
 			mLocationDatafile = new LocationsDataFile(is);
 		} catch (FileNotFoundException e) {
 			locationId = PreferenceUtils.getSortedLocations(mContext)
 					.firstKey();
 			try {
-				is = new BufferedInputStream(mContext.openFileInput(locationId
-						+ ".dat"), STREAM_BUFFER_SIZE);
+				is = new BufferedInputStream(
+						mContext.openFileInput(locationId), STREAM_BUFFER_SIZE);
 				mLocationDatafile = new LocationsDataFile(is);
 			} catch (FileNotFoundException e2) {
 				e2.printStackTrace();
@@ -223,15 +223,14 @@ public class DataProvider extends SubDataProcessor {
 		mCalendar = new GregorianCalendar(
 				TimeZone.getTimeZone(mLocationDatafile.mTimezone));
 		mCalendar.set(Calendar.MILLISECOND, 0);
-		
+
 		MyLog.d(TAG, "Location: " + mLocationDatafile.mStartYear + "-"
 				+ mLocationDatafile.mStartMonth + "-"
 				+ mLocationDatafile.mStartDay + ", "
 				+ mLocationDatafile.mMonthCount);
 
-		mCalendar.set(mCommonDatafile.mStartYear,
-				mCommonDatafile.mStartMonth, mCommonDatafile.mStartDay, 0,
-				0, 0);
+		mCalendar.set(mCommonDatafile.mStartYear, mCommonDatafile.mStartMonth,
+				mCommonDatafile.mStartDay, 0, 0, 0);
 		long commonStart = mCalendar.getTime().getTime();
 		mCalendar.add(Calendar.MONTH, mCommonDatafile.mMonthCount);
 		long commonFinal = mCalendar.getTime().getTime();
@@ -242,10 +241,10 @@ public class DataProvider extends SubDataProcessor {
 		long locationStart = mCalendar.getTime().getTime();
 		mCalendar.add(Calendar.MONTH, mLocationDatafile.mMonthCount);
 		long locationFinal = mCalendar.getTime().getTime();
-		
+
 		mStartJD = Math.max(commonStart, locationStart);
 		mFinalJD = Math.min(commonFinal, locationFinal);
-		
+
 		if (mStartJD > mFinalJD) { // invalid range
 			mStartJD = mFinalJD = 0;
 		}
@@ -268,13 +267,14 @@ public class DataProvider extends SubDataProcessor {
 				buffer = locBundle.extractLocation(index);
 				LocationsDataFile datafile = new LocationsDataFile(
 						new ByteArrayInputStream(buffer));
-				lastLocationId = String.format("%08X", datafile.mCityId);
+				lastLocationId = mPeriod
+						+ String.format("%08x", datafile.mCityId);
 				MyLog.i(TAG, "Unbundle: " + index + ", " + lastLocationId + " "
 						+ datafile.mCity);
 				OutputStream out = null;
 				try {
 					out = new BufferedOutputStream(mContext.openFileOutput(
-							lastLocationId + ".dat", Context.MODE_PRIVATE),
+							lastLocationId, Context.MODE_PRIVATE),
 							STREAM_BUFFER_SIZE);
 					out.write(buffer);
 					editor.putString(lastLocationId, datafile.mCity);
@@ -410,7 +410,7 @@ public class DataProvider extends SubDataProcessor {
 		ArrayList<Event> result = new ArrayList<Event>();
 		if (sunRises.size() < 3 || (sunRises.size() != sunSets.size()))
 			return result;
-		
+
 		for (int i = 0; i < sunRises.size(); ++i)
 			sunRises.get(i).mDate[1] = sunSets.get(i).mDate[0];
 
@@ -448,10 +448,10 @@ public class DataProvider extends SubDataProcessor {
 						+ MSECINDAY * 4, 0);
 		ArrayList<Event> moonMoveVec = getAspectsOnPeriod(Event.SE_MOON,
 				mStartTime - MSECINDAY * 2, mEndTime + MSECINDAY * 2);
-		
+
 		if (asp.isEmpty() || moonMoveVec.isEmpty())
 			return new ArrayList<Event>();
-		
+
 		mergeEvents(moonMoveVec, asp, true);
 		asp.clear();
 		mergeEvents(asp, moonMoveVec, false);
@@ -471,7 +471,7 @@ public class DataProvider extends SubDataProcessor {
 		moonMoveVec.clear();
 		if (id1 == -1)
 			return moonMoveVec;
-		
+
 		for (int i = id1; i <= id2; i++)
 			moonMoveVec.add(asp.get(i));
 

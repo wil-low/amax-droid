@@ -21,6 +21,7 @@ public class Preferences extends SherlockPreferenceActivity {
 	private final String TAG = "Preferences";
 	private ListPreference mLocationsPreference;
 	private CheckBoxPreference mUseCustomTimePreference;
+	@SuppressWarnings("unused")
 	private DataProvider mDataProvider;
 	private TimePreference mCustomTimePreference;
 

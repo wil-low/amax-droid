@@ -118,9 +118,6 @@ public class LocationListActivity extends SherlockActivity {
 		MyLog.d(TAG, "OnRestart");
 	}
 
-	private void updateDisplay() {
-	}
-
 	private void queryLocations() {
 		String url = "http://astromaximum.com/mobi/html/dl.php?lang=en&ajax="
 				+ mMode + "&cid=" + mCountryId + "&stateid=" + mStateId + "&y="
@@ -230,7 +227,7 @@ public class LocationListActivity extends SherlockActivity {
 		dialog.setCancelable(true);
 		dialog.setInverseBackgroundForced(false);
 		dialog.setCanceledOnTouchOutside(true);
-		dialog.setTitle("Downloading...");
+		dialog.setTitle("Downloading " + cityName + "...");
 		
 		String url = "http://astromaximum.com/data/" + periodKey + "/" + cityId;
 		mAQuery.progress(dialog).ajax(url, InputStream.class, new AjaxCallback<InputStream>() {
@@ -239,7 +236,7 @@ public class LocationListActivity extends SherlockActivity {
 					GZIPInputStream zis = null;
 					try {
 						zis = new GZIPInputStream(is);
-						FileOutputStream fos = mContext.openFileOutput(mDataProvider.mPeriod + "_" + cityId, Context.MODE_PRIVATE);
+						FileOutputStream fos = mContext.openFileOutput(mDataProvider.mPeriod + cityId, Context.MODE_PRIVATE);
 						byte[] buffer = new byte[1024];
 						int count;
 						while ((count = zis.read(buffer)) > 0)
