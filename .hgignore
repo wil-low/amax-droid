@@ -5,3 +5,8 @@ syntax: glob
 Astromaximum/bin
 Astromaximum/gen
 extra
+Backend/data/20*
+Backend/deploy
+Backend/deploy_tmp
+bin
+gen
