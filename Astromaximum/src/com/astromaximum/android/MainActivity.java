@@ -20,6 +20,7 @@ import com.astromaximum.android.util.InterpretationProvider;
 import com.astromaximum.android.util.MyLog;
 import com.astromaximum.android.view.SummaryAdapter;
 import com.astromaximum.android.view.ViewHolder;
+import com.astromaximum.util.SubDataProcessor;
 
 public class MainActivity extends SherlockActivity {
 	static final int DATE_DIALOG_ID = 0;
@@ -107,8 +108,8 @@ public class MainActivity extends SherlockActivity {
 			DatePickerDialog dlg = new DatePickerDialog(this, mDateSetListener,
 					mDataProvider.getYear(), mDataProvider.getMonth(),
 					mDataProvider.getDay());
-			dlg.getDatePicker().setMinDate(mDataProvider.getStartJD());
-			dlg.getDatePicker().setMaxDate(mDataProvider.getFinalJD() - 60 * 1000);
+			dlg.getDatePicker().setMinDate(mDataProvider.getStartJD() + SubDataProcessor.MSECINDAY / 2);
+			dlg.getDatePicker().setMaxDate(mDataProvider.getFinalJD() - SubDataProcessor.MSECINDAY / 2);
 			dlg.setTitle(R.string.pick_date);
 	        dlg.setButton(Dialog.BUTTON_POSITIVE, mContext.getText(android.R.string.ok), dlg);
 	        dlg.setButton(Dialog.BUTTON_NEGATIVE, mContext.getText(android.R.string.cancel), (OnClickListener) null);

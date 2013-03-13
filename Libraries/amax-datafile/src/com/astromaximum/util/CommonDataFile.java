@@ -23,10 +23,10 @@ final public class CommonDataFile {
 	public int mStartMonth;
 	public int mStartDay;
 	byte[] mCustomData;
-	public int mDayCount;
+	public int mDayCount, mMonthCount;
 	public DataInputStream mData;
 
-	public CommonDataFile(InputStream stream) {
+	public CommonDataFile(InputStream stream, boolean isLegacy) {
         try {
             DataInputStream is = new DataInputStream(stream);
             mStartYear = is.readShort();
@@ -34,7 +34,10 @@ final public class CommonDataFile {
             mStartDay = is.readUnsignedByte();
             
             int customDataLen = is.readUnsignedShort(); // customData length
-            mDayCount = is.readShort();
+            if (isLegacy)
+            	mDayCount = is.readShort();
+            else
+            	mMonthCount = is.readUnsignedByte();
             if (customDataLen > 0) {
                 mCustomData = new byte[customDataLen];
                 is.read(mCustomData);

@@ -6,14 +6,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 class CommonFilter extends SubDataProcessor {
 	final BaseEvent[] mEvents = new BaseEvent[3000];
 	CommonDataFile mCommonDataFile;
 	private int mYear;
-	private Calendar mCalendar = Calendar.getInstance();
+	private Calendar mCalendar = new GregorianCalendar();
 	private long mStartTime, mEndTime, mStartJD, mFinalJD;
-	private int mStartMonth;
+	private int mStartMonth, mMonthCount;
 
 	static final int[] EVENT_TYPES = { BaseEvent.EV_SIGN_ENTER,
 			BaseEvent.EV_ASP_EXACT, BaseEvent.EV_TITHI,
@@ -24,10 +25,11 @@ class CommonFilter extends SubDataProcessor {
 		mYear = year;
 		try {
 			FileInputStream fis = new FileInputStream(inputFile);
-			mCommonDataFile = new CommonDataFile(fis);
+			mCommonDataFile = new CommonDataFile(fis, true);
 			mCalendar.set(mCommonDataFile.mStartYear,
 					mCommonDataFile.mStartMonth, mCommonDataFile.mStartDay, 0,
 					0, 0);
+			mCalendar.set(Calendar.MILLISECOND, 0);
 			mStartJD = mCalendar.getTime().getTime();
 			mFinalJD = mStartJD + mCommonDataFile.mDayCount * MSECINDAY;
 			System.out.println("Common " + mCommonDataFile.mStartYear + " "
@@ -45,11 +47,13 @@ class CommonFilter extends SubDataProcessor {
 
 	public void dumpToFile(int startMonth, int monthCount, long delta, String outFile) {
 		mStartMonth = startMonth;
+		mMonthCount = monthCount;
 		
 		mCalendar.set(mYear, mStartMonth, 1, 0, 0, 0);
+		mCalendar.set(Calendar.MILLISECOND, 0);
 		mStartTime = mCalendar.getTimeInMillis();
 
-		mCalendar.add(Calendar.MONTH, monthCount);
+		mCalendar.add(Calendar.MONTH, mMonthCount);
 		mEndTime = mCalendar.getTimeInMillis();
 		
 		SubDataInfo info = new SubDataInfo();
@@ -94,7 +98,7 @@ class CommonFilter extends SubDataProcessor {
 	}
 
 	private void joinDatafiles(String tempPath, String outFile) {
-		int diffDays = (int) ((mEndTime - mStartTime) / MSECINDAY + 0.5);
+
 		try {
 			RandomAccessFile raf = new RandomAccessFile(outFile, "rw");
 			raf.setLength(0);
@@ -102,7 +106,7 @@ class CommonFilter extends SubDataProcessor {
 			raf.writeByte(mStartMonth + 1);
 			raf.writeByte(1);  // day of month
 			raf.writeShort(0); // custom data length
-			raf.writeShort(diffDays);
+			raf.writeByte(mMonthCount);
 			File[] tempFiles = new File(tempPath).listFiles();
 			
 			for (File tempFile : tempFiles) {

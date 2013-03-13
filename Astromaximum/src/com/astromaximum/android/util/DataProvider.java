@@ -85,7 +85,7 @@ public class DataProvider extends SubDataProcessor {
 		InputStream is;
 		try {
 			is = manager.open("common.dat");
-			mCommonDatafile = new CommonDataFile(is);
+			mCommonDatafile = new CommonDataFile(is, false);
 			MyLog.d(TAG, "Common: " + mCommonDatafile.mStartYear + "-"
 					+ mCommonDatafile.mStartMonth + "-"
 					+ mCommonDatafile.mStartDay + ", "
@@ -222,23 +222,26 @@ public class DataProvider extends SubDataProcessor {
 		editor.commit();
 		mCalendar = new GregorianCalendar(
 				TimeZone.getTimeZone(mLocationDatafile.mTimezone));
+		mCalendar.set(Calendar.MILLISECOND, 0);
 		
 		MyLog.d(TAG, "Location: " + mLocationDatafile.mStartYear + "-"
 				+ mLocationDatafile.mStartMonth + "-"
 				+ mLocationDatafile.mStartDay + ", "
-				+ mLocationDatafile.mDayCount);
+				+ mLocationDatafile.mMonthCount);
 
 		mCalendar.set(mCommonDatafile.mStartYear,
 				mCommonDatafile.mStartMonth, mCommonDatafile.mStartDay, 0,
 				0, 0);
 		long commonStart = mCalendar.getTime().getTime();
-		long commonFinal = commonStart + mCommonDatafile.mDayCount * MSECINDAY;
+		mCalendar.add(Calendar.MONTH, mCommonDatafile.mMonthCount);
+		long commonFinal = mCalendar.getTime().getTime();
 
 		mCalendar.set(mLocationDatafile.mStartYear,
 				mLocationDatafile.mStartMonth, mLocationDatafile.mStartDay, 0,
 				0, 0);
 		long locationStart = mCalendar.getTime().getTime();
-		long locationFinal = locationStart + mLocationDatafile.mDayCount * MSECINDAY;
+		mCalendar.add(Calendar.MONTH, mLocationDatafile.mMonthCount);
+		long locationFinal = mCalendar.getTime().getTime();
 		
 		mStartJD = Math.max(commonStart, locationStart);
 		mFinalJD = Math.min(commonFinal, locationFinal);

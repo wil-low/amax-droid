@@ -6,15 +6,17 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 import java.util.Vector;
 
 public class LocationFilter extends SubDataProcessor {
 	final BaseEvent[] mEvents = new BaseEvent[3000];
 	LocationsDataFile mLocationsDataFile;
 	private int mYear;
-	private Calendar mCalendar = Calendar.getInstance();
-	private long mStartTime, mEndTime, mStartJD, mFinalJD;
-	private int mStartMonth;
+	private Calendar mCalendar;
+	private long mStartTime, mEndTime, mFinalJD;
+	private int mStartMonth, mMonthCount;
 	private Vector<String> mInputFiles;
 
 	static final int[] EVENT_TYPES = { BaseEvent.EV_RISE, BaseEvent.EV_SET };
@@ -31,6 +33,8 @@ public class LocationFilter extends SubDataProcessor {
 
 	public void dumpToFile(int startMonth, int monthCount, long delta, String outFile) {
 		RandomAccessFile raf;
+		mStartMonth = startMonth;
+		mMonthCount = monthCount;
 		try {
 			raf = new RandomAccessFile(outFile, "rw");
 			raf.writeShort(mYear);
@@ -42,21 +46,16 @@ public class LocationFilter extends SubDataProcessor {
 			for (String inputFile : mInputFiles) {
 				FileInputStream fis = new FileInputStream(inputFile);
 				mLocationsDataFile = new LocationsDataFile(fis);
-				mCalendar.set(mLocationsDataFile.mStartYear,
-						mLocationsDataFile.mStartMonth,
-						mLocationsDataFile.mStartDay, 0, 0, 0);
-				mStartJD = mCalendar.getTime().getTime();
-				mFinalJD = mStartJD + mLocationsDataFile.mDayCount * MSECINDAY;
-				System.out.println("Location " + mLocationsDataFile.mStartYear
-						+ " " + mLocationsDataFile.mDayCount);
-				mStartMonth = startMonth;
+				mCalendar =  new GregorianCalendar(TimeZone.getTimeZone(mLocationsDataFile.mTimezone));
 		
 				mCalendar.set(mYear, mStartMonth, 1, 0, 0, 0);
+				mCalendar.set(Calendar.MILLISECOND, 0);
 				mStartTime = mCalendar.getTimeInMillis();
 		
-				mCalendar.add(Calendar.MONTH, monthCount);
+				mCalendar.add(Calendar.MONTH, mMonthCount);
 				mEndTime = mCalendar.getTimeInMillis();
-		
+				mFinalJD = mEndTime;
+				
 				SubDataInfo info = new SubDataInfo();
 		
 				String tempPath = "/tmp/locations_" + mYear;
@@ -121,16 +120,15 @@ public class LocationFilter extends SubDataProcessor {
 	}
 
 	private long joinTempfiles(String tempPath, RandomAccessFile raf) {
-		int diffDays = (int) ((mEndTime - mStartTime) / MSECINDAY + 0.5);
 		long dataLen = 0;
 		try {
 			long dataPos = raf.getFilePointer();
 			raf.writeBytes("S&WA");
-			raf.writeByte(2); // version
+			raf.writeByte(3); // version
 			raf.writeShort(mYear);
 			raf.writeByte(mStartMonth + 1);
 			raf.writeByte(1); // day of month
-			raf.writeShort(diffDays);
+			raf.writeByte(mMonthCount);
 			raf.writeInt(mLocationsDataFile.mCityId);
 			raf.writeShort(mLocationsDataFile.mCoords[0]);
 			raf.writeShort(mLocationsDataFile.mCoords[1]);
