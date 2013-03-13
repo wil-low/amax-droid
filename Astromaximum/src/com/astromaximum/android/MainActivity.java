@@ -5,8 +5,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.widget.ListView;
@@ -158,18 +156,6 @@ public class MainActivity extends SherlockActivity {
 			updateTitle();
 			break;
 		}
-	}
-
-	private String getVersionedTitle() {
-		PackageInfo pInfo;
-		try {
-			pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-			return getString(R.string.app_name) + " " + pInfo.versionName;
-		} catch (NameNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return getString(R.string.app_name);
 	}
 
 	private void updateTitle() {
