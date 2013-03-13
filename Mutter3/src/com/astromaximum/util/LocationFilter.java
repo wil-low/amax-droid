@@ -1,8 +1,10 @@
 package com.astromaximum.util;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Calendar;
@@ -31,33 +33,43 @@ public class LocationFilter extends SubDataProcessor {
 		mEvents[idx] = new BaseEvent(event);
 	}
 
-	public void dumpToFile(int startMonth, int monthCount, long delta, String outFile) {
+	public void dumpToFile(int startMonth, int monthCount, long delta,
+			String outFile, String csvFile) {
 		RandomAccessFile raf;
 		mStartMonth = startMonth;
 		mMonthCount = monthCount;
 		try {
+			FileWriter fstream = new FileWriter(csvFile);
+			BufferedWriter csvOut = new BufferedWriter(fstream);
 			raf = new RandomAccessFile(outFile, "rw");
 			raf.writeShort(mYear);
 			raf.writeShort(mInputFiles.size());
 			long headerPos = raf.getFilePointer();
 			for (int i = 0; i < mInputFiles.size(); ++i)
-				raf.writeShort(0);  // fake data length
+				raf.writeShort(0); // fake data length
 			int fileCounter = 0;
 			for (String inputFile : mInputFiles) {
 				FileInputStream fis = new FileInputStream(inputFile);
 				mLocationsDataFile = new LocationsDataFile(fis);
-				mCalendar =  new GregorianCalendar(TimeZone.getTimeZone(mLocationsDataFile.mTimezone));
-		
+				csvOut.write(mLocationsDataFile.mCity + ";"
+						+ mLocationsDataFile.mState + ";"
+						+ mLocationsDataFile.mCountry + ";"
+						+ mLocationsDataFile.mTimezone + ";"
+						+ String.format("%08x", mLocationsDataFile.mCityId) + "\n");
+
+				mCalendar = new GregorianCalendar(
+						TimeZone.getTimeZone(mLocationsDataFile.mTimezone));
+
 				mCalendar.set(mYear, mStartMonth, 1, 0, 0, 0);
 				mCalendar.set(Calendar.MILLISECOND, 0);
 				mStartTime = mCalendar.getTimeInMillis();
-		
+
 				mCalendar.add(Calendar.MONTH, mMonthCount);
 				mEndTime = mCalendar.getTimeInMillis();
 				mFinalJD = mEndTime;
-				
+
 				SubDataInfo info = new SubDataInfo();
-		
+
 				String tempPath = "/tmp/locations_" + mYear;
 				File path = new File(tempPath);
 				path.mkdir();
@@ -66,39 +78,43 @@ public class LocationFilter extends SubDataProcessor {
 					tempFile.delete();
 				File mergeFile = new File(tempPath + "/" + fileCounter);
 				mergeFile.delete();
-				
+
 				for (int evtype : EVENT_TYPES) {
 					for (int planet = -1; planet <= BaseEvent.SE_PLUTO; ++planet) {
 						int eventCount = read(mLocationsDataFile.mData, evtype,
-								planet, false, mStartTime - delta, mEndTime + delta, mFinalJD, info);
+								planet, false, mStartTime - delta, mEndTime
+										+ delta, mFinalJD, info);
 						if (eventCount > 0) {
 							info.mFlags &= ~(EF_CUMUL_DATE_B | EF_CUMUL_DATE_W);
 							info.mFlags |= EF_CUMUL_DATE_B;
-		
+
 							System.out.println("dumpToFile: "
 									+ BaseEvent.EVENT_TYPE_STR[evtype] + ", "
 									+ planet + " = " + eventCount + "; "
 									+ "total events=" + info.mTotalCount
 									+ " flags=" + info.mFlags);
-							if (!Mutter.writeToTempFile(tempPath, info, mEvents,
-									eventCount)) {
+							if (!Mutter.writeToTempFile(tempPath, info,
+									mEvents, eventCount)) {
 								info.mFlags &= ~EF_CUMUL_DATE_B;
 								info.mFlags |= EF_CUMUL_DATE_W;
 								System.out.println("dumpToFile: "
-										+ BaseEvent.EVENT_TYPE_STR[evtype] + ", "
-										+ planet + " = " + eventCount + "; "
-										+ "total events=" + info.mTotalCount
-										+ " flags=" + info.mFlags);
-								if (!Mutter.writeToTempFile(tempPath, info, mEvents,
-										eventCount)) {
+										+ BaseEvent.EVENT_TYPE_STR[evtype]
+										+ ", " + planet + " = " + eventCount
+										+ "; " + "total events="
+										+ info.mTotalCount + " flags="
+										+ info.mFlags);
+								if (!Mutter.writeToTempFile(tempPath, info,
+										mEvents, eventCount)) {
 									info.mFlags &= ~EF_CUMUL_DATE_W;
 									System.out.println("dumpToFile: "
-											+ BaseEvent.EVENT_TYPE_STR[evtype] + ", "
-											+ planet + " = " + eventCount + "; "
-											+ "total events=" + info.mTotalCount
-											+ " flags=" + info.mFlags);
-									Mutter.writeToTempFile(tempPath, info, mEvents,
-											eventCount);
+											+ BaseEvent.EVENT_TYPE_STR[evtype]
+											+ ", " + planet + " = "
+											+ eventCount + "; "
+											+ "total events="
+											+ info.mTotalCount + " flags="
+											+ info.mFlags);
+									Mutter.writeToTempFile(tempPath, info,
+											mEvents, eventCount);
 								}
 							}
 						}
@@ -113,6 +129,7 @@ public class LocationFilter extends SubDataProcessor {
 				System.out.println(inputFile);
 				++fileCounter;
 			}
+			csvOut.close();
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

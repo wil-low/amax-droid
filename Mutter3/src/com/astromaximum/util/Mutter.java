@@ -30,23 +30,25 @@ public class Mutter {
 			return;
 		}
 		Vector<String> filenames = new Vector<String>();
-		if ((argsLen == 6) && args[0].equals("location")) {
+		if ((argsLen == 7) && args[0].equals("location")) {
 			int year = Integer.parseInt(args[1]);
 			int startMonth = Integer.parseInt(args[2]);
 			int monthCount = Integer.parseInt(args[3]);
 			String city = args[4];
 			filenames.add(calculationsDir + "/archive/" + year + "/" + city + ".dat");
 			String outFile = args[5];
+			String csvFile = args[6];
 			LocationFilter filter = new LocationFilter(year, filenames);
-			filter.dumpToFile(startMonth, monthCount, delta, outFile);
+			filter.dumpToFile(startMonth, monthCount, delta, outFile, csvFile);
 			return;
 		}
-		if ((argsLen == 6) && args[0].equals("locations")) {
+		if ((argsLen == 7) && args[0].equals("locations")) {
 			int year = Integer.parseInt(args[1]);
 			int startMonth = Integer.parseInt(args[2]);
 			int monthCount = Integer.parseInt(args[3]);
 			String locationsList = args[4];
 			String outFile = args[5];
+			String csvFile = args[6];
 			Scanner input;
 			try {
 				input = new Scanner(new FileInputStream(locationsList));
@@ -59,7 +61,7 @@ public class Mutter {
 				}
 				input.close();
 				LocationFilter filter = new LocationFilter(year, filenames);
-				filter.dumpToFile(startMonth, monthCount, delta, outFile);
+				filter.dumpToFile(startMonth, monthCount, delta, outFile, csvFile);
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -68,7 +70,7 @@ public class Mutter {
 		}
 		System.out.println("Usage:\n\tcommon <year> <start month> <month count> <output> - generate common file");
 		System.out.println("\tlocation <year> <start month> <end month> <country/city id> <output> - generate location file");
-		System.out.println("\tlocations <year> <start month> <end month> <location list file> <output> - generate multi-location file");
+		System.out.println("\tlocations <year> <start month> <end month> <location list file> <output> <csv output> - generate multi-location file");
 	}
 	
 	static boolean writeToTempFile(String path, SubDataInfo info,
