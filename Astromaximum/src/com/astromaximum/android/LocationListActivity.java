@@ -236,14 +236,14 @@ public class LocationListActivity extends SherlockActivity {
 					GZIPInputStream zis = null;
 					try {
 						zis = new GZIPInputStream(is);
-						FileOutputStream fos = mContext.openFileOutput(mDataProvider.mPeriod + cityId, Context.MODE_PRIVATE);
+						FileOutputStream fos = mContext.openFileOutput(mDataProvider.mPeriodStr + cityId, Context.MODE_PRIVATE);
 						byte[] buffer = new byte[1024];
 						int count;
 						while ((count = zis.read(buffer)) > 0)
 							fos.write(buffer, 0, count);
 						fos.close();
 						Toast.makeText(mAQuery.getContext(),
-								"Download finished:" + cityName, Toast.LENGTH_SHORT)
+								"Downloaded:" + cityName, Toast.LENGTH_LONG)
 								.show();
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
@@ -252,7 +252,7 @@ public class LocationListActivity extends SherlockActivity {
 				} else {
 					// ajax error, show error code
 					Toast.makeText(mAQuery.getContext(),
-							"Error:" + status.getCode(), Toast.LENGTH_SHORT)
+							"Error:" + status.getCode(), Toast.LENGTH_LONG)
 							.show();
 				}				
 			}

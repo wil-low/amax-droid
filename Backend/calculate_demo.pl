@@ -64,20 +64,20 @@ sub make_database {
 	open (TMP_SQL, ">$TMP_SQL") or die "$!: $TMP_SQL";
 	print (TMP_SQL "BEGIN TRANSACTION;\n");
 	my $sql = <<END;
-	CREATE TABLE commons (id INTEGER PRIMARY KEY, year NUMERIC, start_month NUMERIC, month_count NUMERIC, key TEXT);
-	CREATE TABLE cities (id INTEGER PRIMARY KEY, name TEXT, state TEXT, country TEXT, key TEXT);
-	CREATE TABLE locations (id INTEGER PRIMARY KEY, common_id NUMERIC, city_id NUMERIC);
+	CREATE TABLE commons (_id INTEGER PRIMARY KEY, year NUMERIC, start_month NUMERIC, month_count NUMERIC, key TEXT);
+	CREATE TABLE cities (_id INTEGER PRIMARY KEY, name TEXT, state TEXT, country TEXT, key TEXT);
+	CREATE TABLE locations (_id INTEGER PRIMARY KEY, common_id NUMERIC, city_id NUMERIC);
 
 END
 	print (TMP_SQL $sql);
-	print (TMP_SQL "\tINSERT INTO commons (id, year, start_month, month_count, key) VALUES (1, $YEAR, $MONTH, $MONTH_COUNT, '$key');\n");
+	print (TMP_SQL "\tINSERT INTO commons (_id, year, start_month, month_count, key) VALUES (1, $YEAR, $MONTH, $MONTH_COUNT, '$key');\n");
 	my $counter = 1;
 	while (my $line = <LOCLIST_CSV>) {
 		chomp($line);
 		$line =~ s/'/''/g;
 		my ($name, $state, $country, $timezone, $city_key) = split (/;/, $line);
-		print (TMP_SQL "\tINSERT INTO cities (id, name, state, country, key) VALUES ($counter, '$name', '$state', '$country', '$city_key');\n");
-		print (TMP_SQL "\tINSERT INTO locations (id, common_id, city_id) VALUES ($counter, 1, $counter);\n");
+		print (TMP_SQL "\tINSERT INTO cities (_id, name, state, country, key) VALUES ($counter, '$name', '$state', '$country', '$city_key');\n");
+		print (TMP_SQL "\tINSERT INTO locations (_id, common_id, city_id) VALUES ($counter, 1, $counter);\n");
 		++$counter;
 	}
 	print (TMP_SQL "COMMIT;\n");

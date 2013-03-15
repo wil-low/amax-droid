@@ -12,7 +12,8 @@ import com.astromaximum.android.util.StartPageItem;
 
 public final class PreferenceUtils {
 	public static final int ID_PREFERENCE = 1;
-	public static final String KEY_LOCATION_ID = "current_location_id";
+	public static final String KEY_COMMON_ID = "common_id";
+	public static final String KEY_LOCATION_ID = "location_id";
 	public static final String PREF_LOCATION_LIST = "location_list";
 	public static final String KEY_START_TIME = "start_time";
 	public static final String KEY_CUSTOM_HOUR = "custom_hour";

@@ -59,15 +59,17 @@ public class DataProvider extends SubDataProcessor {
 	protected long mStartJD, mFinalJD;
 	private Calendar mCalendar = Calendar.getInstance(TimeZone
 			.getTimeZone("UTC"));
-	private static final int STREAM_BUFFER_SIZE = 10000;
+	private static final int STREAM_BUFFER_SIZE = 30000;
 
 	private int mCustomHour = 0;
 	private int mCustomMinute = 0;
 	private String mTitleDateFormat;
 	private boolean mUseCustomTime = false;
 	private ArrayList<StartPageItem> mStartPageLayout;
-	public String mPeriodKey = "bgh5gut9sl5pdf8b";
-	public String mPeriod = "20120006";
+	private int mCommonId;
+	public String mPeriodKey;
+	public String mPeriodStr;
+	private AmaxDatabase mDatabase;
 
 	// Keep in sync with string-array name="startpage_items"
 	static final int[] START_PAGE_ITEM_SEQ = new int[] { Event.EV_MOON_SIGN,
@@ -80,21 +82,7 @@ public class DataProvider extends SubDataProcessor {
 		mTitleDateFormat = mContext.getResources().getString(
 				R.string.title_date_format);
 		mEventCache = new ArrayList<SummaryItem>();
-
-		AssetManager manager = mContext.getAssets();
-		InputStream is;
-		try {
-			is = manager.open("common.dat");
-			mCommonDatafile = new CommonDataFile(is, false);
-			MyLog.d(TAG, "Common: " + mCommonDatafile.mStartYear + "-"
-					+ mCommonDatafile.mStartMonth + "-"
-					+ mCommonDatafile.mStartDay + ", "
-					+ mCommonDatafile.mDayCount);
-			is.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		mDatabase = AmaxDatabase.getInstance(mContext);
 	}
 
 	ArrayList<Event> getEventsOnPeriod(int evtype, int planet, boolean special,
@@ -179,6 +167,19 @@ public class DataProvider extends SubDataProcessor {
 		MyLog.d(TAG, "restoreInstanceState");
 		SharedPreferences sharedPref = PreferenceManager
 				.getDefaultSharedPreferences(mContext);
+		mCommonId = sharedPref.getInt(
+				PreferenceUtils.KEY_COMMON_ID, 0);
+		MyLog.d(TAG, "read KEY_COMMON_ID=" + mCommonId);
+		if (mCommonId == 0) { // no default period, unbundle from asset
+			mCommonId = 1;
+			unbundleCommonAsset();
+		}
+		loadCommon();
+		SharedPreferences.Editor editor = sharedPref.edit();
+		MyLog.d(TAG, "write KEY_COMMON_ID=" + mCommonId);
+		editor.putInt(PreferenceUtils.KEY_COMMON_ID, mCommonId);
+		editor.commit();
+
 		String locationId = sharedPref.getString(
 				PreferenceUtils.KEY_LOCATION_ID, "");
 		if (locationId.equals("")) { // no default location, unbundle from asset
@@ -198,6 +199,60 @@ public class DataProvider extends SubDataProcessor {
 		mCalendar.setTimeInMillis(mStartTime);
 		setDateFromCalendar();
 		mStartPageLayout = PreferenceUtils.getStartPageLayout(mContext);
+	}
+
+	private void loadCommon() {
+		fillCommonIds();
+		BufferedInputStream is = null;
+		try {
+			is = new BufferedInputStream(mContext.openFileInput(mPeriodStr),
+					STREAM_BUFFER_SIZE);
+			mCommonDatafile = new CommonDataFile(is, false);
+		} catch (FileNotFoundException e) {
+			String[] periodIds = mDatabase.getCommonIds(1);
+			try {
+				is = new BufferedInputStream(
+						mContext.openFileInput(periodIds[0]), STREAM_BUFFER_SIZE);
+				mCommonDatafile = new CommonDataFile(is, false);
+				mPeriodStr = periodIds[0];
+				mPeriodKey = periodIds[1];
+			} catch (FileNotFoundException e2) {
+				e2.printStackTrace();
+			}
+		}
+		MyLog.d(TAG, "Common: " + mCommonDatafile.mStartYear + "-"
+				+ mCommonDatafile.mStartMonth + "-"
+				+ mCommonDatafile.mStartDay + ", "
+				+ mCommonDatafile.mDayCount + " > " + mPeriodKey);
+	}
+
+	private void unbundleCommonAsset() {
+		fillCommonIds();
+		AssetManager manager = mContext.getAssets();
+		try {
+			MyLog.d(TAG, "Unbundle common");
+			InputStream is = manager.open("common.dat");
+			byte[] buffer = new byte[is.available()];
+			is.read(buffer);
+			OutputStream out = null;
+			try {
+				out = new BufferedOutputStream(mContext.openFileOutput(
+						mPeriodStr, Context.MODE_PRIVATE),
+						STREAM_BUFFER_SIZE);
+				out.write(buffer);
+			} finally {
+				if (out != null)
+					out.close();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void fillCommonIds() {
+		String[] commonIds = mDatabase.getCommonIds(mCommonId);
+		mPeriodStr = commonIds[0];
+		mPeriodKey = commonIds[1];
 	}
 
 	private void loadLocation(String locationId, SharedPreferences sharedPref) {
@@ -227,7 +282,7 @@ public class DataProvider extends SubDataProcessor {
 		MyLog.d(TAG, "Location: " + mLocationDatafile.mStartYear + "-"
 				+ mLocationDatafile.mStartMonth + "-"
 				+ mLocationDatafile.mStartDay + ", "
-				+ mLocationDatafile.mMonthCount);
+				+ mLocationDatafile.mMonthCount + " > " + locationId);
 
 		mCalendar.set(mCommonDatafile.mStartYear, mCommonDatafile.mStartMonth,
 				mCommonDatafile.mStartDay, 0, 0, 0);
@@ -267,7 +322,7 @@ public class DataProvider extends SubDataProcessor {
 				buffer = locBundle.extractLocation(index);
 				LocationsDataFile datafile = new LocationsDataFile(
 						new ByteArrayInputStream(buffer));
-				lastLocationId = mPeriod
+				lastLocationId = mPeriodStr
 						+ String.format("%08x", datafile.mCityId);
 				MyLog.i(TAG, "Unbundle: " + index + ", " + lastLocationId + " "
 						+ datafile.mCity);

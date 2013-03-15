@@ -69,7 +69,7 @@ public class Mutter {
 			return;
 		}
 		System.out.println("Usage:\n\tcommon <year> <start month> <month count> <output> - generate common file");
-		System.out.println("\tlocation <year> <start month> <end month> <country/city id> <output> - generate location file");
+		System.out.println("\tlocation <year> <start month> <end month> <country/city id> <output> <csv output> - generate location file");
 		System.out.println("\tlocations <year> <start month> <end month> <location list file> <output> <csv output> - generate multi-location file");
 	}
 	

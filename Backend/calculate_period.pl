@@ -9,6 +9,7 @@ use Cwd;
 if (!defined($ARGV[2])) {
 	die "Usage: calculate_period.pl <year> <month> <month_count>";
 }
+my $LOCLIST_CSV = '/tmp/tmp.csv';
 my $SCRIPT_DIR = getcwd();
 $ENV{CALCULATIONS_DIR} = '/home/willow/prj/amax/amax-calculations';
 
@@ -42,7 +43,7 @@ sub make_location {   # $country, $city_id
 	my ($country, $city_id) = @_;
 	my $location_file = "$DEST_DIR/$city_id.dat";
 	if (! -f $location_file) {
-		my $cmd = "java -jar Mutter3.jar location $YEAR $MONTH $MONTH_COUNT $country/$city_id $location_file";
+		my $cmd = "java -jar Mutter3.jar location $YEAR $MONTH $MONTH_COUNT $country/$city_id $location_file $LOCLIST_CSV";
 		system ($cmd);
 	}
 }
