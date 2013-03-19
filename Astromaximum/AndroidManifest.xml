@@ -23,6 +23,7 @@
 		<activity android:name=".InterpreterActivity"/>
 		<activity android:name=".LocationListActivity"/>
 		<activity android:name=".StartPageLayoutActivity"/>
+		<activity android:name=".DataActivity"/>
 	</application>
 
 </manifest>

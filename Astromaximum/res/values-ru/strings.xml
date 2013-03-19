@@ -3,6 +3,7 @@
 
     <string name="pref_current_city">Текущий город</string>
     <string name="pref_download_more">Скачать города</string>
+    <string name="data">Данные</string>
     <string name="prefs_title">Настройки</string>
     <string name="today_title">Сегодня</string>
     <string name="help_title">Помощь</string>

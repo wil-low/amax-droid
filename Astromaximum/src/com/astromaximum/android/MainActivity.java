@@ -87,6 +87,11 @@ public class MainActivity extends SherlockActivity {
 			updateDisplay();
 			break;
 		}
+		case R.id.menu_data: {
+			Intent intent = new Intent(this, DataActivity.class);
+			startActivity(intent);
+			break;
+		}
 		case R.id.menu_options: {
 			Intent intent = new Intent(this, Preferences.class);
 			startActivityForResult(intent, PreferenceUtils.ID_PREFERENCE);

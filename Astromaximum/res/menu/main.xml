@@ -24,6 +24,11 @@
         android:title="@string/pick_date">
     </item>
     <item
+        android:id="@+id/menu_data"
+        android:icon="@+drawable/ic_menu_mapmode"
+        android:title="@string/data">
+    </item>
+    <item
         android:id="@+id/menu_options"
         android:icon="@+drawable/ic_menu_preferences"
         android:title="@string/prefs_title">

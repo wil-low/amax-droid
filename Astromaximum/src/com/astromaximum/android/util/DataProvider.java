@@ -67,6 +67,7 @@ public class DataProvider extends SubDataProcessor {
 	private boolean mUseCustomTime = false;
 	private ArrayList<StartPageItem> mStartPageLayout;
 	private int mCommonId;
+
 	public String mPeriodKey;
 	public String mPeriodStr;
 	private AmaxDatabase mDatabase;
@@ -119,6 +120,10 @@ public class DataProvider extends SubDataProcessor {
 			return read(mCommonDatafile.mData, evtype, planet, true, dayStart,
 					dayEnd, mFinalJD, null);
 		}
+	}
+
+	public int getCommonId() {
+		return mCommonId;
 	}
 
 	public long getStartJD() {
