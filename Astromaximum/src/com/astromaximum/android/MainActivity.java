@@ -88,7 +88,7 @@ public class MainActivity extends SherlockActivity {
 			break;
 		}
 		case R.id.menu_data: {
-			Intent intent = new Intent(this, DataActivity.class);
+			Intent intent = new Intent(this, PeriodSelectActivity.class);
 			startActivity(intent);
 			break;
 		}

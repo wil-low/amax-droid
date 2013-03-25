@@ -13,4 +13,7 @@
     <dimen name="interp_text_size">18sp</dimen>
     <dimen name="interp_margin">5dp</dimen>
     
+    <dimen name="data_name_side_margin">10dp</dimen>
+    <dimen name="data_summary_side_margin">20dp</dimen>
+    
 </resources>

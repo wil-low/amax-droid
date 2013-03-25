@@ -20,6 +20,9 @@
     <string name="norm_range_whole_day">whole day</string>
     <string name="norm_range_arrow">⇨</string>
     <string name="interp_share">Share</string>
+    <string name="avail_periods">Available periods:</string>
+    <string name="avail_cities">Available cities:</string>
+    <string name="data_add">Add</string>
     
     <string name="si_key_voc">Moon \"Void of Course\"</string>
     <string name="si_key_vc">\"Via Combusta\"</string>
@@ -153,4 +156,10 @@
     </string-array>
 
     <string name="retry">Retry</string> <!-- Retry download button -->
+    
+    <string-array name="menu_city">
+        <item>Delete city</item>
+        <item>Information</item>
+    </string-array>
+    
 </resources>

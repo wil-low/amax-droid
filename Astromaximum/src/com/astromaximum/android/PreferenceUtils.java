@@ -1,8 +1,6 @@
 package com.astromaximum.android;
 
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.TreeMap;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -14,13 +12,14 @@ public final class PreferenceUtils {
 	public static final int ID_PREFERENCE = 1;
 	public static final String KEY_COMMON_ID = "common_id";
 	public static final String KEY_LOCATION_ID = "location_id";
-	public static final String PREF_LOCATION_LIST = "location_list";
 	public static final String KEY_START_TIME = "start_time";
 	public static final String KEY_CUSTOM_HOUR = "custom_hour";
 	public static final String KEY_CUSTOM_MINUTE = "custom_minute";
 	public static final String LISTKEY_EVENT_KEY = "com.astromaximum.android.eventKey";
 	public static final String LISTKEY_INTERPRETER_TEXT = "com.astromaximum.android.interpreterCode";
 	public static final String LISTKEY_INTERPRETER_EVENT = "com.astromaximum.android.event";
+	public static final String PERIOD_STRING_KEY = "com.astromaximum.android.periodString";
+	public static final String PERIOD_KEY_KEY = "com.astromaximum.android.periodKey";
 	public static final String KEY_USE_CUSTOM_TIME = "use_custom_time";
 	public static final String KEY_CUSTOM_TIME = "custom_time";
 	public static final String KEY_START_PAGE_LAYOUT = "start_page_layout";
@@ -33,7 +32,15 @@ public final class PreferenceUtils {
 	public static String getLocationId(Context context) {
 		SharedPreferences sharedPref = PreferenceManager
 				.getDefaultSharedPreferences(context);
-		return sharedPref.getString(PreferenceUtils.KEY_LOCATION_ID, "");
+		return sharedPref.getString(PreferenceUtils.KEY_LOCATION_ID, null);
+	}
+
+	public static void setLocationId(Context context, String id) {
+		SharedPreferences sharedPref = PreferenceManager
+				.getDefaultSharedPreferences(context);
+		SharedPreferences.Editor editor = sharedPref.edit();
+		editor.putString(PreferenceUtils.KEY_LOCATION_ID, id);
+		editor.commit();
 	}
 
 	public static boolean getUseCustomTime(Context context) {
@@ -48,16 +55,6 @@ public final class PreferenceUtils {
 				.getDefaultSharedPreferences(context);
 		return sharedPref
 				.getBoolean(PreferenceUtils.KEY_USE_VOLUME_BUTTONS, false);
-	}
-
-	public static TreeMap<String, String> getSortedLocations(Context context) {
-		SharedPreferences sharedPref = context.getSharedPreferences(
-				PREF_LOCATION_LIST, 0);
-
-		TreeMap<String, String> treeMap = new TreeMap<String, String>();
-		for (Map.Entry<String, ?> entry : sharedPref.getAll().entrySet())
-			treeMap.put((String) entry.getValue(), entry.getKey());
-		return treeMap;
 	}
 
 	public static ArrayList<StartPageItem> getStartPageLayout(Context context) {

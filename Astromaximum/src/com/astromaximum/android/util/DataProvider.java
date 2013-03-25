@@ -15,6 +15,7 @@ import java.util.TimeZone;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
+import android.database.Cursor;
 import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 
@@ -185,9 +186,8 @@ public class DataProvider extends SubDataProcessor {
 		editor.putInt(PreferenceUtils.KEY_COMMON_ID, mCommonId);
 		editor.commit();
 
-		String locationId = sharedPref.getString(
-				PreferenceUtils.KEY_LOCATION_ID, "");
-		if (locationId.equals("")) { // no default location, unbundle from asset
+		String locationId = PreferenceUtils.getLocationId(mContext);
+		if (locationId == null) { // no default location, unbundle from asset
 			locationId = unbundleLocationAsset();
 		}
 		loadLocation(locationId, sharedPref);
@@ -261,18 +261,14 @@ public class DataProvider extends SubDataProcessor {
 	}
 
 	private void loadLocation(String locationId, SharedPreferences sharedPref) {
-		BufferedInputStream is = null;
 		try {
-			is = new BufferedInputStream(mContext.openFileInput(locationId),
-					STREAM_BUFFER_SIZE);
-			mLocationDatafile = new LocationsDataFile(is);
+			makeLocationDatafile(locationId);
 		} catch (FileNotFoundException e) {
-			locationId = PreferenceUtils.getSortedLocations(mContext)
-					.firstKey();
+			Cursor cursor = mDatabase.getSortedLocations();
+			if (cursor.moveToFirst())
+				locationId = cursor.getString(4);
 			try {
-				is = new BufferedInputStream(
-						mContext.openFileInput(locationId), STREAM_BUFFER_SIZE);
-				mLocationDatafile = new LocationsDataFile(is);
+				makeLocationDatafile(locationId);
 			} catch (FileNotFoundException e2) {
 				e2.printStackTrace();
 			}
@@ -312,39 +308,45 @@ public class DataProvider extends SubDataProcessor {
 		Event.setTimeZone(mLocationDatafile.mTimezone);
 	}
 
+	private void makeLocationDatafile(String locationId) throws FileNotFoundException {
+		String filename = makeLocationFilename(locationId);
+		InputStream is = new BufferedInputStream(mContext.openFileInput(filename),
+				STREAM_BUFFER_SIZE);
+		mLocationDatafile = new LocationsDataFile(is);
+	}
+
+	private String makeLocationFilename(String locationId) {
+		return mPeriodStr + locationId;
+	}
+
 	private String unbundleLocationAsset() {
-		String lastLocationId = "";
+		String lastLocationId = null;
 		AssetManager manager = mContext.getAssets();
 		try {
 			InputStream is = manager.open("locations.dat");
 			LocationBundle locBundle = new LocationBundle(is);
 			int index = 0;
 			byte[] buffer = null;
-			SharedPreferences sharedPref = mContext.getSharedPreferences(
-					PreferenceUtils.PREF_LOCATION_LIST, 0);
-			SharedPreferences.Editor editor = sharedPref.edit();
 			for (int i = 0; i < locBundle.mRecordCount; ++i) {
 				buffer = locBundle.extractLocation(index);
 				LocationsDataFile datafile = new LocationsDataFile(
 						new ByteArrayInputStream(buffer));
-				lastLocationId = mPeriodStr
-						+ String.format("%08x", datafile.mCityId);
+				lastLocationId = String.format("%08x", datafile.mCityId);
 				MyLog.i(TAG, "Unbundle: " + index + ", " + lastLocationId + " "
 						+ datafile.mCity);
 				OutputStream out = null;
 				try {
+					String filename = makeLocationFilename(lastLocationId);
 					out = new BufferedOutputStream(mContext.openFileOutput(
-							lastLocationId, Context.MODE_PRIVATE),
+							filename, Context.MODE_PRIVATE),
 							STREAM_BUFFER_SIZE);
 					out.write(buffer);
-					editor.putString(lastLocationId, datafile.mCity);
 				} finally {
 					if (out != null)
 						out.close();
 				}
 				++index;
 			}
-			editor.commit();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

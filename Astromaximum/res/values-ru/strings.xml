@@ -20,6 +20,9 @@
     <string name="norm_range_whole_day">весь день</string>
     <string name="norm_range_arrow">⇨</string>
     <string name="interp_share">Поделиться</string>
+    <string name="avail_periods">Доступные периоды:</string>
+    <string name="avail_cities">Доступные города:</string>
+    <string name="data_add">Добавить</string>
     
     <string name="si_key_voc">Луна \"без курса\"</string>
     <string name="si_key_vc">\"Сожженный путь\"</string>
@@ -151,4 +154,10 @@
         <item>Луна на сожженном пути (VC)</item>
     </string-array>
 	<string name="retry">Повторить</string> <!-- Retry download button -->
+	
+	<string-array name="menu_city">
+        <item>Удалить город</item>
+        <item>Информация</item>
+    </string-array>
+	
 </resources>

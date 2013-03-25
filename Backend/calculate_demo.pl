@@ -64,8 +64,8 @@ sub make_database {
 	open (TMP_SQL, ">$TMP_SQL") or die "$!: $TMP_SQL";
 	print (TMP_SQL "BEGIN TRANSACTION;\n");
 	my $sql = <<END;
-	CREATE TABLE commons (_id INTEGER PRIMARY KEY, year NUMERIC, start_month NUMERIC, month_count NUMERIC, key TEXT);
-	CREATE TABLE cities (_id INTEGER PRIMARY KEY, name TEXT, state TEXT, country TEXT, key TEXT);
+	CREATE TABLE commons (_id INTEGER PRIMARY KEY, year NUMERIC, start_month NUMERIC, month_count NUMERIC, key TEXT UNIQUE);
+	CREATE TABLE cities (_id INTEGER PRIMARY KEY, name TEXT, state TEXT, country TEXT, key TEXT UNIQUE);
 	CREATE TABLE locations (_id INTEGER PRIMARY KEY, common_id NUMERIC, city_id NUMERIC);
 
 END
