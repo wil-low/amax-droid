@@ -26,13 +26,4 @@
         android:text="Small Text"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
-    <RadioButton
-        android:id="@+id/radioCurrent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:clickable="false"
-        android:focusable="false" />
-
 </RelativeLayout>

@@ -30,6 +30,7 @@ public class CitySelectActivity extends SherlockActivity {
 	private ListView mCityList;
 	private DataProvider mDataProvider;
 	private Context mContext;
+	private String mLocationId;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -41,7 +42,7 @@ public class CitySelectActivity extends SherlockActivity {
 				PreferenceUtils.PERIOD_STRING_KEY);
 
 		mCityList = (ListView) findViewById(R.id.currentCityList);
-		
+
 		mDataProvider = DataProvider.getInstance(getApplicationContext());
 		mDB = AmaxDatabase.getInstance(getApplicationContext());
 
@@ -72,9 +73,9 @@ public class CitySelectActivity extends SherlockActivity {
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
 		if (v.getId() == R.id.layoutCity) {
-			RadioButton cb = (RadioButton) v.findViewById(R.id.radioCurrent);
-			menu.setHeaderTitle("City key = " + cb.getTag());
-			String[] menuItems = getResources().getStringArray(R.array.menu_city);
+			menu.setHeaderTitle("City key = ");
+			String[] menuItems = getResources().getStringArray(
+					R.array.menu_city);
 			for (int i = 0; i < menuItems.length; i++) {
 				menu.add(Menu.NONE, i, i, menuItems[i]);
 			}
@@ -88,10 +89,10 @@ public class CitySelectActivity extends SherlockActivity {
 		SharedPreferences sharedPref = PreferenceManager
 				.getDefaultSharedPreferences(this);
 		int commonId = sharedPref.getInt(PreferenceUtils.KEY_COMMON_ID, 0);
-		String locationId = PreferenceUtils.getLocationId(this);
+		mLocationId = PreferenceUtils.getLocationId(this);
 
 		Cursor cursor = mDB.getCitiesForPeriod(commonId);
-		CursorAdapter adapter = new CityCursorAdapter(this, cursor, locationId);
+		CursorAdapter adapter = new CityCursorAdapter(this, cursor, mLocationId);
 		mCityList.setAdapter(adapter);
 	}
 
@@ -119,32 +120,23 @@ public class CitySelectActivity extends SherlockActivity {
 			}
 			tv = (TextView) view.findViewById(R.id.textSummary);
 			tv.setText(summary);
-			RadioButton cb = (RadioButton) view.findViewById(R.id.radioCurrent);
 			String cityKey = cursor.getString(4);
-			cb.setTag(cityKey);
-			cb.setChecked(cityKey.equals(mLocationId));
+			view.setTag(cityKey);
 		}
 
 		@Override
 		public View newView(Context context, Cursor cursor, ViewGroup parent) {
 			final View view = LayoutInflater.from(context).inflate(
 					R.layout.item_data_city, parent, false);
-			registerForContextMenu(view);
-
 			view.setOnClickListener(new View.OnClickListener() {
 
 				public void onClick(View view) {
-					final RadioButton cb = (RadioButton) view
-							.findViewById(R.id.radioCurrent);
-					String selectedKey = (String) cb.getTag();
-					if (!selectedKey.equals(mLocationId)) {
-						mLocationId = selectedKey;
-						PreferenceUtils.setLocationId(mContext, mLocationId);
-						notifyDataSetChanged();
-					}
+					mLocationId = (String) view.getTag();
+					PreferenceUtils.setLocationId(mContext, mLocationId);
+					finish();
 				}
-
 			});
+			registerForContextMenu(view);
 			return view;
 		}
 
