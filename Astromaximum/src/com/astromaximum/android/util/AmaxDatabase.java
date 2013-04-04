@@ -1,9 +1,12 @@
 package com.astromaximum.android.util;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.astromaximum.util.LocationsDataFile;
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
 public class AmaxDatabase extends SQLiteAssetHelper {
@@ -78,13 +81,39 @@ public class AmaxDatabase extends SQLiteAssetHelper {
 
 	public Cursor getCitiesForPeriod(int commonId) {
 		mDB = getReadableDatabase();
-		Cursor cursor = mDB
-				.rawQuery(
-						"select lo._id as _id, ci.name, ci.state, ci.country, ci.key "
-								+ "from cities ci, locations lo, commons co "
-								+ "where ci._id = lo.city_id and co._id = "
-								+ commonId + " order by ci.name, ci.state, ci.country",
-						null);
+		Cursor cursor = mDB.rawQuery(
+				"select lo._id as _id, ci.name, ci.state, ci.country, ci.key "
+						+ "from cities ci, locations lo, commons co "
+						+ "where ci._id = lo.city_id and co._id = " + commonId
+						+ " order by ci.name, ci.state, ci.country", null);
 		return cursor;
+	}
+
+	public long addCity(LocationsDataFile ldf, String locationKey) {
+		mDB = getWritableDatabase();
+		ContentValues cv = new ContentValues();
+		cv.put("name", ldf.mCity);
+		cv.put("state", ldf.mState);
+		cv.put("country", ldf.mCountry);
+		cv.put("key", locationKey);
+		try {
+			return mDB.insertOrThrow("cities", null, cv);
+		} catch (SQLException e) {
+			Cursor cursor = getCurrentLocation(locationKey);
+			if (cursor.moveToFirst())
+				return cursor.getLong(0);
+		}
+		return -1;
+	}
+
+	public void addLocation(long periodId, long cityId) {
+		mDB = getWritableDatabase();
+		ContentValues cv = new ContentValues();
+		cv.put("common_id", periodId);
+		cv.put("city_id", cityId);
+		try {
+			mDB.insertOrThrow("locations", null, cv);
+		} catch (SQLException e) {
+		}
 	}
 }

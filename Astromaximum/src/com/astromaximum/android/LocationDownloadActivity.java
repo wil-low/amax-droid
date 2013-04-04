@@ -1,12 +1,11 @@
 package com.astromaximum.android;
 
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import org.json.JSONArray;
@@ -28,22 +27,26 @@ import com.actionbarsherlock.view.Window;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
+import com.astromaximum.android.util.AmaxDatabase;
 import com.astromaximum.android.util.DataProvider;
 import com.astromaximum.android.util.MyLog;
 import com.astromaximum.android.view.ViewHolder;
+import com.astromaximum.util.LocationBundle;
+import com.astromaximum.util.LocationsDataFile;
 import com.woozzu.android.util.StringMatcher;
 import com.woozzu.android.widget.IndexableListView;
 
-public class LocationListActivity extends SherlockActivity {
-	private final String TAG = "LocationListActivity";
+public class LocationDownloadActivity extends SherlockActivity {
+	private final String TAG = "LocationDownloadActivity";
 	private IndexableListView mEventList;
 	private DataProvider mDataProvider;
+	private AmaxDatabase mDB;
 	private Context mContext;
 	private ProgressDialog mProgressDialog;
 	private AQuery mAQuery;
 	private String mTitle = "Download cities";
 	private int mYear = 2012, mMode = MODE_COUNTRIES;
-	private String mCountryId, mStateId, mCityId;
+	private String mCountryId, mStateId, mCityId, mPeriodString;
 	private ArrayList<String> mIdentifierList = new ArrayList<String>();
 	private ArrayList<String> mNameList = new ArrayList<String>();
 	private Button mRetryButton;
@@ -58,6 +61,13 @@ public class LocationListActivity extends SherlockActivity {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		MyLog.d(TAG, "OnCreate: ");
 		mContext = this;
+		mDB = AmaxDatabase.getInstance(mContext);
+		mPeriodString = getIntent().getStringExtra(
+				PreferenceUtils.PERIOD_STRING_KEY);
+		getSupportActionBar().setSubtitle(mPeriodString);
+		getSupportActionBar().setDisplayShowHomeEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 		mDataProvider = DataProvider.getInstance(this);
 		mAQuery = new AQuery(mContext);
 		setContentView(R.layout.activity_location_list);
@@ -136,6 +146,7 @@ public class LocationListActivity extends SherlockActivity {
 			mTitle = "City";
 			return;
 		}
+		getSupportActionBar().setTitle(mTitle);
 		setSupportProgressBarIndeterminateVisibility(true);
 		mAQuery.ajax(url, JSONObject.class, new AjaxCallback<JSONObject>() {
 			@Override
@@ -146,7 +157,6 @@ public class LocationListActivity extends SherlockActivity {
 					try {
 						// successful ajax call, show status code and json
 						// content
-						getSupportActionBar().setTitle(mTitle);
 						mNameList.clear();
 						mIdentifierList.clear();
 						JSONArray arr0 = json.getJSONArray("content");
@@ -220,7 +230,7 @@ public class LocationListActivity extends SherlockActivity {
 		}
 	}
 
-	private void downloadCity(final String periodKey, final String cityId, final String cityName) {
+	private void downloadCity(final String periodKey, final String cityKey, final String cityName) {
 		ProgressDialog dialog = new ProgressDialog(this);
 
 		dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -229,22 +239,29 @@ public class LocationListActivity extends SherlockActivity {
 		dialog.setCanceledOnTouchOutside(true);
 		dialog.setTitle("Downloading " + cityName + "...");
 		
-		String url = "http://astromaximum.com/data/" + periodKey + "/" + cityId;
+		String url = "http://astromaximum.com/data/" + periodKey + "/" + cityKey;
 		mAQuery.progress(dialog).ajax(url, InputStream.class, new AjaxCallback<InputStream>() {
 			public void callback(String url, InputStream is, AjaxStatus status) {
 				if (is != null) {
 					GZIPInputStream zis = null;
 					try {
 						zis = new GZIPInputStream(is);
-						FileOutputStream fos = mContext.openFileOutput(mDataProvider.mPeriodStr + cityId, Context.MODE_PRIVATE);
+						FileOutputStream fos = mContext.openFileOutput(mDataProvider.mPeriodStr + cityKey, Context.MODE_PRIVATE);
 						byte[] buffer = new byte[1024];
 						int count;
 						while ((count = zis.read(buffer)) > 0)
 							fos.write(buffer, 0, count);
 						fos.close();
+						FileInputStream fis = mContext.openFileInput(mDataProvider.mPeriodStr + cityKey);
+						LocationsDataFile ldf = new LocationsDataFile(fis);
+						fis.close();
+						long cityId = mDB.addCity(ldf, cityKey);
+						mDB.addLocation(mDataProvider.mCommonId, cityId);
+						PreferenceUtils.setLocationId(mContext, cityKey);
 						Toast.makeText(mAQuery.getContext(),
 								"Downloaded:" + cityName, Toast.LENGTH_LONG)
 								.show();
+						finish();
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

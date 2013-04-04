@@ -34,19 +34,22 @@ public class LocationFilter extends SubDataProcessor {
 	}
 
 	public void dumpToFile(int startMonth, int monthCount, long delta,
-			String outFile, String csvFile) {
+			String outFile, String csvFile, boolean makeBundle) {
 		RandomAccessFile raf;
 		mStartMonth = startMonth;
 		mMonthCount = monthCount;
+		long headerPos = 0;
 		try {
 			FileWriter fstream = new FileWriter(csvFile);
 			BufferedWriter csvOut = new BufferedWriter(fstream);
 			raf = new RandomAccessFile(outFile, "rw");
-			raf.writeShort(mYear);
-			raf.writeShort(mInputFiles.size());
-			long headerPos = raf.getFilePointer();
-			for (int i = 0; i < mInputFiles.size(); ++i)
-				raf.writeShort(0); // fake data length
+			if (makeBundle) {
+				raf.writeShort(mYear);
+				raf.writeShort(mInputFiles.size());
+				headerPos = raf.getFilePointer();
+				for (int i = 0; i < mInputFiles.size(); ++i)
+					raf.writeShort(0); // fake data length
+			}
 			int fileCounter = 0;
 			for (String inputFile : mInputFiles) {
 				FileInputStream fis = new FileInputStream(inputFile);
@@ -121,11 +124,13 @@ public class LocationFilter extends SubDataProcessor {
 					}
 				}
 				long dataLen = joinTempfiles(tempPath, raf);
-				long posEnd = raf.getFilePointer();
-				raf.seek(headerPos);
-				raf.writeShort((int) dataLen);
-				headerPos = raf.getFilePointer();
-				raf.seek(posEnd);
+				if (makeBundle) {
+					long posEnd = raf.getFilePointer();
+					raf.seek(headerPos);
+					raf.writeShort((int) dataLen);
+					headerPos = raf.getFilePointer();
+					raf.seek(posEnd);
+				}
 				System.out.println(inputFile);
 				++fileCounter;
 			}

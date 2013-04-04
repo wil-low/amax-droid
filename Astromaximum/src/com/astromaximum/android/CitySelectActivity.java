@@ -11,10 +11,8 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
@@ -31,24 +29,24 @@ public class CitySelectActivity extends SherlockActivity {
 	private DataProvider mDataProvider;
 	private Context mContext;
 	private String mLocationId;
+	private String mPeriodString;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_city_select);
 		mContext = this;
-
-		String periodString = getIntent().getStringExtra(
+		mPeriodString = getIntent().getStringExtra(
 				PreferenceUtils.PERIOD_STRING_KEY);
+
+		getSupportActionBar().setTitle(mPeriodString);
+		getSupportActionBar().setDisplayShowHomeEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		mCityList = (ListView) findViewById(R.id.currentCityList);
 
 		mDataProvider = DataProvider.getInstance(getApplicationContext());
 		mDB = AmaxDatabase.getInstance(getApplicationContext());
-
-		getSupportActionBar().setTitle(periodString);
-		getSupportActionBar().setDisplayShowHomeEnabled(true);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 
 	@Override
@@ -64,6 +62,11 @@ public class CitySelectActivity extends SherlockActivity {
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			finish();
+			break;
+		case R.id.menu_add:
+			Intent intent = new Intent(mContext, LocationDownloadActivity.class);
+			intent.putExtra(PreferenceUtils.PERIOD_STRING_KEY, mPeriodString);
+			startActivity(intent);
 			break;
 		}
 		return true;

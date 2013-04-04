@@ -12,10 +12,10 @@ import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -38,14 +38,6 @@ public class PeriodSelectActivity extends SherlockActivity {
 		mCurrentPeriodList = (ListView) findViewById(R.id.currentPeriodList);
 
 		mAvailPeriodList = (ListView) findViewById(R.id.availPeriodList);
-		mAvailPeriodList
-				.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-					public void onItemClick(AdapterView<?> parent, View view,
-							int position, long id) {
-					}
-
-				});
 
 		mDataProvider = DataProvider.getInstance(getApplicationContext());
 		mDB = AmaxDatabase.getInstance(getApplicationContext());

@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 if (!defined($ARGV[2])) {
-	die "Usage: calculate_demo.pl <year> <month> <month_count>";
+	die "Usage: calculate_demo.pl <year> <month 0-11> <month_count>";
 }
 
 $ENV{CALCULATIONS_DIR} = '/home/willow/prj/amax/amax-calculations';

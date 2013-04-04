@@ -27,8 +27,8 @@ final public class LocationsDataFile {
 	public int mCityId;
 	int[] mCoords = new int[3];
 	public String mCity;
-	String mState;
-	String mCountry;
+	public String mState;
+	public String mCountry;
 	public String mTimezone;
 	String mCustomData;
 	TimezoneTransition[] mTransitions;

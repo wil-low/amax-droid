@@ -39,7 +39,7 @@ public class Mutter {
 			String outFile = args[5];
 			String csvFile = args[6];
 			LocationFilter filter = new LocationFilter(year, filenames);
-			filter.dumpToFile(startMonth, monthCount, delta, outFile, csvFile);
+			filter.dumpToFile(startMonth, monthCount, delta, outFile, csvFile, false);
 			return;
 		}
 		if ((argsLen == 7) && args[0].equals("locations")) {
@@ -61,7 +61,7 @@ public class Mutter {
 				}
 				input.close();
 				LocationFilter filter = new LocationFilter(year, filenames);
-				filter.dumpToFile(startMonth, monthCount, delta, outFile, csvFile);
+				filter.dumpToFile(startMonth, monthCount, delta, outFile, csvFile, true);
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

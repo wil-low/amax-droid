@@ -67,7 +67,7 @@ public class DataProvider extends SubDataProcessor {
 	private String mTitleDateFormat;
 	private boolean mUseCustomTime = false;
 	private ArrayList<StartPageItem> mStartPageLayout;
-	private int mCommonId;
+	public int mCommonId;
 
 	public String mPeriodKey;
 	public String mPeriodStr;
