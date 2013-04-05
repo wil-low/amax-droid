@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
@@ -88,7 +89,7 @@ public class MainActivity extends SherlockActivity {
 			break;
 		}
 		case R.id.menu_data: {
-			Intent intent = new Intent(this, PeriodSelectActivity.class);
+			Intent intent = new Intent(mContext, CitySelectActivity.class);
 			startActivity(intent);
 			break;
 		}

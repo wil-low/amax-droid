@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
@@ -39,14 +40,26 @@ public class CitySelectActivity extends SherlockActivity {
 		mPeriodString = getIntent().getStringExtra(
 				PreferenceUtils.PERIOD_STRING_KEY);
 
-		getSupportActionBar().setTitle(mPeriodString);
-		getSupportActionBar().setDisplayShowHomeEnabled(true);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
 		mCityList = (ListView) findViewById(R.id.currentCityList);
 
 		mDataProvider = DataProvider.getInstance(getApplicationContext());
 		mDB = AmaxDatabase.getInstance(getApplicationContext());
+
+		SharedPreferences sharedPref = PreferenceManager
+				.getDefaultSharedPreferences(this);
+		int commonId = sharedPref.getInt(PreferenceUtils.KEY_COMMON_ID, 0);
+
+		mLocationId = PreferenceUtils.getLocationId(this);
+		Cursor cursor = mDB.getCurrentPeriodAndCity(commonId, mLocationId);
+		if (cursor.moveToFirst()) {
+			mPeriodString = DataProvider.makePeriodCaption(cursor.getInt(1), cursor.getInt(2),
+					cursor.getInt(3) - 1);
+			getSupportActionBar().setTitle(mPeriodString);
+		}
+		cursor.close();
+		getSupportActionBar().setDisplayShowHomeEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 	}
 
 	@Override
@@ -92,7 +105,6 @@ public class CitySelectActivity extends SherlockActivity {
 		SharedPreferences sharedPref = PreferenceManager
 				.getDefaultSharedPreferences(this);
 		int commonId = sharedPref.getInt(PreferenceUtils.KEY_COMMON_ID, 0);
-		mLocationId = PreferenceUtils.getLocationId(this);
 
 		Cursor cursor = mDB.getCitiesForPeriod(commonId);
 		CursorAdapter adapter = new CityCursorAdapter(this, cursor, mLocationId);
@@ -125,6 +137,8 @@ public class CitySelectActivity extends SherlockActivity {
 			tv.setText(summary);
 			String cityKey = cursor.getString(4);
 			view.setTag(cityKey);
+			RadioButton rb = (RadioButton) view.findViewById(R.id.radioButton1);
+			rb.setChecked(cityKey.equals(mLocationId));
 		}
 
 		@Override

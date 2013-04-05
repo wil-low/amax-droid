@@ -1,14 +1,11 @@
 package com.astromaximum.android;
 
-import java.util.Calendar;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,7 +94,7 @@ public class PeriodSelectActivity extends SherlockActivity {
 		@Override
 		public void bindView(View view, Context context, Cursor cursor) {
 			TextView tv = (TextView) view.findViewById(R.id.textCommon);
-			tv.setText(makePeriodCaption(cursor.getInt(1), cursor.getInt(2),
+			tv.setText(DataProvider.makePeriodCaption(cursor.getInt(1), cursor.getInt(2),
 					cursor.getInt(3) - 1));
 			tv = (TextView) view.findViewById(R.id.textLocation);
 			tv.setText(cursor.getString(5));
@@ -132,7 +129,7 @@ public class PeriodSelectActivity extends SherlockActivity {
 		public void bindView(View view, Context context, Cursor cursor) {
 			final TextView tv = (TextView) view
 					.findViewById(android.R.id.text1);
-			tv.setText(makePeriodCaption(cursor.getInt(1), cursor.getInt(2),
+			tv.setText(DataProvider.makePeriodCaption(cursor.getInt(1), cursor.getInt(2),
 					cursor.getInt(3) - 1));
 		}
 
@@ -144,17 +141,4 @@ public class PeriodSelectActivity extends SherlockActivity {
 		}
 
 	}
-
-	public CharSequence makePeriodCaption(int year, int startMonth,
-			int monthCount) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(year, startMonth, 1);
-		String text = (String) DateFormat.format("yyyy MMM ", calendar);
-		if (monthCount > 1) {
-			calendar.add(Calendar.MONTH, monthCount);
-			text += DateFormat.format("- MMM", calendar);
-		}
-		return text;
-	}
-
 }

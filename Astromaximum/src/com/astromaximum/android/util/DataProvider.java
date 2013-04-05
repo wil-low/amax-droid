@@ -747,4 +747,16 @@ public class DataProvider extends SubDataProcessor {
 	protected void addEvent(int idx, BaseEvent event) {
 		mEvents[idx] = new Event(event);
 	}
+
+	public static String makePeriodCaption(int year, int startMonth,
+			int monthCount) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(year, startMonth, 1);
+		String text = (String) DateFormat.format("yyyy MMM ", calendar);
+		if (monthCount > 1) {
+			calendar.add(Calendar.MONTH, monthCount);
+			text += DateFormat.format("- MMM", calendar);
+		}
+		return text;
+	}
 }
