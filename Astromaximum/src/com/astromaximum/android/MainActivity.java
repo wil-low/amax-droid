@@ -7,8 +7,10 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.RelativeLayout;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
@@ -19,28 +21,30 @@ import com.astromaximum.android.util.InterpretationProvider;
 import com.astromaximum.android.util.MyLog;
 import com.astromaximum.android.view.SummaryAdapter;
 import com.astromaximum.android.view.ViewHolder;
-import com.astromaximum.util.SubDataProcessor;
 
 public class MainActivity extends SherlockActivity {
 	static final int DATE_DIALOG_ID = 0;
 
 	private final String TAG = "MainActivity";
-	private ListView mEventList = null;
+	private ListView mEventList;
+	private RelativeLayout mNoPeriodLayout;
+	private Button mBuyPeriod;
 
 	private DataProvider mDataProvider;
 	private String mTitleDate;
 	private Context mContext;
 	private boolean mUseVolumeButtons;
+	private boolean mIsListVisible = true;
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		MyLog.setLevel(0);
-		
+
 		MyLog.d(TAG, "OnCreate");
 		mContext = this;
-		
+
 		Event.setContext(mContext);
 		ViewHolder.initialize(mContext);
 
@@ -50,9 +54,11 @@ public class MainActivity extends SherlockActivity {
 		setContentView(R.layout.activity_main);
 
 		mEventList = (ListView) findViewById(R.id.ListViewEvents);
+		mNoPeriodLayout = (RelativeLayout) findViewById(R.id.NoPeriodLayout);
+		mBuyPeriod = (Button) mNoPeriodLayout.findViewById(R.id.btnBuyPeriod);
 
 		getSupportActionBar().setDisplayShowHomeEnabled(false);
-		updateDisplay();
+		updateDisplay(mDataProvider.hasPeriod());
 	}
 
 	// the callback received when the user "sets" the date in the dialog
@@ -60,7 +66,7 @@ public class MainActivity extends SherlockActivity {
 		public void onDateSet(net.simonvt.widget.DatePicker view, int year,
 				int monthOfYear, int dayOfMonth) {
 			DataProvider.getInstance().setDate(year, monthOfYear, dayOfMonth);
-			updateDisplay();
+			updateDisplay(mDataProvider.hasPeriod());
 		}
 	};
 
@@ -85,7 +91,7 @@ public class MainActivity extends SherlockActivity {
 		}
 		case R.id.menu_today: {
 			mDataProvider.setTodayDate();
-			updateDisplay();
+			updateDisplay(mDataProvider.hasPeriod());
 			break;
 		}
 		case R.id.menu_data: {
@@ -104,7 +110,7 @@ public class MainActivity extends SherlockActivity {
 		}
 		return true;
 	}
-	
+
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
@@ -112,11 +118,16 @@ public class MainActivity extends SherlockActivity {
 			DatePickerDialog dlg = new DatePickerDialog(this, mDateSetListener,
 					mDataProvider.getYear(), mDataProvider.getMonth(),
 					mDataProvider.getDay());
-			dlg.getDatePicker().setMinDate(mDataProvider.getStartJD() + SubDataProcessor.MSECINDAY / 2);
-			dlg.getDatePicker().setMaxDate(mDataProvider.getFinalJD() - SubDataProcessor.MSECINDAY / 2);
+			// dlg.getDatePicker().setMinDate(mDataProvider.getStartJD() +
+			// SubDataProcessor.MSECINDAY / 2);
+			// dlg.getDatePicker().setMaxDate(mDataProvider.getFinalJD() -
+			// SubDataProcessor.MSECINDAY / 2);
 			dlg.setTitle(R.string.pick_date);
-	        dlg.setButton(Dialog.BUTTON_POSITIVE, mContext.getText(android.R.string.ok), dlg);
-	        dlg.setButton(Dialog.BUTTON_NEGATIVE, mContext.getText(android.R.string.cancel), (OnClickListener) null);
+			dlg.setButton(Dialog.BUTTON_POSITIVE,
+					mContext.getText(android.R.string.ok), dlg);
+			dlg.setButton(Dialog.BUTTON_NEGATIVE,
+					mContext.getText(android.R.string.cancel),
+					(OnClickListener) null);
 			return dlg;
 		default:
 			return null;
@@ -141,16 +152,28 @@ public class MainActivity extends SherlockActivity {
 	protected void onRestart() {
 		super.onRestart();
 		mDataProvider.restoreState();
-		updateDisplay();
+		updateDisplay(mDataProvider.hasPeriod());
 		MyLog.d(TAG, "OnRestart");
 	}
 
-	private void updateDisplay() {
-		mDataProvider.prepareCalculation();
-		mDataProvider.calculateAll();
-		SummaryAdapter adapter = new SummaryAdapter(this, mDataProvider.mEventCache,
-				mDataProvider.getCustomTime(), mDataProvider.getCurrentTime());
-		mEventList.setAdapter(adapter);
+	private void updateDisplay(boolean hasPeriod) {
+		if (hasPeriod) {
+			mEventList.setVisibility(View.VISIBLE);
+			mNoPeriodLayout.setVisibility(View.INVISIBLE);
+			mDataProvider.prepareCalculation();
+			mDataProvider.calculateAll();
+			SummaryAdapter adapter = new SummaryAdapter(this,
+					mDataProvider.mEventCache, mDataProvider.getCustomTime(),
+					mDataProvider.getCurrentTime());
+			mEventList.setAdapter(adapter);
+		} else {
+			mEventList.setVisibility(View.INVISIBLE);
+			mNoPeriodLayout.setVisibility(View.VISIBLE);
+			mBuyPeriod.setTag(String.format("%04d%02d%02d", mDataProvider.getYear(), mDataProvider.getMonth(), 1));
+			mBuyPeriod.setText(String.format(
+					mContext.getResources().getString(R.string.buy_period),
+					mDataProvider.getYear(), mDataProvider.getMonth() + 1));
+		}
 		updateTitle();
 	}
 
@@ -167,19 +190,19 @@ public class MainActivity extends SherlockActivity {
 	private void updateTitle() {
 		mTitleDate = mDataProvider.getCurrentDateString();
 		getSupportActionBar().setTitle(mTitleDate);
-		getSupportActionBar().setSubtitle(mDataProvider.getHighlightTimeString() + ", " + mDataProvider.getLocationName());
+		getSupportActionBar().setSubtitle(
+				mDataProvider.getHighlightTimeString() + ", "
+						+ mDataProvider.getLocationName());
 	}
 
 	private void previousDate() {
 		MyLog.d(TAG, "previousDate");
-		if (mDataProvider.changeDate(-1))
-			updateDisplay();
+		updateDisplay(mDataProvider.changeDate(-1));
 	}
 
 	private void nextDate() {
 		MyLog.d(TAG, "nextDate");
-		if (mDataProvider.changeDate(1))
-			updateDisplay();
+		updateDisplay(mDataProvider.changeDate(1));
 	}
 
 	@Override

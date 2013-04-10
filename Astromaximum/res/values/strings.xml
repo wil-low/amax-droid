@@ -23,6 +23,8 @@
     <string name="avail_periods">Available periods:</string>
     <string name="avail_cities">Available cities:</string>
     <string name="data_add">Add</string>
+    <string name="no_period">No data for this period</string>
+    <string name="buy_period">Buy \""%1$s\"</string>
     
     <string name="si_key_voc">Moon \"Void of Course\"</string>
     <string name="si_key_vc">\"Via Combusta\"</string>

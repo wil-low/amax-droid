@@ -1,14 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/MainLinearLayout"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/FrameLayout1"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:layout_height="fill_parent" >
 
     <ListView
         android:id="@+id/ListViewEvents"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="match_parent"
         android:minHeight="@dimen/list_item_height" />
 
-</LinearLayout>
+    <RelativeLayout
+        android:id="@+id/NoPeriodLayout"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:visibility="invisible" >
+
+        <Button
+            android:id="@+id/btnBuyPeriod"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="@+string/buy_period" />
+
+        <TextView
+            android:id="@+id/txtNoPeriod"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/btnBuyPeriod"
+            android:layout_centerHorizontal="true"
+            android:text="@+string/no_period" />
+    </RelativeLayout>
+
+</FrameLayout>

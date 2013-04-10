@@ -298,6 +298,11 @@ public class DataProvider extends SubDataProcessor {
 		mCalendar.add(Calendar.MONTH, mLocationDatafile.mMonthCount);
 		long locationFinal = mCalendar.getTime().getTime();
 
+		MyLog.d(TAG, "Common: " + commonStart + "-"
+				+ commonFinal + "; location: "
+				+ locationStart + "-"
+				+ locationFinal);
+
 		mStartJD = Math.max(commonStart, locationStart);
 		mFinalJD = Math.min(commonFinal, locationFinal);
 
@@ -356,25 +361,34 @@ public class DataProvider extends SubDataProcessor {
 	public boolean changeDate(int deltaDays) {
 		// stick to noon to determine date
 		long newDate = mStartTime + MSECINDAY * deltaDays + MSECINDAY / 2;
-		if (newDate < mStartJD || newDate > mFinalJD)
-			return false;
 		mEventCache.clear();
 		mStartTime = newDate;
 		mCalendar.setTimeInMillis(mStartTime);
 		setDateFromCalendar();
-		return true;
+		return hasPeriod();
 	}
 
+	public boolean hasPeriod() {
+		return (mStartTime >= mStartJD && mStartTime < mFinalJD);
+	}
+	
 	public void setDate(int year, int month, int day) {
 		mYear = year;
 		mMonth = month;
 		mDay = day;
+		mCalendar.set(mYear, mMonth, mDay, 0, 0, 0);
+		mCalendar.set(Calendar.MILLISECOND, 0);
+		mStartTime = mCalendar.getTimeInMillis();
 	}
 
 	public void setDateFromCalendar() {
 		mYear = mCalendar.get(Calendar.YEAR);
 		mMonth = mCalendar.get(Calendar.MONTH);
 		mDay = mCalendar.get(Calendar.DAY_OF_MONTH);
+		mCalendar.set(mYear, mMonth, mDay, 0, 0, 0);
+		mCalendar.set(Calendar.MILLISECOND, 0);
+		mStartTime = mCalendar.getTimeInMillis();
+		MyLog.d(TAG, "setDateFromCalendar: " + mStartTime + "-" + mEndTime + "; " + mYear + "-" + mMonth + "-" + mDay);
 	}
 
 	public void prepareCalculation() {
