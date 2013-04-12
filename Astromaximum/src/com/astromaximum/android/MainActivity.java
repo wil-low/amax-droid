@@ -1,7 +1,16 @@
 package com.astromaximum.android;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.zip.GZIPInputStream;
+
 import net.simonvt.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
@@ -11,16 +20,23 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.androidquery.AQuery;
+import com.androidquery.callback.AjaxCallback;
+import com.androidquery.callback.AjaxStatus;
+import com.astromaximum.android.util.AmaxDatabase;
 import com.astromaximum.android.util.DataProvider;
 import com.astromaximum.android.util.Event;
 import com.astromaximum.android.util.InterpretationProvider;
 import com.astromaximum.android.util.MyLog;
 import com.astromaximum.android.view.SummaryAdapter;
 import com.astromaximum.android.view.ViewHolder;
+import com.astromaximum.util.CommonDataFile;
+import com.astromaximum.util.LocationsDataFile;
 
 public class MainActivity extends SherlockActivity {
 	static final int DATE_DIALOG_ID = 0;
@@ -35,6 +51,8 @@ public class MainActivity extends SherlockActivity {
 	private Context mContext;
 	private boolean mUseVolumeButtons;
 	private boolean mIsListVisible = true;
+	private AQuery mAQuery;
+	private AmaxDatabase mDB;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -44,6 +62,8 @@ public class MainActivity extends SherlockActivity {
 
 		MyLog.d(TAG, "OnCreate");
 		mContext = this;
+		mAQuery = new AQuery(mContext);
+		mDB = AmaxDatabase.getInstance(mContext);
 
 		Event.setContext(mContext);
 		ViewHolder.initialize(mContext);
@@ -57,6 +77,11 @@ public class MainActivity extends SherlockActivity {
 		mNoPeriodLayout = (RelativeLayout) findViewById(R.id.NoPeriodLayout);
 		mBuyPeriod = (Button) mNoPeriodLayout.findViewById(R.id.btnBuyPeriod);
 
+		mBuyPeriod.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				downloadPeriod("20130201", "akd6vtir95bs1kow");
+			}
+		});
 		getSupportActionBar().setDisplayShowHomeEnabled(false);
 		updateDisplay(mDataProvider.hasPeriod());
 	}
@@ -222,5 +247,57 @@ public class MainActivity extends SherlockActivity {
 			return true;
 		}
 		return super.dispatchKeyEvent(event);
+	}
+	
+	private void downloadPeriod(final String periodStr, final String periodKey) {
+		ProgressDialog dialog = new ProgressDialog(this);
+
+		dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+		dialog.setCancelable(true);
+		dialog.setInverseBackgroundForced(false);
+		dialog.setCanceledOnTouchOutside(true);
+		dialog.setTitle("Downloading " + periodStr + "...");
+		
+		String url = "http://astromaximum.com/data/?buy=" + periodKey;
+		Map<String, Object> params = new HashMap<String, Object>();
+        params.put("k", "44b62ab3e3165298849ac71428eca191");
+        
+		mAQuery.progress(dialog).ajax(url, params, InputStream.class, new AjaxCallback<InputStream>() {
+			public void callback(String url, InputStream is, AjaxStatus status) {
+				if (is != null) {
+					byte[] keyBuffer = new byte[16];
+					try {
+						if (is.read(keyBuffer) == 16) {
+							String receivedKey = new String(keyBuffer);
+							GZIPInputStream zis = new GZIPInputStream(is);
+							FileOutputStream fos = mContext.openFileOutput(periodStr, Context.MODE_PRIVATE);
+							byte[] buffer = new byte[1024];
+							int count;
+							while ((count = zis.read(buffer)) > 0)
+								fos.write(buffer, 0, count);
+							fos.close();
+							FileInputStream fis = mContext.openFileInput(periodStr);
+							CommonDataFile cdf = new CommonDataFile(fis, false);
+							fis.close();
+							long periodId = mDB.addPeriod(cdf, receivedKey);
+							PreferenceUtils.setCommonId(mContext, periodId);
+							Toast.makeText(mAQuery.getContext(),
+									"Downloaded:" + periodStr, Toast.LENGTH_LONG)
+									.show();
+							onRestart();
+						}
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} else {
+					// ajax error, show error code
+					Toast.makeText(mAQuery.getContext(),
+							"Error:" + status.getCode(), Toast.LENGTH_LONG)
+							.show();
+				}				
+			}
+		});
+
 	}
 }

@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.astromaximum.util.CommonDataFile;
 import com.astromaximum.util.LocationsDataFile;
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
@@ -27,7 +28,7 @@ public class AmaxDatabase extends SQLiteAssetHelper {
 	}
 
 	// 1st is period id, 2nd - key
-	String[] getCommonIds(int id) {
+	String[] getCommonIds(long id) {
 		mDB = getReadableDatabase();
 		Cursor cursor = mDB.rawQuery(
 				"select year, start_month, month_count, key from commons where _id = "
@@ -43,7 +44,7 @@ public class AmaxDatabase extends SQLiteAssetHelper {
 		return result;
 	}
 
-	public Cursor getCurrentPeriodAndCity(int periodId, String locationId) {
+	public Cursor getCurrentPeriodAndCity(long periodId, String locationId) {
 		mDB = getReadableDatabase();
 		String q = "select commons._id as _id, year, start_month, month_count, commons.key, name from commons, cities where commons._id = "
 				+ periodId + " and cities.key = '" + locationId + "'";
@@ -51,7 +52,7 @@ public class AmaxDatabase extends SQLiteAssetHelper {
 		return cursor;
 	}
 
-	public Cursor getAvailablePeriods(int exceptId) {
+	public Cursor getAvailablePeriods(long exceptId) {
 		mDB = getReadableDatabase();
 		Cursor cursor = mDB
 				.rawQuery(
@@ -79,7 +80,7 @@ public class AmaxDatabase extends SQLiteAssetHelper {
 		return cursor;
 	}
 
-	public Cursor getCitiesForPeriod(int commonId) {
+	public Cursor getCitiesForPeriod(long commonId) {
 		mDB = getReadableDatabase();
 		Cursor cursor = mDB.rawQuery(
 				"select lo._id as _id, ci.name, ci.state, ci.country, ci.key "
@@ -115,5 +116,28 @@ public class AmaxDatabase extends SQLiteAssetHelper {
 			mDB.insertOrThrow("locations", null, cv);
 		} catch (SQLException e) {
 		}
+	}
+
+	public long addPeriod(CommonDataFile cdf, String key) {
+		mDB = getWritableDatabase();
+		ContentValues cv = new ContentValues();
+		cv.put("year", cdf.mStartYear);
+		cv.put("start_month", cdf.mStartMonth);
+		cv.put("month_count", cdf.mMonthCount);
+		cv.put("key", key);
+		try {
+			return mDB.insertOrThrow("commons", null, cv);
+		} catch (SQLException e) {
+		}
+		return getPeriodByKey(key);
+	}
+
+	public long getPeriodByKey(String periodKey) {
+		mDB = getReadableDatabase();
+		String q = "select _id from commons where key = '" + periodKey + "'";
+		Cursor cursor = mDB.rawQuery(q, null);
+		if (cursor.moveToFirst())
+			return cursor.getLong(0);
+		return -1;
 	}
 }

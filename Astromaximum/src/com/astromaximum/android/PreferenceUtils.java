@@ -10,7 +10,7 @@ import com.astromaximum.android.util.StartPageItem;
 
 public final class PreferenceUtils {
 	public static final int ID_PREFERENCE = 1;
-	public static final String KEY_COMMON_ID = "common_id";
+	private static final String KEY_COMMON_ID = "common_id";
 	public static final String KEY_LOCATION_ID = "location_id";
 	public static final String KEY_START_TIME = "start_time";
 	public static final String KEY_CUSTOM_HOUR = "custom_hour";
@@ -28,6 +28,20 @@ public final class PreferenceUtils {
 	static final String KEY_STARTPAGE_ITEM_INDEX = "startpage_item_index";
 	static final String KEY_STARTPAGE_ITEM_ENABLED = "startpage_item_enabled";
 	private static final String TAG = "PreferenceUtils";
+
+	public static long getCommonId(Context context) {
+		SharedPreferences sharedPref = PreferenceManager
+				.getDefaultSharedPreferences(context);
+		return sharedPref.getLong(PreferenceUtils.KEY_COMMON_ID, 0);
+	}
+
+	public static void setCommonId(Context context, long id) {
+		SharedPreferences sharedPref = PreferenceManager
+				.getDefaultSharedPreferences(context);
+		SharedPreferences.Editor editor = sharedPref.edit();
+		editor.putLong(PreferenceUtils.KEY_COMMON_ID, id);
+		editor.commit();
+	}
 
 	public static String getLocationId(Context context) {
 		SharedPreferences sharedPref = PreferenceManager

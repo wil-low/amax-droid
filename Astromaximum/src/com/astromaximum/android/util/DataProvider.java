@@ -67,7 +67,7 @@ public class DataProvider extends SubDataProcessor {
 	private String mTitleDateFormat;
 	private boolean mUseCustomTime = false;
 	private ArrayList<StartPageItem> mStartPageLayout;
-	public int mCommonId;
+	public long mCommonId;
 
 	public String mPeriodKey;
 	public String mPeriodStr;
@@ -123,7 +123,7 @@ public class DataProvider extends SubDataProcessor {
 		}
 	}
 
-	public int getCommonId() {
+	public long getCommonId() {
 		return mCommonId;
 	}
 
@@ -171,25 +171,24 @@ public class DataProvider extends SubDataProcessor {
 
 	public void restoreState() {
 		MyLog.d(TAG, "restoreInstanceState");
-		SharedPreferences sharedPref = PreferenceManager
-				.getDefaultSharedPreferences(mContext);
-		mCommonId = sharedPref.getInt(
-				PreferenceUtils.KEY_COMMON_ID, 0);
+		
+		mCommonId = PreferenceUtils.getCommonId(mContext);
 		MyLog.d(TAG, "read KEY_COMMON_ID=" + mCommonId);
 		if (mCommonId == 0) { // no default period, unbundle from asset
 			mCommonId = 1;
 			unbundleCommonAsset();
 		}
 		loadCommon();
-		SharedPreferences.Editor editor = sharedPref.edit();
+		PreferenceUtils.setCommonId(mContext, mCommonId);
 		MyLog.d(TAG, "write KEY_COMMON_ID=" + mCommonId);
-		editor.putInt(PreferenceUtils.KEY_COMMON_ID, mCommonId);
-		editor.commit();
 
 		String locationId = PreferenceUtils.getLocationId(mContext);
 		if (locationId == null) { // no default location, unbundle from asset
 			locationId = unbundleLocationAsset();
 		}
+
+		SharedPreferences sharedPref = PreferenceManager
+				.getDefaultSharedPreferences(mContext);
 		loadLocation(locationId, sharedPref);
 
 		mStartTime = sharedPref
@@ -213,7 +212,7 @@ public class DataProvider extends SubDataProcessor {
 			is = new BufferedInputStream(mContext.openFileInput(mPeriodStr),
 					STREAM_BUFFER_SIZE);
 			mCommonDatafile = new CommonDataFile(is, false);
-		} catch (FileNotFoundException e) {
+		} catch (Exception e) {
 			String[] periodIds = mDatabase.getCommonIds(1);
 			try {
 				is = new BufferedInputStream(

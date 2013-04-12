@@ -66,9 +66,7 @@ public class PeriodSelectActivity extends SherlockActivity {
 	protected void onResume() {
 		super.onResume();
 		MyLog.d(TAG, "OnResume");
-		SharedPreferences sharedPref = PreferenceManager
-				.getDefaultSharedPreferences(this);
-		int commonId = sharedPref.getInt(PreferenceUtils.KEY_COMMON_ID, 0);
+		long commonId = PreferenceUtils.getCommonId(mContext);
 		String locationId = PreferenceUtils.getLocationId(this);
 
 		Cursor cursor = mDB.getCurrentPeriodAndCity(commonId, locationId);

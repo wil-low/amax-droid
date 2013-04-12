@@ -45,9 +45,7 @@ public class CitySelectActivity extends SherlockActivity {
 		mDataProvider = DataProvider.getInstance(getApplicationContext());
 		mDB = AmaxDatabase.getInstance(getApplicationContext());
 
-		SharedPreferences sharedPref = PreferenceManager
-				.getDefaultSharedPreferences(this);
-		int commonId = sharedPref.getInt(PreferenceUtils.KEY_COMMON_ID, 0);
+		long commonId = PreferenceUtils.getCommonId(mContext);
 
 		mLocationId = PreferenceUtils.getLocationId(this);
 		Cursor cursor = mDB.getCurrentPeriodAndCity(commonId, mLocationId);
@@ -102,9 +100,7 @@ public class CitySelectActivity extends SherlockActivity {
 	protected void onResume() {
 		super.onResume();
 		MyLog.d(TAG, "OnResume");
-		SharedPreferences sharedPref = PreferenceManager
-				.getDefaultSharedPreferences(this);
-		int commonId = sharedPref.getInt(PreferenceUtils.KEY_COMMON_ID, 0);
+		long commonId = PreferenceUtils.getCommonId(mContext);
 
 		Cursor cursor = mDB.getCitiesForPeriod(commonId);
 		CursorAdapter adapter = new CityCursorAdapter(this, cursor, mLocationId);
