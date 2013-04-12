@@ -1,16 +1,7 @@
 package com.astromaximum.android;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.zip.GZIPInputStream;
-
 import net.simonvt.app.DatePickerDialog;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
@@ -20,23 +11,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.androidquery.AQuery;
-import com.androidquery.callback.AjaxCallback;
-import com.androidquery.callback.AjaxStatus;
-import com.astromaximum.android.util.AmaxDatabase;
 import com.astromaximum.android.util.DataProvider;
+import com.astromaximum.android.util.Downloader;
 import com.astromaximum.android.util.Event;
 import com.astromaximum.android.util.InterpretationProvider;
 import com.astromaximum.android.util.MyLog;
 import com.astromaximum.android.view.SummaryAdapter;
 import com.astromaximum.android.view.ViewHolder;
-import com.astromaximum.util.CommonDataFile;
-import com.astromaximum.util.LocationsDataFile;
 
 public class MainActivity extends SherlockActivity {
 	static final int DATE_DIALOG_ID = 0;
@@ -44,15 +30,13 @@ public class MainActivity extends SherlockActivity {
 	private final String TAG = "MainActivity";
 	private ListView mEventList;
 	private RelativeLayout mNoPeriodLayout;
-	private Button mBuyPeriod;
+	private Button mMissingDataButton;
+	private TextView mMissingDataMessage;
 
 	private DataProvider mDataProvider;
 	private String mTitleDate;
 	private Context mContext;
 	private boolean mUseVolumeButtons;
-	private boolean mIsListVisible = true;
-	private AQuery mAQuery;
-	private AmaxDatabase mDB;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -62,8 +46,6 @@ public class MainActivity extends SherlockActivity {
 
 		MyLog.d(TAG, "OnCreate");
 		mContext = this;
-		mAQuery = new AQuery(mContext);
-		mDB = AmaxDatabase.getInstance(mContext);
 
 		Event.setContext(mContext);
 		ViewHolder.initialize(mContext);
@@ -75,15 +57,13 @@ public class MainActivity extends SherlockActivity {
 
 		mEventList = (ListView) findViewById(R.id.ListViewEvents);
 		mNoPeriodLayout = (RelativeLayout) findViewById(R.id.NoPeriodLayout);
-		mBuyPeriod = (Button) mNoPeriodLayout.findViewById(R.id.btnBuyPeriod);
+		mMissingDataMessage = (TextView) mNoPeriodLayout
+				.findViewById(R.id.txtMissingData);
+		mMissingDataButton = (Button) mNoPeriodLayout
+				.findViewById(R.id.btnMissingData);
 
-		mBuyPeriod.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				downloadPeriod("20130201", "akd6vtir95bs1kow");
-			}
-		});
 		getSupportActionBar().setDisplayShowHomeEnabled(false);
-		updateDisplay(mDataProvider.hasPeriod());
+		updateDisplay();
 	}
 
 	// the callback received when the user "sets" the date in the dialog
@@ -91,7 +71,7 @@ public class MainActivity extends SherlockActivity {
 		public void onDateSet(net.simonvt.widget.DatePicker view, int year,
 				int monthOfYear, int dayOfMonth) {
 			DataProvider.getInstance().setDate(year, monthOfYear, dayOfMonth);
-			updateDisplay(mDataProvider.hasPeriod());
+			updateDisplay();
 		}
 	};
 
@@ -116,7 +96,7 @@ public class MainActivity extends SherlockActivity {
 		}
 		case R.id.menu_today: {
 			mDataProvider.setTodayDate();
-			updateDisplay(mDataProvider.hasPeriod());
+			updateDisplay();
 			break;
 		}
 		case R.id.menu_data: {
@@ -177,27 +157,79 @@ public class MainActivity extends SherlockActivity {
 	protected void onRestart() {
 		super.onRestart();
 		mDataProvider.restoreState();
-		updateDisplay(mDataProvider.hasPeriod());
+		updateDisplay();
 		MyLog.d(TAG, "OnRestart");
 	}
 
-	private void updateDisplay(boolean hasPeriod) {
-		if (hasPeriod) {
-			mEventList.setVisibility(View.VISIBLE);
-			mNoPeriodLayout.setVisibility(View.INVISIBLE);
-			mDataProvider.prepareCalculation();
-			mDataProvider.calculateAll();
-			SummaryAdapter adapter = new SummaryAdapter(this,
-					mDataProvider.mEventCache, mDataProvider.getCustomTime(),
-					mDataProvider.getCurrentTime());
-			mEventList.setAdapter(adapter);
+	private void updateDisplay() {
+		if (mDataProvider.hasPeriod()) {
+			if (mDataProvider.hasLocation()) {
+				mEventList.setVisibility(View.VISIBLE);
+				mNoPeriodLayout.setVisibility(View.INVISIBLE);
+				mDataProvider.prepareCalculation();
+				mDataProvider.calculateAll();
+				SummaryAdapter adapter = new SummaryAdapter(this,
+						mDataProvider.mEventCache,
+						mDataProvider.getCustomTime(),
+						mDataProvider.getCurrentTime());
+				mEventList.setAdapter(adapter);
+			} else {
+				// No location
+				mEventList.setVisibility(View.INVISIBLE);
+				mNoPeriodLayout.setVisibility(View.VISIBLE);
+				mMissingDataMessage.setText(R.string.no_location);
+
+				mMissingDataButton.setTag(String.format("%04d%02d%02d",
+						mDataProvider.getYear(), mDataProvider.getMonth(), 1));
+				mMissingDataButton.setText(String.format(mContext
+						.getResources().getString(R.string.download_location),
+						mDataProvider.getLocationName()));
+
+				mMissingDataButton
+						.setOnClickListener(new View.OnClickListener() {
+							public void onClick(View v) {
+								String locationId = PreferenceUtils
+										.getLocationId(mContext);
+								Downloader.getInstance(mContext).downloadCity(
+										mDataProvider, locationId,
+										mDataProvider.getLocationName(),
+										new Downloader.Callback() {
+											public void callback(
+													boolean isSuccess) {
+												if (isSuccess) {
+													onPause();
+													onRestart();
+												}
+											}
+										});
+							}
+						});
+			}
 		} else {
+			// No period
 			mEventList.setVisibility(View.INVISIBLE);
 			mNoPeriodLayout.setVisibility(View.VISIBLE);
-			mBuyPeriod.setTag(String.format("%04d%02d%02d", mDataProvider.getYear(), mDataProvider.getMonth(), 1));
-			mBuyPeriod.setText(String.format(
-					mContext.getResources().getString(R.string.buy_period),
-					mDataProvider.getYear(), mDataProvider.getMonth() + 1));
+			mMissingDataMessage.setText(R.string.no_period);
+
+			mMissingDataButton.setTag(String.format("%04d%02d%02d",
+					mDataProvider.getYear(), mDataProvider.getMonth(), 1));
+			mMissingDataButton.setText(String.format(mContext.getResources()
+					.getString(R.string.buy_period), mDataProvider.getYear(),
+					mDataProvider.getMonth() + 1));
+
+			mMissingDataButton.setOnClickListener(new View.OnClickListener() {
+				public void onClick(View v) {
+					Downloader.getInstance(mContext).downloadPeriod("20130201",
+							"akd6vtir95bs1kow", new Downloader.Callback() {
+								public void callback(boolean isSuccess) {
+									if (isSuccess) {
+										onPause();
+										onRestart();
+									}
+								}
+							});
+				}
+			});
 		}
 		updateTitle();
 	}
@@ -222,12 +254,14 @@ public class MainActivity extends SherlockActivity {
 
 	private void previousDate() {
 		MyLog.d(TAG, "previousDate");
-		updateDisplay(mDataProvider.changeDate(-1));
+		mDataProvider.changeDate(-1);
+		updateDisplay();
 	}
 
 	private void nextDate() {
 		MyLog.d(TAG, "nextDate");
-		updateDisplay(mDataProvider.changeDate(1));
+		mDataProvider.changeDate(1);
+		updateDisplay();
 	}
 
 	@Override
@@ -247,57 +281,5 @@ public class MainActivity extends SherlockActivity {
 			return true;
 		}
 		return super.dispatchKeyEvent(event);
-	}
-	
-	private void downloadPeriod(final String periodStr, final String periodKey) {
-		ProgressDialog dialog = new ProgressDialog(this);
-
-		dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-		dialog.setCancelable(true);
-		dialog.setInverseBackgroundForced(false);
-		dialog.setCanceledOnTouchOutside(true);
-		dialog.setTitle("Downloading " + periodStr + "...");
-		
-		String url = "http://astromaximum.com/data/?buy=" + periodKey;
-		Map<String, Object> params = new HashMap<String, Object>();
-        params.put("k", "44b62ab3e3165298849ac71428eca191");
-        
-		mAQuery.progress(dialog).ajax(url, params, InputStream.class, new AjaxCallback<InputStream>() {
-			public void callback(String url, InputStream is, AjaxStatus status) {
-				if (is != null) {
-					byte[] keyBuffer = new byte[16];
-					try {
-						if (is.read(keyBuffer) == 16) {
-							String receivedKey = new String(keyBuffer);
-							GZIPInputStream zis = new GZIPInputStream(is);
-							FileOutputStream fos = mContext.openFileOutput(periodStr, Context.MODE_PRIVATE);
-							byte[] buffer = new byte[1024];
-							int count;
-							while ((count = zis.read(buffer)) > 0)
-								fos.write(buffer, 0, count);
-							fos.close();
-							FileInputStream fis = mContext.openFileInput(periodStr);
-							CommonDataFile cdf = new CommonDataFile(fis, false);
-							fis.close();
-							long periodId = mDB.addPeriod(cdf, receivedKey);
-							PreferenceUtils.setCommonId(mContext, periodId);
-							Toast.makeText(mAQuery.getContext(),
-									"Downloaded:" + periodStr, Toast.LENGTH_LONG)
-									.show();
-							onRestart();
-						}
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				} else {
-					// ajax error, show error code
-					Toast.makeText(mAQuery.getContext(),
-							"Error:" + status.getCode(), Toast.LENGTH_LONG)
-							.show();
-				}				
-			}
-		});
-
 	}
 }

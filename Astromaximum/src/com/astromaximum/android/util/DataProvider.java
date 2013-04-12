@@ -263,56 +263,57 @@ public class DataProvider extends SubDataProcessor {
 		try {
 			makeLocationDatafile(locationId);
 		} catch (FileNotFoundException e) {
-			Cursor cursor = mDatabase.getSortedLocations();
-			if (cursor.moveToFirst())
-				locationId = cursor.getString(4);
-			try {
-				makeLocationDatafile(locationId);
-			} catch (FileNotFoundException e2) {
-				e2.printStackTrace();
-			}
 		}
 		SharedPreferences.Editor editor = sharedPref.edit();
 		editor.putString(PreferenceUtils.KEY_LOCATION_ID, locationId);
 		editor.commit();
-		mCalendar = new GregorianCalendar(
-				TimeZone.getTimeZone(mLocationDatafile.mTimezone));
-		mCalendar.set(Calendar.MILLISECOND, 0);
 
-		MyLog.d(TAG, "Location: " + mLocationDatafile.mStartYear + "-"
-				+ mLocationDatafile.mStartMonth + "-"
-				+ mLocationDatafile.mStartDay + ", "
-				+ mLocationDatafile.mMonthCount + " > " + locationId);
+		long locationStart = 0;
+		long locationFinal = 0;
+		
+		if (mLocationDatafile != null) {
+			mCalendar = new GregorianCalendar(
+					TimeZone.getTimeZone(mLocationDatafile.mTimezone));
+			mCalendar.set(Calendar.MILLISECOND, 0);
+			
+			Event.setTimeZone(mLocationDatafile.mTimezone);
+	
+			MyLog.d(TAG, "Location: " + mLocationDatafile.mStartYear + "-"
+					+ mLocationDatafile.mStartMonth + "-"
+					+ mLocationDatafile.mStartDay + ", "
+					+ mLocationDatafile.mMonthCount + " > " + locationId);
+	
+			mCalendar.set(mLocationDatafile.mStartYear,
+					mLocationDatafile.mStartMonth, mLocationDatafile.mStartDay, 0,
+					0, 0);
 
+			locationStart = mCalendar.getTime().getTime();
+			mCalendar.add(Calendar.MONTH, mLocationDatafile.mMonthCount);
+			locationFinal = mCalendar.getTime().getTime();
+		}
+	
 		mCalendar.set(mCommonDatafile.mStartYear, mCommonDatafile.mStartMonth,
 				mCommonDatafile.mStartDay, 0, 0, 0);
+
 		long commonStart = mCalendar.getTime().getTime();
 		mCalendar.add(Calendar.MONTH, mCommonDatafile.mMonthCount);
 		long commonFinal = mCalendar.getTime().getTime();
 
-		mCalendar.set(mLocationDatafile.mStartYear,
-				mLocationDatafile.mStartMonth, mLocationDatafile.mStartDay, 0,
-				0, 0);
-		long locationStart = mCalendar.getTime().getTime();
-		mCalendar.add(Calendar.MONTH, mLocationDatafile.mMonthCount);
-		long locationFinal = mCalendar.getTime().getTime();
+		MyLog.d(TAG, "Common: " + commonStart + "-" + commonFinal
+				+ "; location: " + locationStart + "-" + locationFinal);
+		
+//		mStartJD = Math.max(commonStart, locationStart);
+//		mFinalJD = Math.min(commonFinal, locationFinal);
 
-		MyLog.d(TAG, "Common: " + commonStart + "-"
-				+ commonFinal + "; location: "
-				+ locationStart + "-"
-				+ locationFinal);
-
-		mStartJD = Math.max(commonStart, locationStart);
-		mFinalJD = Math.min(commonFinal, locationFinal);
-
-		if (mStartJD > mFinalJD) { // invalid range
-			mStartJD = mFinalJD = 0;
-		}
-
-		Event.setTimeZone(mLocationDatafile.mTimezone);
+		mStartJD = commonStart;
+		mFinalJD = commonFinal;
+//		if (mStartJD > mFinalJD) { // invalid range
+//			mStartJD = mFinalJD = 0;
+//		}
 	}
 
 	private void makeLocationDatafile(String locationId) throws FileNotFoundException {
+		mLocationDatafile = null;
 		String filename = makeLocationFilename(locationId);
 		InputStream is = new BufferedInputStream(mContext.openFileInput(filename),
 				STREAM_BUFFER_SIZE);
@@ -357,18 +358,21 @@ public class DataProvider extends SubDataProcessor {
 		return lastLocationId;
 	}
 
-	public boolean changeDate(int deltaDays) {
+	public void changeDate(int deltaDays) {
 		// stick to noon to determine date
 		long newDate = mStartTime + MSECINDAY * deltaDays + MSECINDAY / 2;
 		mEventCache.clear();
 		mStartTime = newDate;
 		mCalendar.setTimeInMillis(mStartTime);
 		setDateFromCalendar();
-		return hasPeriod();
 	}
 
 	public boolean hasPeriod() {
 		return (mStartTime >= mStartJD && mStartTime < mFinalJD);
+	}
+	
+	public boolean hasLocation() {
+		return mLocationDatafile != null;
 	}
 	
 	public void setDate(int year, int month, int day) {
@@ -377,7 +381,7 @@ public class DataProvider extends SubDataProcessor {
 		mDay = day;
 		mCalendar.set(mYear, mMonth, mDay, 0, 0, 0);
 		mCalendar.set(Calendar.MILLISECOND, 0);
-		mStartTime = mCalendar.getTimeInMillis();
+		setDateFromCalendar();
 	}
 
 	public void setDateFromCalendar() {
@@ -388,6 +392,14 @@ public class DataProvider extends SubDataProcessor {
 		mCalendar.set(Calendar.MILLISECOND, 0);
 		mStartTime = mCalendar.getTimeInMillis();
 		MyLog.d(TAG, "setDateFromCalendar: " + mStartTime + "-" + mEndTime + "; " + mYear + "-" + mMonth + "-" + mDay);
+		if (!hasPeriod()) {
+			Cursor cursor = mDatabase.getPeriodByDate(mYear, mMonth);
+			if (cursor.moveToFirst()) {
+				PreferenceUtils.setCommonId(mContext, cursor.getLong(0));
+				saveState();
+				restoreState();
+			}
+		}
 	}
 
 	public void prepareCalculation() {
@@ -690,8 +702,13 @@ public class DataProvider extends SubDataProcessor {
 	}
 
 	public String getLocationName() {
-		if (mLocationDatafile == null)
-			return null;
+		if (mLocationDatafile == null) {
+			Cursor cursor = mDatabase.getLocation(PreferenceUtils.getLocationId(mContext));
+			if (cursor.moveToFirst())
+				return cursor.getString(1);
+			else
+				return null;
+		}
 		return mLocationDatafile.mCity;
 	}
 

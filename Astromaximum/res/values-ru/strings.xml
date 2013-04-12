@@ -21,10 +21,13 @@
     <string name="norm_range_arrow">⇨</string>
     <string name="interp_share">Поделиться</string>
     <string name="avail_periods">Доступные периоды:</string>
-    <string name="avail_cities">Доступные города:</string>
     <string name="data_add">Добавить</string>
     <string name="no_period">Нет данных на этот период</string>
+    <string name="no_location">Нет данных города на этот период</string>
     <string name="buy_period">Купить \""%1$04d-%2$02d\"</string>
+    <string name="download_location">Загрузить \"%1$s\"</string>
+    <string name="downloading">Загружается %1$s...</string>
+    <string name="downloaded">Загружено: %1$s</string>
     
     <string name="si_key_voc">Луна \"без курса\"</string>
     <string name="si_key_vc">\"Сожженный путь\"</string>

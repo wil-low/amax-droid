@@ -17,7 +17,7 @@
         android:visibility="invisible" >
 
         <Button
-            android:id="@+id/btnBuyPeriod"
+            android:id="@+id/btnMissingData"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
@@ -25,12 +25,13 @@
             android:text="@+string/buy_period" />
 
         <TextView
-            android:id="@+id/txtNoPeriod"
+            android:id="@+id/txtMissingData"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/btnBuyPeriod"
+            android:layout_above="@+id/btnMissingData"
             android:layout_centerHorizontal="true"
-            android:text="@+string/no_period" />
+            android:layout_marginBottom="10dp" />
+
     </RelativeLayout>
 
 </FrameLayout>

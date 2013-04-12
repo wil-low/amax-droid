@@ -63,7 +63,7 @@ public class AmaxDatabase extends SQLiteAssetHelper {
 		return cursor;
 	}
 
-	public Cursor getCurrentLocation(String locationKey) {
+	public Cursor getLocation(String locationKey) {
 		mDB = getReadableDatabase();
 		Cursor cursor = mDB.rawQuery(
 				"select _id, name, state, country from cities where key = '"
@@ -86,6 +86,7 @@ public class AmaxDatabase extends SQLiteAssetHelper {
 				"select lo._id as _id, ci.name, ci.state, ci.country, ci.key "
 						+ "from cities ci, locations lo, commons co "
 						+ "where ci._id = lo.city_id and co._id = " + commonId
+						+ " and lo.common_id = co._id"
 						+ " order by ci.name, ci.state, ci.country", null);
 		return cursor;
 	}
@@ -100,7 +101,7 @@ public class AmaxDatabase extends SQLiteAssetHelper {
 		try {
 			return mDB.insertOrThrow("cities", null, cv);
 		} catch (SQLException e) {
-			Cursor cursor = getCurrentLocation(locationKey);
+			Cursor cursor = getLocation(locationKey);
 			if (cursor.moveToFirst())
 				return cursor.getLong(0);
 		}
@@ -139,5 +140,13 @@ public class AmaxDatabase extends SQLiteAssetHelper {
 		if (cursor.moveToFirst())
 			return cursor.getLong(0);
 		return -1;
+	}
+
+	public Cursor getPeriodByDate(int year, int month) {
+		mDB = getReadableDatabase();
+		String q = "select _id from commons where year = " + year + " and "
+				+ month
+				+ " between start_month and start_month + month_count - 1";
+		return mDB.rawQuery(q, null);
 	}
 }
