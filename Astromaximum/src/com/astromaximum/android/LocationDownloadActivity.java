@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,6 +18,7 @@ import android.widget.SectionIndexer;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
@@ -40,10 +42,21 @@ public class LocationDownloadActivity extends SherlockActivity {
 	private ArrayList<String> mIdentifierList = new ArrayList<String>();
 	private ArrayList<String> mNameList = new ArrayList<String>();
 	private Button mRetryButton;
-	private final static int MODE_COUNTRIES = 0;
-	private final static int MODE_STATES = 1;
-	private final static int MODE_CITIES = 2;
-	private final static int MODE_DOWNLOAD = 3;
+	public final static int MODE_COUNTRIES = 0;
+	public final static int MODE_STATES = 1;
+	public final static int MODE_CITIES = 2;
+	public final static int MODE_DOWNLOAD = 3;
+
+	public static Intent makeIntent(Context context, String periodString,
+			int mode, String countryId, String stateId, String cityId) {
+		Intent intent = new Intent(context, LocationDownloadActivity.class);
+		intent.putExtra(PreferenceUtils.PERIOD_STRING_KEY, periodString);
+		intent.putExtra(PreferenceUtils.MODE_KEY, mode);
+		intent.putExtra(PreferenceUtils.COUNTRY_ID_KEY, countryId);
+		intent.putExtra(PreferenceUtils.STATE_ID_KEY, stateId);
+		intent.putExtra(PreferenceUtils.CITY_ID_KEY, cityId);
+		return intent;
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -53,6 +66,11 @@ public class LocationDownloadActivity extends SherlockActivity {
 		mContext = this;
 		mPeriodString = getIntent().getStringExtra(
 				PreferenceUtils.PERIOD_STRING_KEY);
+		mMode = getIntent().getIntExtra(PreferenceUtils.MODE_KEY,
+				MODE_COUNTRIES);
+		mCountryId = getIntent().getStringExtra(PreferenceUtils.COUNTRY_ID_KEY);
+		mStateId = getIntent().getStringExtra(PreferenceUtils.STATE_ID_KEY);
+		mCityId = getIntent().getStringExtra(PreferenceUtils.CITY_ID_KEY);
 		getSupportActionBar().setSubtitle(mPeriodString);
 		getSupportActionBar().setDisplayShowHomeEnabled(true);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -76,30 +94,34 @@ public class LocationDownloadActivity extends SherlockActivity {
 
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
+						String countryId = mCountryId;
+						String stateId = mStateId;
+						String cityId = mCityId;
 						switch (mMode) {
 						case MODE_COUNTRIES:
-							mCountryId = mIdentifierList.get(position);
+							countryId = mIdentifierList.get(position);
 							break;
 						case MODE_STATES:
-							mStateId = mIdentifierList.get(position);
+							stateId = mIdentifierList.get(position);
 							break;
 						case MODE_CITIES:
-							mCityId = mIdentifierList.get(position);
+							cityId = mIdentifierList.get(position);
 							Downloader.getInstance(mContext).downloadCity(
-									mDataProvider, mCityId,
+									mDataProvider, cityId,
 									mNameList.get(position),
 									new Downloader.Callback() {
 										public void callback(boolean isSuccess) {
-											if (isSuccess)
-												finish();
+											//if (isSuccess)
+												//finish();
 										}
 									});
 							return;
 						case MODE_DOWNLOAD:
 							mCityId = mIdentifierList.get(position);
 						}
-						++mMode;
-						queryLocations();
+						Intent intent = LocationDownloadActivity.makeIntent(mContext,
+								mPeriodString, mMode + 1, countryId, stateId, cityId);
+						startActivity(intent);
 					}
 				});
 		mEventList.setFastScrollEnabled(true);
@@ -124,6 +146,17 @@ public class LocationDownloadActivity extends SherlockActivity {
 		MyLog.d(TAG, "OnRestart");
 	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		super.onOptionsItemSelected(item);
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			break;
+		}
+		return true;
+	}
+	
 	private void queryLocations() {
 		if (mCountryId == null)
 			mCountryId = "0";
@@ -149,6 +182,7 @@ public class LocationDownloadActivity extends SherlockActivity {
 			mTitle = "City";
 			return;
 		}
+		MyLog.d(TAG, url);
 		getSupportActionBar().setTitle(mTitle);
 		setSupportProgressBarIndeterminateVisibility(true);
 		mAQuery.ajax(url, JSONObject.class, new AjaxCallback<JSONObject>() {

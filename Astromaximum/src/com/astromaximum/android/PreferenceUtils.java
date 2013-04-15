@@ -19,7 +19,11 @@ public final class PreferenceUtils {
 	public static final String LISTKEY_INTERPRETER_TEXT = "com.astromaximum.android.interpreterCode";
 	public static final String LISTKEY_INTERPRETER_EVENT = "com.astromaximum.android.event";
 	public static final String PERIOD_STRING_KEY = "com.astromaximum.android.periodString";
+	public static final String MODE_KEY = "com.astromaximum.android.mode";
 	public static final String PERIOD_KEY_KEY = "com.astromaximum.android.periodKey";
+	public static final String COUNTRY_ID_KEY = "com.astromaximum.android.countryId";
+	public static final String STATE_ID_KEY = "com.astromaximum.android.stateId";
+	public static final String CITY_ID_KEY = "com.astromaximum.android.cityId";
 	public static final String KEY_USE_CUSTOM_TIME = "use_custom_time";
 	public static final String KEY_CUSTOM_TIME = "custom_time";
 	public static final String KEY_START_PAGE_LAYOUT = "start_page_layout";

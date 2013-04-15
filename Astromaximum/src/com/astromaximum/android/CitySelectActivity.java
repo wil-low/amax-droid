@@ -50,8 +50,8 @@ public class CitySelectActivity extends SherlockActivity {
 		mLocationId = PreferenceUtils.getLocationId(this);
 		Cursor cursor = mDB.getCurrentPeriodAndCity(commonId, mLocationId);
 		if (cursor.moveToFirst()) {
-			mPeriodString = DataProvider.makePeriodCaption(cursor.getInt(1), cursor.getInt(2),
-					cursor.getInt(3) - 1);
+			mPeriodString = DataProvider.makePeriodCaption(cursor.getInt(1),
+					cursor.getInt(2), cursor.getInt(3) - 1);
 			getSupportActionBar().setTitle(mPeriodString);
 		}
 		cursor.close();
@@ -75,8 +75,9 @@ public class CitySelectActivity extends SherlockActivity {
 			finish();
 			break;
 		case R.id.menu_add:
-			Intent intent = new Intent(mContext, LocationDownloadActivity.class);
-			intent.putExtra(PreferenceUtils.PERIOD_STRING_KEY, mPeriodString);
+			Intent intent = LocationDownloadActivity.makeIntent(mContext,
+					mPeriodString, LocationDownloadActivity.MODE_COUNTRIES,
+					"0", "0", "0");
 			startActivity(intent);
 			break;
 		}

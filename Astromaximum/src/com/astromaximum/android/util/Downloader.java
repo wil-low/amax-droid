@@ -21,6 +21,8 @@ import com.astromaximum.util.CommonDataFile;
 import com.astromaximum.util.LocationsDataFile;
 
 public class Downloader {
+	private final String TAG = "Downloader";
+	
 	public static class Callback {
 		public void callback(boolean isSuccess) {
 
@@ -51,6 +53,7 @@ public class Downloader {
 
 		String url = "http://astromaximum.com/data/" + provider.mPeriodKey
 				+ "/" + cityKey;
+		MyLog.d(TAG, url);
 		mAQuery.progress(dialog).ajax(url, InputStream.class,
 				new AjaxCallback<InputStream>() {
 					public void callback(String url, InputStream is,
