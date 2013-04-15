@@ -35,7 +35,7 @@ public class LocationDownloadActivity extends SherlockActivity {
 	private Context mContext;
 	private AQuery mAQuery;
 	private String mTitle = "Download cities";
-	private int mYear = 2012, mMode = MODE_COUNTRIES;
+	private int mMode = MODE_COUNTRIES;
 	private String mCountryId, mStateId, mCityId, mPeriodString;
 	private ArrayList<String> mIdentifierList = new ArrayList<String>();
 	private ArrayList<String> mNameList = new ArrayList<String>();
@@ -125,9 +125,16 @@ public class LocationDownloadActivity extends SherlockActivity {
 	}
 
 	private void queryLocations() {
+		if (mCountryId == null)
+			mCountryId = "0";
+		if (mStateId == null)
+			mStateId = "0";
+		if (mCityId == null)
+			mCityId = "0";
+
 		String url = "http://astromaximum.com/mobi/html/dl.php?lang=en&ajax="
 				+ mMode + "&cid=" + mCountryId + "&stateid=" + mStateId + "&y="
-				+ mYear;
+				+ mDataProvider.getYear();
 		switch (mMode) {
 		case MODE_COUNTRIES:
 			mTitle = "Countries";
