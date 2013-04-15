@@ -7,7 +7,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -25,6 +27,7 @@ import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.astromaximum.android.util.DataProvider;
 import com.astromaximum.android.util.Downloader;
+import com.astromaximum.android.util.Downloader.Callback;
 import com.astromaximum.android.util.MyLog;
 import com.astromaximum.android.view.ViewHolder;
 import com.woozzu.android.util.StringMatcher;
@@ -36,12 +39,14 @@ public class LocationDownloadActivity extends SherlockActivity {
 	private DataProvider mDataProvider;
 	private Context mContext;
 	private AQuery mAQuery;
-	private String mTitle = "Download cities";
+	private int mTitleId = 0;
 	private int mMode = MODE_COUNTRIES;
 	private String mCountryId, mStateId, mCityId, mPeriodString;
 	private ArrayList<String> mIdentifierList = new ArrayList<String>();
 	private ArrayList<String> mNameList = new ArrayList<String>();
 	private Button mRetryButton;
+	protected Callback mDownloadCallback;
+	protected String mCityName;
 	public final static int MODE_COUNTRIES = 0;
 	public final static int MODE_STATES = 1;
 	public final static int MODE_CITIES = 2;
@@ -96,7 +101,6 @@ public class LocationDownloadActivity extends SherlockActivity {
 							int position, long id) {
 						String countryId = mCountryId;
 						String stateId = mStateId;
-						String cityId = mCityId;
 						switch (mMode) {
 						case MODE_COUNTRIES:
 							countryId = mIdentifierList.get(position);
@@ -105,25 +109,47 @@ public class LocationDownloadActivity extends SherlockActivity {
 							stateId = mIdentifierList.get(position);
 							break;
 						case MODE_CITIES:
-							cityId = mIdentifierList.get(position);
+							mCityId = mIdentifierList.get(position);
+							mCityName = mNameList.get(position);
 							Downloader.getInstance(mContext).downloadCity(
-									mDataProvider, cityId,
-									mNameList.get(position),
-									new Downloader.Callback() {
-										public void callback(boolean isSuccess) {
-											//if (isSuccess)
-												//finish();
-										}
-									});
+									mDataProvider, mCityId, mCityName,
+									mDownloadCallback);
 							return;
 						case MODE_DOWNLOAD:
 							mCityId = mIdentifierList.get(position);
 						}
-						Intent intent = LocationDownloadActivity.makeIntent(mContext,
-								mPeriodString, mMode + 1, countryId, stateId, cityId);
+						Intent intent = LocationDownloadActivity.makeIntent(
+								mContext, mPeriodString, mMode + 1, countryId,
+								stateId, mCityId);
 						startActivity(intent);
 					}
 				});
+		mDownloadCallback = new Downloader.Callback() {
+			public void callback(boolean isSuccess) {
+				if (isSuccess) {
+					AlertDialog.Builder builder = new AlertDialog.Builder(
+							mContext);
+					builder.setTitle(mCityName);
+					builder.setMessage(R.string.make_current);
+		            builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+		                   public void onClick(DialogInterface dialog, int id) {
+		                	   PreferenceUtils.setLocationId(mContext, mCityId);
+		                	   mDataProvider.restoreState();
+		                	   Intent intent = new Intent(mContext, MainActivity.class);
+		                	   intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		                	   startActivity(intent);
+		                   }
+		               });
+		            builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+		                   public void onClick(DialogInterface dialog, int id) {
+		                       // User cancelled the dialog
+		                   }
+		               });					
+					AlertDialog dialog = builder.create();
+					dialog.show();
+				}
+			}
+		};
 		mEventList.setFastScrollEnabled(true);
 	}
 
@@ -156,7 +182,7 @@ public class LocationDownloadActivity extends SherlockActivity {
 		}
 		return true;
 	}
-	
+
 	private void queryLocations() {
 		if (mCountryId == null)
 			mCountryId = "0";
@@ -170,20 +196,19 @@ public class LocationDownloadActivity extends SherlockActivity {
 				+ mDataProvider.getYear();
 		switch (mMode) {
 		case MODE_COUNTRIES:
-			mTitle = "Countries";
+			mTitleId = R.string.country_list;
 			break;
 		case MODE_STATES:
-			mTitle = "States";
+			mTitleId = R.string.state_list;
 			break;
 		case MODE_CITIES:
-			mTitle = "Cities";
+			mTitleId = R.string.city_list;
 			break;
 		case MODE_DOWNLOAD:
-			mTitle = "City";
 			return;
 		}
 		MyLog.d(TAG, url);
-		getSupportActionBar().setTitle(mTitle);
+		getSupportActionBar().setTitle(mTitleId);
 		setSupportProgressBarIndeterminateVisibility(true);
 		mAQuery.ajax(url, JSONObject.class, new AjaxCallback<JSONObject>() {
 			@Override
@@ -202,7 +227,12 @@ public class LocationDownloadActivity extends SherlockActivity {
 							MyLog.d(TAG, arr1.toString());
 							mIdentifierList.add(arr1
 									.getString(mMode == MODE_CITIES ? 2 : 0));
-							mNameList.add(arr1.getString(1));
+							if (mMode == MODE_STATES
+									&& arr1.getString(0).equals("0"))
+								mNameList.add(mContext.getResources()
+										.getString(R.string.all_states));
+							else
+								mNameList.add(arr1.getString(1));
 						}
 						ContentAdapter adapter = new ContentAdapter(mContext,
 								android.R.layout.simple_list_item_1, mNameList);
