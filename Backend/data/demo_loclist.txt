@@ -1,6 +1,4 @@
 UA/d9d95558 Kiev
-ancients/9de36cb2 Mount Olympus
-ancients/d8b2d6ac Lhasa
 RU/0785f285 Moscow
 WE/b542f60c London
 US/9a8bbb46 New York
