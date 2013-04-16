@@ -24,7 +24,7 @@ final public class LocationsDataFile {
 	public int mStartMonth;
 	public int mStartDay;
 	public int mMonthCount;
-	public int mCityId;
+	public int mCityKey;
 	int[] mCoords = new int[3];
 	public String mCity;
 	public String mState;
@@ -55,7 +55,7 @@ final public class LocationsDataFile {
             else {
                 System.out.println("Unknown version " + version);
             }        
-            mCityId = dis.readInt(); // city id
+            mCityKey = dis.readInt(); // city key as number
             mCoords[0] = dis.readShort(); // latitude
             mCoords[1] = dis.readShort(); // longitude
             mCoords[2] = dis.readShort(); // altitude

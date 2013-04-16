@@ -67,7 +67,7 @@ public class DataProvider extends SubDataProcessor {
 	private String mTitleDateFormat;
 	private boolean mUseCustomTime = false;
 	private ArrayList<StartPageItem> mStartPageLayout;
-	public long mCommonId;
+	public long mPeriodId;
 
 	public String mPeriodKey;
 	public String mPeriodStr;
@@ -124,7 +124,7 @@ public class DataProvider extends SubDataProcessor {
 	}
 
 	public long getCommonId() {
-		return mCommonId;
+		return mPeriodId;
 	}
 
 	public long getStartJD() {
@@ -172,24 +172,24 @@ public class DataProvider extends SubDataProcessor {
 	public void restoreState() {
 		MyLog.d(TAG, "restoreInstanceState");
 		
-		mCommonId = PreferenceUtils.getCommonId(mContext);
-		MyLog.d(TAG, "read KEY_COMMON_ID=" + mCommonId);
-		if (mCommonId == 0) { // no default period, unbundle from asset
-			mCommonId = 1;
-			unbundleCommonAsset();
+		mPeriodId = PreferenceUtils.getPeriodId(mContext);
+		MyLog.d(TAG, "read KEY_PERIOD_ID=" + mPeriodId);
+		if (mPeriodId == 0) { // no default period, unbundle from asset
+			mPeriodId = 1;
+			unbundlePeriodAsset();
 		}
-		loadCommon();
-		PreferenceUtils.setCommonId(mContext, mCommonId);
-		MyLog.d(TAG, "write KEY_COMMON_ID=" + mCommonId);
+		loadPeriod();
+		PreferenceUtils.setPeriodId(mContext, mPeriodId);
+		MyLog.d(TAG, "write KEY_COMMON_ID=" + mPeriodId);
 
-		String locationId = PreferenceUtils.getLocationId(mContext);
-		if (locationId == null) { // no default location, unbundle from asset
-			locationId = unbundleLocationAsset();
+		String cityKey = PreferenceUtils.getCityKey(mContext);
+		if (cityKey == null) { // no default location, unbundle from asset
+			cityKey = unbundleLocationAsset();
 		}
 
 		SharedPreferences sharedPref = PreferenceManager
 				.getDefaultSharedPreferences(mContext);
-		loadLocation(locationId, sharedPref);
+		loadLocation(cityKey, sharedPref);
 
 		mStartTime = sharedPref
 				.getLong(PreferenceUtils.KEY_START_TIME,
@@ -205,7 +205,7 @@ public class DataProvider extends SubDataProcessor {
 		mStartPageLayout = PreferenceUtils.getStartPageLayout(mContext);
 	}
 
-	private void loadCommon() {
+	private void loadPeriod() {
 		fillCommonIds();
 		BufferedInputStream is = null;
 		try {
@@ -213,13 +213,13 @@ public class DataProvider extends SubDataProcessor {
 					STREAM_BUFFER_SIZE);
 			mCommonDatafile = new CommonDataFile(is, false);
 		} catch (Exception e) {
-			String[] periodIds = mDatabase.getCommonIds(1);
+			String[] periodStrs = mDatabase.getPeriodStringAndKey(1);
 			try {
 				is = new BufferedInputStream(
-						mContext.openFileInput(periodIds[0]), STREAM_BUFFER_SIZE);
+						mContext.openFileInput(periodStrs[0]), STREAM_BUFFER_SIZE);
 				mCommonDatafile = new CommonDataFile(is, false);
-				mPeriodStr = periodIds[0];
-				mPeriodKey = periodIds[1];
+				mPeriodStr = periodStrs[0];
+				mPeriodKey = periodStrs[1];
 			} catch (FileNotFoundException e2) {
 				e2.printStackTrace();
 			}
@@ -230,11 +230,11 @@ public class DataProvider extends SubDataProcessor {
 				+ mCommonDatafile.mDayCount + " > " + mPeriodKey);
 	}
 
-	private void unbundleCommonAsset() {
+	private void unbundlePeriodAsset() {
 		fillCommonIds();
 		AssetManager manager = mContext.getAssets();
 		try {
-			MyLog.d(TAG, "Unbundle common");
+			MyLog.d(TAG, "Unbundle period");
 			InputStream is = manager.open("common.dat");
 			byte[] buffer = new byte[is.available()];
 			is.read(buffer);
@@ -254,18 +254,18 @@ public class DataProvider extends SubDataProcessor {
 	}
 
 	private void fillCommonIds() {
-		String[] commonIds = mDatabase.getCommonIds(mCommonId);
-		mPeriodStr = commonIds[0];
-		mPeriodKey = commonIds[1];
+		String[] periodStrs = mDatabase.getPeriodStringAndKey(mPeriodId);
+		mPeriodStr = periodStrs[0];
+		mPeriodKey = periodStrs[1];
 	}
 
-	private void loadLocation(String locationId, SharedPreferences sharedPref) {
+	private void loadLocation(String cityKey, SharedPreferences sharedPref) {
 		try {
-			makeLocationDatafile(locationId);
+			makeLocationDatafile(cityKey);
 		} catch (FileNotFoundException e) {
 		}
 		SharedPreferences.Editor editor = sharedPref.edit();
-		editor.putString(PreferenceUtils.KEY_LOCATION_ID, locationId);
+		editor.putString(PreferenceUtils.KEY_CITY_KEY, cityKey);
 		editor.commit();
 
 		long locationStart = 0;
@@ -281,7 +281,7 @@ public class DataProvider extends SubDataProcessor {
 			MyLog.d(TAG, "Location: " + mLocationDatafile.mStartYear + "-"
 					+ mLocationDatafile.mStartMonth + "-"
 					+ mLocationDatafile.mStartDay + ", "
-					+ mLocationDatafile.mMonthCount + " > " + locationId);
+					+ mLocationDatafile.mMonthCount + " > " + cityKey);
 	
 			mCalendar.set(mLocationDatafile.mStartYear,
 					mLocationDatafile.mStartMonth, mLocationDatafile.mStartDay, 0,
@@ -312,20 +312,20 @@ public class DataProvider extends SubDataProcessor {
 //		}
 	}
 
-	private void makeLocationDatafile(String locationId) throws FileNotFoundException {
+	private void makeLocationDatafile(String cityKey) throws FileNotFoundException {
 		mLocationDatafile = null;
-		String filename = makeLocationFilename(locationId);
+		String filename = makeLocationFilename(cityKey);
 		InputStream is = new BufferedInputStream(mContext.openFileInput(filename),
 				STREAM_BUFFER_SIZE);
 		mLocationDatafile = new LocationsDataFile(is);
 	}
 
-	private String makeLocationFilename(String locationId) {
-		return mPeriodStr + locationId;
+	private String makeLocationFilename(String cityKey) {
+		return mPeriodStr + cityKey;
 	}
 
 	private String unbundleLocationAsset() {
-		String lastLocationId = null;
+		String lastCityKey = null;
 		AssetManager manager = mContext.getAssets();
 		try {
 			InputStream is = manager.open("locations.dat");
@@ -336,12 +336,12 @@ public class DataProvider extends SubDataProcessor {
 				buffer = locBundle.extractLocation(index);
 				LocationsDataFile datafile = new LocationsDataFile(
 						new ByteArrayInputStream(buffer));
-				lastLocationId = String.format("%08x", datafile.mCityId);
-				MyLog.i(TAG, "Unbundle: " + index + ", " + lastLocationId + " "
+				lastCityKey = String.format("%08x", datafile.mCityKey);
+				MyLog.i(TAG, "Unbundle: " + index + ", " + lastCityKey + " "
 						+ datafile.mCity);
 				OutputStream out = null;
 				try {
-					String filename = makeLocationFilename(lastLocationId);
+					String filename = makeLocationFilename(lastCityKey);
 					out = new BufferedOutputStream(mContext.openFileOutput(
 							filename, Context.MODE_PRIVATE),
 							STREAM_BUFFER_SIZE);
@@ -355,7 +355,7 @@ public class DataProvider extends SubDataProcessor {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return lastLocationId;
+		return lastCityKey;
 	}
 
 	public void changeDate(int deltaDays) {
@@ -395,7 +395,7 @@ public class DataProvider extends SubDataProcessor {
 		if (!hasPeriod()) {
 			Cursor cursor = mDatabase.getPeriodByDate(mYear, mMonth);
 			if (cursor.moveToFirst()) {
-				PreferenceUtils.setCommonId(mContext, cursor.getLong(0));
+				PreferenceUtils.setPeriodId(mContext, cursor.getLong(0));
 				saveState();
 				restoreState();
 			}
@@ -701,9 +701,9 @@ public class DataProvider extends SubDataProcessor {
 		setDateFromCalendar();
 	}
 
-	public String getLocationName() {
+	public String getCityName() {
 		if (mLocationDatafile == null) {
-			Cursor cursor = mDatabase.getLocation(PreferenceUtils.getLocationId(mContext));
+			Cursor cursor = mDatabase.getCity(PreferenceUtils.getCityKey(mContext));
 			if (cursor.moveToFirst())
 				return cursor.getString(1);
 			else

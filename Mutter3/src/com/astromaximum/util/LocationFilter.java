@@ -58,7 +58,7 @@ public class LocationFilter extends SubDataProcessor {
 						+ mLocationsDataFile.mState + ";"
 						+ mLocationsDataFile.mCountry + ";"
 						+ mLocationsDataFile.mTimezone + ";"
-						+ String.format("%08x", mLocationsDataFile.mCityId) + "\n");
+						+ String.format("%08x", mLocationsDataFile.mCityKey) + "\n");
 
 				mCalendar = new GregorianCalendar(
 						TimeZone.getTimeZone(mLocationsDataFile.mTimezone));
@@ -151,7 +151,7 @@ public class LocationFilter extends SubDataProcessor {
 			raf.writeByte(mStartMonth + 1);
 			raf.writeByte(1); // day of month
 			raf.writeByte(mMonthCount);
-			raf.writeInt(mLocationsDataFile.mCityId);
+			raf.writeInt(mLocationsDataFile.mCityKey);
 			raf.writeShort(mLocationsDataFile.mCoords[0]);
 			raf.writeShort(mLocationsDataFile.mCoords[1]);
 			raf.writeShort(mLocationsDataFile.mCoords[2]);

@@ -28,12 +28,12 @@ public class AmaxDatabase extends SQLiteAssetHelper {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
 
-	// 1st is period id, 2nd - key
-	String[] getCommonIds(long id) {
+	// 1st is period string, 2nd - key
+	String[] getPeriodStringAndKey(long periodId) {
 		mDB = getReadableDatabase();
 		Cursor cursor = mDB.rawQuery(
 				"select year, start_month, month_count, key from commons where _id = "
-						+ id, null);
+						+ periodId, null);
 		String[] result = new String[2];
 		if (cursor.moveToFirst()) {
 			result[0] = String.format("%04d%02d%02d", cursor.getInt(0),
@@ -45,7 +45,7 @@ public class AmaxDatabase extends SQLiteAssetHelper {
 		return result;
 	}
 
-	public Cursor getCurrentPeriodAndCity(long periodId, String cityKey) {
+	public Cursor getPeriodAndCity(long periodId, String cityKey) {
 		mDB = getReadableDatabase();
 		String q = "select commons._id as _id, year, start_month, month_count, commons.key, name from commons, cities where commons._id = "
 				+ periodId + " and cities.key = '" + cityKey + "'";
@@ -64,15 +64,15 @@ public class AmaxDatabase extends SQLiteAssetHelper {
 		return cursor;
 	}
 
-	public Cursor getLocation(String locationKey) {
+	public Cursor getCity(String cityKey) {
 		mDB = getReadableDatabase();
 		Cursor cursor = mDB.rawQuery(
 				"select _id, name, state, country from cities where key = '"
-						+ locationKey + "'", null);
+						+ cityKey + "'", null);
 		return cursor;
 	}
 
-	public Cursor getSortedLocations() {
+	public Cursor getSortedCities() {
 		mDB = getReadableDatabase();
 		Cursor cursor = mDB
 				.rawQuery(
@@ -81,28 +81,28 @@ public class AmaxDatabase extends SQLiteAssetHelper {
 		return cursor;
 	}
 
-	public Cursor getCitiesForPeriod(long commonId) {
+	public Cursor getLocationsForPeriod(long periodId) {
 		mDB = getReadableDatabase();
 		Cursor cursor = mDB.rawQuery(
 				"select lo._id as _id, ci.name, ci.state, ci.country, ci.key "
 						+ "from cities ci, locations lo, commons co "
-						+ "where ci._id = lo.city_id and co._id = " + commonId
+						+ "where ci._id = lo.city_id and co._id = " + periodId
 						+ " and lo.common_id = co._id"
 						+ " order by ci.name, ci.state, ci.country", null);
 		return cursor;
 	}
 
-	public long addCity(LocationsDataFile ldf, String locationKey) {
+	public long addCity(LocationsDataFile ldf, String cityKey) {
 		mDB = getWritableDatabase();
 		ContentValues cv = new ContentValues();
 		cv.put("name", ldf.mCity);
 		cv.put("state", ldf.mState);
 		cv.put("country", ldf.mCountry);
-		cv.put("key", locationKey);
+		cv.put("key", cityKey);
 		try {
 			return mDB.insertOrThrow("cities", null, cv);
 		} catch (SQLException e) {
-			Cursor cursor = getLocation(locationKey);
+			Cursor cursor = getCity(cityKey);
 			if (cursor.moveToFirst())
 				return cursor.getLong(0);
 		}
@@ -120,21 +120,21 @@ public class AmaxDatabase extends SQLiteAssetHelper {
 		}
 	}
 
-	public long addPeriod(CommonDataFile cdf, String key) {
+	public long addPeriod(CommonDataFile cdf, String periodKey) {
 		mDB = getWritableDatabase();
 		ContentValues cv = new ContentValues();
 		cv.put("year", cdf.mStartYear);
 		cv.put("start_month", cdf.mStartMonth);
 		cv.put("month_count", cdf.mMonthCount);
-		cv.put("key", key);
+		cv.put("key", periodKey);
 		try {
 			return mDB.insertOrThrow("commons", null, cv);
 		} catch (SQLException e) {
 		}
-		return getPeriodByKey(key);
+		return getPeriodIdByKey(periodKey);
 	}
 
-	public long getPeriodByKey(String periodKey) {
+	public long getPeriodIdByKey(String periodKey) {
 		mDB = getReadableDatabase();
 		String q = "select _id from commons where key = '" + periodKey + "'";
 		Cursor cursor = mDB.rawQuery(q, null);

@@ -183,16 +183,16 @@ public class MainActivity extends SherlockActivity {
 						mDataProvider.getYear(), mDataProvider.getMonth(), 1));
 				mMissingDataButton.setText(String.format(mContext
 						.getResources().getString(R.string.download_location),
-						mDataProvider.getLocationName()));
+						mDataProvider.getCityName()));
 
 				mMissingDataButton
 						.setOnClickListener(new View.OnClickListener() {
 							public void onClick(View v) {
-								String locationId = PreferenceUtils
-										.getLocationId(mContext);
-								Downloader.getInstance(mContext).downloadCity(
-										mDataProvider, locationId,
-										mDataProvider.getLocationName(),
+								String cityKey = PreferenceUtils
+										.getCityKey(mContext);
+								Downloader.getInstance(mContext).downloadLocation(
+										mDataProvider, cityKey,
+										mDataProvider.getCityName(),
 										new Downloader.Callback() {
 											public void callback(
 													boolean isSuccess) {
@@ -249,7 +249,7 @@ public class MainActivity extends SherlockActivity {
 		getSupportActionBar().setTitle(mTitleDate);
 		getSupportActionBar().setSubtitle(
 				mDataProvider.getHighlightTimeString() + ", "
-						+ mDataProvider.getLocationName());
+						+ mDataProvider.getCityName());
 	}
 
 	private void previousDate() {

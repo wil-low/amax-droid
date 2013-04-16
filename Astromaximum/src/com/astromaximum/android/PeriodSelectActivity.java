@@ -66,10 +66,10 @@ public class PeriodSelectActivity extends SherlockActivity {
 	protected void onResume() {
 		super.onResume();
 		MyLog.d(TAG, "OnResume");
-		long commonId = PreferenceUtils.getCommonId(mContext);
-		String locationId = PreferenceUtils.getLocationId(this);
+		long commonId = PreferenceUtils.getPeriodId(mContext);
+		String locationId = PreferenceUtils.getCityKey(this);
 
-		Cursor cursor = mDB.getCurrentPeriodAndCity(commonId, locationId);
+		Cursor cursor = mDB.getPeriodAndCity(commonId, locationId);
 		CursorAdapter adapter = new CurrentPeriodCursorAdapter(this, cursor);
 		mCurrentPeriodList.setAdapter(adapter);
 

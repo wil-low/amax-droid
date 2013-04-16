@@ -47,7 +47,7 @@ public class Downloader {
 		return mInstance;
 	}
 
-	public void downloadCity(final DataProvider provider, final String cityKey,
+	public void downloadLocation(final DataProvider provider, final String cityKey,
 			final String cityName, final Callback cb) {
 		ProgressDialog dialog = makeProgressDialog(cityName);
 
@@ -77,9 +77,9 @@ public class Downloader {
 										fis);
 								fis.close();
 								long cityId = mDB.addCity(ldf, cityKey);
-								mDB.addLocation(provider.mCommonId, cityId);
+								mDB.addLocation(provider.mPeriodId, cityId);
 								PreferenceUtils
-										.setLocationId(mContext, cityKey);
+										.setCityKey(mContext, cityKey);
 								showSuccessToast(cityName);
 								cb.callback(true);
 							} catch (IOException e) {
@@ -128,7 +128,7 @@ public class Downloader {
 									fis.close();
 									long periodId = mDB.addPeriod(cdf,
 											receivedKey);
-									PreferenceUtils.setCommonId(mContext,
+									PreferenceUtils.setPeriodId(mContext,
 											periodId);
 									showSuccessToast(periodStr);
 									cb.callback(true);

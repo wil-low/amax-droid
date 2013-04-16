@@ -111,7 +111,7 @@ public class LocationDownloadActivity extends SherlockActivity {
 						case MODE_CITIES:
 							mCityId = mIdentifierList.get(position);
 							mCityName = mNameList.get(position);
-							Downloader.getInstance(mContext).downloadCity(
+							Downloader.getInstance(mContext).downloadLocation(
 									mDataProvider, mCityId, mCityName,
 									mDownloadCallback);
 							return;
@@ -133,7 +133,7 @@ public class LocationDownloadActivity extends SherlockActivity {
 					builder.setMessage(R.string.make_current);
 		            builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 		                   public void onClick(DialogInterface dialog, int id) {
-		                	   PreferenceUtils.setLocationId(mContext, mCityId);
+		                	   PreferenceUtils.setCityKey(mContext, mCityId);
 		                	   mDataProvider.restoreState();
 		                	   Intent intent = new Intent(mContext, MainActivity.class);
 		                	   intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

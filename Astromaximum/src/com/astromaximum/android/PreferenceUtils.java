@@ -10,8 +10,8 @@ import com.astromaximum.android.util.StartPageItem;
 
 public final class PreferenceUtils {
 	public static final int ID_PREFERENCE = 1;
-	private static final String KEY_COMMON_ID = "common_id";
-	public static final String KEY_LOCATION_ID = "location_id";
+	private static final String KEY_PERIOD_ID = "period_id";
+	public static final String KEY_CITY_KEY = "city_key";
 	public static final String KEY_START_TIME = "start_time";
 	public static final String KEY_CUSTOM_HOUR = "custom_hour";
 	public static final String KEY_CUSTOM_MINUTE = "custom_minute";
@@ -20,7 +20,6 @@ public final class PreferenceUtils {
 	public static final String LISTKEY_INTERPRETER_EVENT = "com.astromaximum.android.event";
 	public static final String PERIOD_STRING_KEY = "com.astromaximum.android.periodString";
 	public static final String MODE_KEY = "com.astromaximum.android.mode";
-	public static final String PERIOD_KEY_KEY = "com.astromaximum.android.periodKey";
 	public static final String COUNTRY_ID_KEY = "com.astromaximum.android.countryId";
 	public static final String STATE_ID_KEY = "com.astromaximum.android.stateId";
 	public static final String CITY_ID_KEY = "com.astromaximum.android.cityId";
@@ -33,31 +32,31 @@ public final class PreferenceUtils {
 	static final String KEY_STARTPAGE_ITEM_ENABLED = "startpage_item_enabled";
 	private static final String TAG = "PreferenceUtils";
 
-	public static long getCommonId(Context context) {
+	public static long getPeriodId(Context context) {
 		SharedPreferences sharedPref = PreferenceManager
 				.getDefaultSharedPreferences(context);
-		return sharedPref.getLong(PreferenceUtils.KEY_COMMON_ID, 0);
+		return sharedPref.getLong(PreferenceUtils.KEY_PERIOD_ID, 0);
 	}
 
-	public static void setCommonId(Context context, long id) {
+	public static void setPeriodId(Context context, long periodId) {
 		SharedPreferences sharedPref = PreferenceManager
 				.getDefaultSharedPreferences(context);
 		SharedPreferences.Editor editor = sharedPref.edit();
-		editor.putLong(PreferenceUtils.KEY_COMMON_ID, id);
+		editor.putLong(PreferenceUtils.KEY_PERIOD_ID, periodId);
 		editor.commit();
 	}
 
-	public static String getLocationId(Context context) {
+	public static String getCityKey(Context context) {
 		SharedPreferences sharedPref = PreferenceManager
 				.getDefaultSharedPreferences(context);
-		return sharedPref.getString(PreferenceUtils.KEY_LOCATION_ID, null);
+		return sharedPref.getString(PreferenceUtils.KEY_CITY_KEY, null);
 	}
 
-	public static void setLocationId(Context context, String id) {
+	public static void setCityKey(Context context, String cityKey) {
 		SharedPreferences sharedPref = PreferenceManager
 				.getDefaultSharedPreferences(context);
 		SharedPreferences.Editor editor = sharedPref.edit();
-		editor.putString(PreferenceUtils.KEY_LOCATION_ID, id);
+		editor.putString(PreferenceUtils.KEY_CITY_KEY, cityKey);
 		editor.commit();
 	}
 

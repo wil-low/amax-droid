@@ -31,7 +31,7 @@ public class CitySelectActivity extends SherlockActivity {
 	private Context mContext;
 	private String mLocationId;
 	private String mPeriodString;
-	private long mCommonId;
+	private long mPeriodId;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -41,15 +41,15 @@ public class CitySelectActivity extends SherlockActivity {
 		mPeriodString = getIntent().getStringExtra(
 				PreferenceUtils.PERIOD_STRING_KEY);
 
-		mCityList = (ListView) findViewById(R.id.currentCityList);
+		mCityList = (ListView) findViewById(R.id.cityList);
 
 		mDataProvider = DataProvider.getInstance(getApplicationContext());
 		mDB = AmaxDatabase.getInstance(getApplicationContext());
 
-		mCommonId = PreferenceUtils.getCommonId(mContext);
+		mPeriodId = PreferenceUtils.getPeriodId(mContext);
 
-		mLocationId = PreferenceUtils.getLocationId(this);
-		Cursor cursor = mDB.getCurrentPeriodAndCity(mCommonId, mLocationId);
+		mLocationId = PreferenceUtils.getCityKey(this);
+		Cursor cursor = mDB.getPeriodAndCity(mPeriodId, mLocationId);
 		if (cursor.moveToFirst()) {
 			mPeriodString = DataProvider.makePeriodCaption(cursor.getInt(1),
 					cursor.getInt(2), cursor.getInt(3) - 1);
@@ -108,9 +108,9 @@ public class CitySelectActivity extends SherlockActivity {
 	protected void onResume() {
 		super.onResume();
 		MyLog.d(TAG, "OnResume");
-		long commonId = PreferenceUtils.getCommonId(mContext);
+		long commonId = PreferenceUtils.getPeriodId(mContext);
 
-		Cursor cursor = mDB.getCitiesForPeriod(commonId);
+		Cursor cursor = mDB.getLocationsForPeriod(commonId);
 		CursorAdapter adapter = new CityCursorAdapter(this, cursor, mLocationId);
 		mCityList.setAdapter(adapter);
 	}
@@ -131,7 +131,7 @@ public class CitySelectActivity extends SherlockActivity {
 		builder.setPositiveButton(android.R.string.ok,
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
-						mDB.deleteLocation(mCommonId, locationId);
+						mDB.deleteLocation(mPeriodId, locationId);
 						onResume();
 					}
 				});
@@ -189,7 +189,7 @@ public class CitySelectActivity extends SherlockActivity {
 
 				public void onClick(View view) {
 					mLocationId = (String) view.getTag(R.id.csa_city_key);
-					PreferenceUtils.setLocationId(mContext, mLocationId);
+					PreferenceUtils.setCityKey(mContext, mLocationId);
 					finish();
 				}
 			});
