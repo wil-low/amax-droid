@@ -11,6 +11,7 @@ import com.astromaximum.util.LocationsDataFile;
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
 public class AmaxDatabase extends SQLiteAssetHelper {
+	private static final String TAG = "AmaxDatabase";
 	private static final String DATABASE_NAME = "amax";
 	private static final int DATABASE_VERSION = 1;
 	private static AmaxDatabase mInstance;
@@ -44,10 +45,10 @@ public class AmaxDatabase extends SQLiteAssetHelper {
 		return result;
 	}
 
-	public Cursor getCurrentPeriodAndCity(long periodId, String locationId) {
+	public Cursor getCurrentPeriodAndCity(long periodId, String cityKey) {
 		mDB = getReadableDatabase();
 		String q = "select commons._id as _id, year, start_month, month_count, commons.key, name from commons, cities where commons._id = "
-				+ periodId + " and cities.key = '" + locationId + "'";
+				+ periodId + " and cities.key = '" + cityKey + "'";
 		Cursor cursor = mDB.rawQuery(q, null);
 		return cursor;
 	}
@@ -148,5 +149,12 @@ public class AmaxDatabase extends SQLiteAssetHelper {
 				+ month
 				+ " between start_month and start_month + month_count - 1";
 		return mDB.rawQuery(q, null);
+	}
+
+	public void deleteLocation(long periodId, long cityId) {
+		mDB = getWritableDatabase();
+		int rowsAffected = mDB.delete("locations", "common_id=? and city_id=?", new String[] {
+				Long.toString(periodId), Long.toString(cityId) });
+		MyLog.d(TAG, "Deleted " + rowsAffected);
 	}
 }

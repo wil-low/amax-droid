@@ -167,9 +167,7 @@
 
     <string name="retry">Retry</string> <!-- Retry download button -->
     
-    <string-array name="menu_city">
-        <item>Delete city</item>
-        <item>Information</item>
-    </string-array>
+    <string name="city_delete">Delete city</string>
+    <string name="city_info">Information</string>
     
 </resources>

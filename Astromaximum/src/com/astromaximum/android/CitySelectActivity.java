@@ -1,11 +1,11 @@
 package com.astromaximum.android;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -31,6 +31,7 @@ public class CitySelectActivity extends SherlockActivity {
 	private Context mContext;
 	private String mLocationId;
 	private String mPeriodString;
+	private long mCommonId;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -45,10 +46,10 @@ public class CitySelectActivity extends SherlockActivity {
 		mDataProvider = DataProvider.getInstance(getApplicationContext());
 		mDB = AmaxDatabase.getInstance(getApplicationContext());
 
-		long commonId = PreferenceUtils.getCommonId(mContext);
+		mCommonId = PreferenceUtils.getCommonId(mContext);
 
 		mLocationId = PreferenceUtils.getLocationId(this);
-		Cursor cursor = mDB.getCurrentPeriodAndCity(commonId, mLocationId);
+		Cursor cursor = mDB.getCurrentPeriodAndCity(mCommonId, mLocationId);
 		if (cursor.moveToFirst()) {
 			mPeriodString = DataProvider.makePeriodCaption(cursor.getInt(1),
 					cursor.getInt(2), cursor.getInt(3) - 1);
@@ -88,12 +89,18 @@ public class CitySelectActivity extends SherlockActivity {
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
 		if (v.getId() == R.id.layoutCity) {
-			menu.setHeaderTitle("City key = ");
-			String[] menuItems = getResources().getStringArray(
-					R.array.menu_city);
-			for (int i = 0; i < menuItems.length; i++) {
-				menu.add(Menu.NONE, i, i, menuItems[i]);
-			}
+			final String cityKey = (String) v.getTag(R.id.csa_city_key);
+			menu.setHeaderTitle("City key = " + cityKey);
+			final long locationId = Long.parseLong((String) v
+					.getTag(R.id.csa_location_id));
+			android.view.MenuItem item = menu.add(Menu.NONE, 0, 0,
+					R.string.city_delete);
+			item.setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
+
+				public boolean onMenuItemClick(android.view.MenuItem item) {
+					return true;
+				}
+			});
 		}
 	}
 
@@ -114,6 +121,31 @@ public class CitySelectActivity extends SherlockActivity {
 		MyLog.d(TAG, "OnPause");
 	}
 
+	private void showEraseDialog(View v) {
+		TextView tv = (TextView) v.findViewById(R.id.textCity);
+		final long locationId = Long.parseLong((String) v
+				.getTag(R.id.csa_location_id));
+		
+		AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+		builder.setMessage("Erase " + tv.getText() + " ?");
+		builder.setPositiveButton(android.R.string.ok,
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						mDB.deleteLocation(mCommonId, locationId);
+						onResume();
+					}
+				});
+		builder.setNegativeButton(android.R.string.cancel,
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						// User cancelled the dialog
+					}
+				});
+		
+		AlertDialog dialog = builder.create();
+		dialog.show();
+	}
+
 	class CityCursorAdapter extends CursorAdapter {
 		private String mLocationId;
 
@@ -132,10 +164,21 @@ public class CitySelectActivity extends SherlockActivity {
 			}
 			tv = (TextView) view.findViewById(R.id.textSummary);
 			tv.setText(summary);
-			String cityKey = cursor.getString(4);
-			view.setTag(cityKey);
+			final String cityKey = cursor.getString(4);
+			view.setTag(R.id.csa_city_key, cityKey);
+			view.setTag(R.id.csa_location_id, cursor.getString(0));
+
+			final boolean isChecked = cityKey.equals(mLocationId);
 			RadioButton rb = (RadioButton) view.findViewById(R.id.radioButton1);
-			rb.setChecked(cityKey.equals(mLocationId));
+			rb.setChecked(isChecked);
+
+			view.setOnLongClickListener(new View.OnLongClickListener() {
+				public boolean onLongClick(View v) {
+					if (!isChecked)
+						showEraseDialog(v);
+					return true;
+				}
+			});
 		}
 
 		@Override
@@ -145,12 +188,12 @@ public class CitySelectActivity extends SherlockActivity {
 			view.setOnClickListener(new View.OnClickListener() {
 
 				public void onClick(View view) {
-					mLocationId = (String) view.getTag();
+					mLocationId = (String) view.getTag(R.id.csa_city_key);
 					PreferenceUtils.setLocationId(mContext, mLocationId);
 					finish();
 				}
 			});
-			registerForContextMenu(view);
+			// registerForContextMenu(view);
 			return view;
 		}
 
