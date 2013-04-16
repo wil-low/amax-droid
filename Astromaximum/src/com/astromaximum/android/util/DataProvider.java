@@ -320,7 +320,7 @@ public class DataProvider extends SubDataProcessor {
 		mLocationDatafile = new LocationsDataFile(is);
 	}
 
-	private String makeLocationFilename(String cityKey) {
+	public String makeLocationFilename(String cityKey) {
 		return mPeriodStr + cityKey;
 	}
 

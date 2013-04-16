@@ -125,6 +125,7 @@ public class CitySelectActivity extends SherlockActivity {
 		TextView tv = (TextView) v.findViewById(R.id.textCity);
 		final long locationId = Long.parseLong((String) v
 				.getTag(R.id.csa_location_id));
+		final String cityKey = (String) v.getTag(R.id.csa_city_key);
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 		builder.setMessage("Erase " + tv.getText() + " ?");
@@ -132,6 +133,8 @@ public class CitySelectActivity extends SherlockActivity {
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 						mDB.deleteLocation(mPeriodId, locationId);
+						String fileToDelete = mDataProvider.makeLocationFilename(cityKey);
+						mContext.deleteFile(fileToDelete);
 						onResume();
 					}
 				});
