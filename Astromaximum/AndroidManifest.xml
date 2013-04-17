@@ -31,7 +31,7 @@
         <activity android:name=".InterpreterActivity" />
         <activity android:name=".LocationDownloadActivity" />
         <activity android:name=".StartPageLayoutActivity" />
-        <activity android:name=".PeriodSelectActivity" />
+        <activity android:name=".PeriodBuyActivity" />
         <activity android:name=".CitySelectActivity" />
     </application>
 

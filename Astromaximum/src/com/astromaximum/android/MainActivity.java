@@ -211,14 +211,19 @@ public class MainActivity extends SherlockActivity {
 			mNoPeriodLayout.setVisibility(View.VISIBLE);
 			mMissingDataMessage.setText(R.string.no_period);
 
-			mMissingDataButton.setTag(String.format("%04d%02d%02d",
-					mDataProvider.getYear(), mDataProvider.getMonth(), 1));
+			final String periodKey = String.format("%04d%02d%02d",
+					mDataProvider.getYear(), mDataProvider.getMonth(), 1);
 			mMissingDataButton.setText(String.format(mContext.getResources()
 					.getString(R.string.buy_period), mDataProvider.getYear(),
 					mDataProvider.getMonth() + 1));
 
 			mMissingDataButton.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
+					Intent intent = new Intent(mContext, PeriodBuyActivity.class);
+					intent.putExtra(PreferenceUtils.PERIOD_STRING_KEY, periodKey);
+					startActivity(intent);
+					
+					/*
 					Downloader.getInstance(mContext).downloadPeriod("20130201",
 							"akd6vtir95bs1kow", new Downloader.Callback() {
 								public void callback(boolean isSuccess) {
@@ -228,6 +233,7 @@ public class MainActivity extends SherlockActivity {
 									}
 								}
 							});
+							*/
 				}
 			});
 		}

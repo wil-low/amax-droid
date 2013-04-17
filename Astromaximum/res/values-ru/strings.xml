@@ -28,9 +28,11 @@
     <string name="download_location">Загрузить \"%1$s\"</string>
     <string name="downloading">Загружается %1$s&#8230;</string>
     <string name="downloaded">Загружено: %1$s</string>
-    <string name="country_list">Страны</string>
-    <string name="state_list">Регионы</string>
-    <string name="city_list">Города</string>
+    
+    <string name="lda_countries_title">Страны (%1$s)</string>
+    <string name="lda_states_title">Регионы (%1$s)</string>
+    <string name="lda_cities_title">Города (%1$s)</string>
+
     <string name="all_states">&lt;Все регионы&gt;</string>
     <string name="make_current">Сделать город текущим и вернуться на стартовый экран?</string>
     

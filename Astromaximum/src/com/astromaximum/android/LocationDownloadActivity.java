@@ -39,27 +39,31 @@ public class LocationDownloadActivity extends SherlockActivity {
 	private DataProvider mDataProvider;
 	private Context mContext;
 	private AQuery mAQuery;
-	private int mTitleId = 0;
 	private int mMode = MODE_COUNTRIES;
 	private String mCountryId, mStateId, mCityId, mPeriodString;
+	private String mCountryName, mStateName, mCityName;
 	private ArrayList<String> mIdentifierList = new ArrayList<String>();
 	private ArrayList<String> mNameList = new ArrayList<String>();
+	private ArrayList<Integer> mStateCountList = new ArrayList<Integer>();
 	private Button mRetryButton;
 	protected Callback mDownloadCallback;
-	protected String mCityName;
 	public final static int MODE_COUNTRIES = 0;
 	public final static int MODE_STATES = 1;
 	public final static int MODE_CITIES = 2;
 	public final static int MODE_DOWNLOAD = 3;
 
 	public static Intent makeIntent(Context context, String periodString,
-			int mode, String countryId, String stateId, String cityId) {
+			int mode, String countryId, String stateId, String cityId,
+			String countryName, String stateName, String cityName) {
 		Intent intent = new Intent(context, LocationDownloadActivity.class);
 		intent.putExtra(PreferenceUtils.PERIOD_STRING_KEY, periodString);
 		intent.putExtra(PreferenceUtils.MODE_KEY, mode);
 		intent.putExtra(PreferenceUtils.COUNTRY_ID_KEY, countryId);
 		intent.putExtra(PreferenceUtils.STATE_ID_KEY, stateId);
 		intent.putExtra(PreferenceUtils.CITY_ID_KEY, cityId);
+		intent.putExtra(PreferenceUtils.COUNTRY_NAME_KEY, countryName);
+		intent.putExtra(PreferenceUtils.STATE_NAME_KEY, stateName);
+		intent.putExtra(PreferenceUtils.CITY_NAME_KEY, cityName);
 		return intent;
 	}
 
@@ -76,7 +80,11 @@ public class LocationDownloadActivity extends SherlockActivity {
 		mCountryId = getIntent().getStringExtra(PreferenceUtils.COUNTRY_ID_KEY);
 		mStateId = getIntent().getStringExtra(PreferenceUtils.STATE_ID_KEY);
 		mCityId = getIntent().getStringExtra(PreferenceUtils.CITY_ID_KEY);
-		getSupportActionBar().setSubtitle(mPeriodString);
+		mCountryName = getIntent().getStringExtra(
+				PreferenceUtils.COUNTRY_NAME_KEY);
+		mStateName = getIntent().getStringExtra(PreferenceUtils.STATE_NAME_KEY);
+		mCityName = getIntent().getStringExtra(PreferenceUtils.CITY_NAME_KEY);
+
 		getSupportActionBar().setDisplayShowHomeEnabled(true);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -101,12 +109,20 @@ public class LocationDownloadActivity extends SherlockActivity {
 							int position, long id) {
 						String countryId = mCountryId;
 						String stateId = mStateId;
+						String countryName = mCountryName;
+						String stateName = mStateName;
+						int newMode = mMode + 1;
 						switch (mMode) {
 						case MODE_COUNTRIES:
 							countryId = mIdentifierList.get(position);
+							countryName = mNameList.get(position);
+							int stateCount = mStateCountList.get(position);
+							if (stateCount == 0)
+								newMode = MODE_CITIES;
 							break;
 						case MODE_STATES:
 							stateId = mIdentifierList.get(position);
+							stateName = mNameList.get(position);
 							break;
 						case MODE_CITIES:
 							mCityId = mIdentifierList.get(position);
@@ -119,8 +135,9 @@ public class LocationDownloadActivity extends SherlockActivity {
 							mCityId = mIdentifierList.get(position);
 						}
 						Intent intent = LocationDownloadActivity.makeIntent(
-								mContext, mPeriodString, mMode + 1, countryId,
-								stateId, mCityId);
+								mContext, mPeriodString, newMode, countryId,
+								stateId, mCityId, countryName, stateName,
+								mCityName);
 						startActivity(intent);
 					}
 				});
@@ -131,20 +148,26 @@ public class LocationDownloadActivity extends SherlockActivity {
 							mContext);
 					builder.setTitle(mCityName);
 					builder.setMessage(R.string.make_current);
-		            builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-		                   public void onClick(DialogInterface dialog, int id) {
-		                	   PreferenceUtils.setCityKey(mContext, mCityId);
-		                	   mDataProvider.restoreState();
-		                	   Intent intent = new Intent(mContext, MainActivity.class);
-		                	   intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		                	   startActivity(intent);
-		                   }
-		               });
-		            builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-		                   public void onClick(DialogInterface dialog, int id) {
-		                       // User cancelled the dialog
-		                   }
-		               });					
+					builder.setPositiveButton(android.R.string.ok,
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int id) {
+									PreferenceUtils.setCityKey(mContext,
+											mCityId);
+									mDataProvider.restoreState();
+									Intent intent = new Intent(mContext,
+											MainActivity.class);
+									intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+									startActivity(intent);
+								}
+							});
+					builder.setNegativeButton(android.R.string.cancel,
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int id) {
+									// User cancelled the dialog
+								}
+							});
 					AlertDialog dialog = builder.create();
 					dialog.show();
 				}
@@ -194,21 +217,32 @@ public class LocationDownloadActivity extends SherlockActivity {
 		String url = "http://astromaximum.com/mobi/html/dl.php?lang=en&ajax="
 				+ mMode + "&cid=" + mCountryId + "&stateid=" + mStateId + "&y="
 				+ mDataProvider.getYear();
+		MyLog.d(TAG, url);
+
+		String title = null, subtitle = null;
 		switch (mMode) {
 		case MODE_COUNTRIES:
-			mTitleId = R.string.country_list;
+			title = mContext.getResources().getString(
+					R.string.lda_countries_title, mPeriodString);
 			break;
 		case MODE_STATES:
-			mTitleId = R.string.state_list;
+			title = mContext.getResources().getString(
+					R.string.lda_states_title, mPeriodString);
+			subtitle = mCountryName;
 			break;
 		case MODE_CITIES:
-			mTitleId = R.string.city_list;
+			title = mContext.getResources().getString(
+					R.string.lda_cities_title, mPeriodString);
+			subtitle = mCountryName;
+			if (mStateName != null)
+				subtitle += ", " + mStateName;
 			break;
 		case MODE_DOWNLOAD:
 			return;
 		}
-		MyLog.d(TAG, url);
-		getSupportActionBar().setTitle(mTitleId);
+		getSupportActionBar().setTitle(title);
+		getSupportActionBar().setSubtitle(subtitle);
+
 		setSupportProgressBarIndeterminateVisibility(true);
 		mAQuery.ajax(url, JSONObject.class, new AjaxCallback<JSONObject>() {
 			@Override
@@ -221,12 +255,15 @@ public class LocationDownloadActivity extends SherlockActivity {
 						// content
 						mNameList.clear();
 						mIdentifierList.clear();
+						mStateCountList.clear();
 						JSONArray arr0 = json.getJSONArray("content");
 						for (int i = 0; i < arr0.length(); ++i) {
 							JSONArray arr1 = arr0.getJSONArray(i);
 							MyLog.d(TAG, arr1.toString());
 							mIdentifierList.add(arr1
 									.getString(mMode == MODE_CITIES ? 2 : 0));
+							if (mMode == MODE_COUNTRIES)
+								mStateCountList.add(arr1.getInt(2));
 							if (mMode == MODE_STATES
 									&& arr1.getString(0).equals("0"))
 								mNameList.add(mContext.getResources()

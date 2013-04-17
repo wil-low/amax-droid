@@ -78,7 +78,7 @@ public class CitySelectActivity extends SherlockActivity {
 		case R.id.menu_add:
 			Intent intent = LocationDownloadActivity.makeIntent(mContext,
 					mPeriodString, LocationDownloadActivity.MODE_COUNTRIES,
-					"0", "0", "0");
+					"0", "0", "0", null, null, null);
 			startActivity(intent);
 			break;
 		}
