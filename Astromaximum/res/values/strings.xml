@@ -29,9 +29,9 @@
     <string name="downloading">Downloading %1$s&#8230;</string>
     <string name="downloaded">Downloaded: %1$s</string>
     
-    <string name="lda_countries_title">Countries (%1$s)</string>
-    <string name="lda_states_title">States (%1$s)</string>
-    <string name="lda_cities_title">Cities (%1$s)</string>
+    <string name="lda_countries_title">Countries - %1$s</string>
+    <string name="lda_states_title">States - %1$s</string>
+    <string name="lda_cities_title">Cities - %1$s</string>
     
     <string name="all_states">&lt;All states&gt;</string>
     <string name="make_current">Make the city current and go back to start screen?</string>
