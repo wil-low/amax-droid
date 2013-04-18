@@ -23,6 +23,7 @@ public class InterpreterActivity extends SherlockActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mContext = this;
+		Event.setContext(mContext);
 		setContentView(R.layout.activity_interpreter);
 		getSupportActionBar().setDisplayShowHomeEnabled(false);
 

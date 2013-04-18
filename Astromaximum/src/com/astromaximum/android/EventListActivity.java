@@ -34,6 +34,7 @@ public class EventListActivity extends SherlockActivity {
 		MyLog.d(TAG, "OnCreate: ");
 		mContext = this;
 		setContentView(R.layout.activity_event_list);
+		Event.setContext(mContext);
 		ViewHolder.initialize(mContext);
 		mEventList = (ListView) findViewById(R.id.event_list_view);
 		mEventList
