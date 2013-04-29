@@ -190,18 +190,19 @@ public class MainActivity extends SherlockActivity {
 							public void onClick(View v) {
 								String cityKey = PreferenceUtils
 										.getCityKey(mContext);
-								Downloader.getInstance(mContext).downloadLocation(
-										mDataProvider, cityKey,
-										mDataProvider.getCityName(),
-										new Downloader.Callback() {
-											public void callback(
-													boolean isSuccess) {
-												if (isSuccess) {
-													onPause();
-													onRestart();
-												}
-											}
-										});
+								Downloader.getInstance(mContext)
+										.downloadLocation(mDataProvider,
+												cityKey,
+												mDataProvider.getCityName(),
+												new Downloader.Callback() {
+													public void callback(
+															boolean isSuccess) {
+														if (isSuccess) {
+															onPause();
+															onRestart();
+														}
+													}
+												});
 							}
 						});
 			}
@@ -211,7 +212,7 @@ public class MainActivity extends SherlockActivity {
 			mNoPeriodLayout.setVisibility(View.VISIBLE);
 			mMissingDataMessage.setText(R.string.no_period);
 
-			final String periodKey = String.format("%04d%02d%02d",
+			final String periodStr = String.format("%04d%02d%02d",
 					mDataProvider.getYear(), mDataProvider.getMonth(), 1);
 			mMissingDataButton.setText(String.format(mContext.getResources()
 					.getString(R.string.buy_period), mDataProvider.getYear(),
@@ -219,25 +220,30 @@ public class MainActivity extends SherlockActivity {
 
 			mMissingDataButton.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
-					Intent intent = new Intent(mContext, PeriodBuyActivity.class);
-					intent.putExtra(PreferenceUtils.PERIOD_STRING_KEY, periodKey);
-					startActivity(intent);
-					
-					/*
-					Downloader.getInstance(mContext).downloadPeriod("20130201",
-							"akd6vtir95bs1kow", new Downloader.Callback() {
-								public void callback(boolean isSuccess) {
-									if (isSuccess) {
-										onPause();
-										onRestart();
-									}
-								}
-							});
-							*/
+					// buyPeriod(periodKey);
+					downloadPeriod(periodStr);
 				}
 			});
 		}
 		updateTitle();
+	}
+
+	protected void downloadPeriod(String periodStr) {
+		Downloader.getInstance(mContext).downloadPeriod(periodStr,
+				"vlr41lhxbh0f0mbr", new Downloader.Callback() {
+					public void callback(boolean isSuccess) {
+						if (isSuccess) {
+							onPause();
+							onRestart();
+						}
+					}
+				});
+	}
+
+	protected void buyPeriod(String periodStr) {
+		Intent intent = new Intent(mContext, PeriodBuyActivity.class);
+		intent.putExtra(PreferenceUtils.PERIOD_STRING_KEY, periodStr);
+		startActivity(intent);
 	}
 
 	@Override
