@@ -1,42 +1,25 @@
 package com.astromaximum.android;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ListView;
 
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.astromaximum.android.util.DataProvider;
 import com.astromaximum.android.util.Event;
 import com.astromaximum.android.util.InterpretationProvider;
 import com.astromaximum.android.util.MyLog;
 import com.astromaximum.android.view.EventListAdapter;
 import com.astromaximum.android.view.SummaryItem;
-import com.astromaximum.android.view.ViewHolder;
 
-public class EventListActivity extends SherlockActivity {
-	private final String TAG = "EventListActivity";
-	private ListView mEventList;
-	private DataProvider mDataProvider;
-	private Context mContext;
+public class EventListActivity extends BaseEventListActivity {
 	private int mKey;
 	private String mKeyDescription;
-	private boolean mUseVolumeButtons;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		MyLog.d(TAG, "OnCreate: ");
-		mContext = this;
-		setContentView(R.layout.activity_event_list);
-		Event.setContext(mContext);
-		ViewHolder.initialize(mContext);
-		mEventList = (ListView) findViewById(R.id.event_list_view);
+		super.onCreate(savedInstanceState, R.layout.activity_event_list,
+				"EventListActivity", R.menu.event_list);
 		mEventList
 				.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -60,20 +43,10 @@ public class EventListActivity extends SherlockActivity {
 
 				});
 
-		mDataProvider = DataProvider.getInstance(getApplicationContext());
-
 		mKey = getIntent().getIntExtra(PreferenceUtils.LISTKEY_EVENT_KEY,
 				Event.EV_LAST);
 		mKeyDescription = getKeyDescription(mKey);
-		getSupportActionBar().setDisplayShowHomeEnabled(false);
 		updateDisplay();
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
-		getSupportMenuInflater().inflate(R.menu.event_list, menu);
-		return true;
 	}
 
 	@Override
@@ -91,57 +64,7 @@ public class EventListActivity extends SherlockActivity {
 	}
 
 	@Override
-	protected void onPause() {
-		super.onPause();
-		mDataProvider.saveState();
-		MyLog.d(TAG, "OnPause");
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		mUseVolumeButtons = PreferenceUtils.getUseVolumeButtons(mContext);
-		MyLog.d(TAG, "OnResume");
-	}
-
-	@Override
-	protected void onRestart() {
-		super.onRestart();
-		MyLog.d(TAG, "OnRestart");
-	}
-
-	@Override
-	public boolean dispatchKeyEvent(KeyEvent event) {
-		switch (event.getKeyCode()) {
-		case KeyEvent.KEYCODE_VOLUME_DOWN:
-			if (!mUseVolumeButtons)
-				break;
-			if (event.getAction() == KeyEvent.ACTION_DOWN)
-				previousDate();
-			return true;
-		case KeyEvent.KEYCODE_VOLUME_UP:
-			if (!mUseVolumeButtons)
-				break;
-			if (event.getAction() == KeyEvent.ACTION_DOWN)
-				nextDate();
-			return true;
-		}
-		return super.dispatchKeyEvent(event);
-	}
-
-	private void previousDate() {
-		mDataProvider.changeDate(-1);
-		updateDisplay();
-	}
-
-	private void nextDate() {
-		mDataProvider.changeDate(1);
-		updateDisplay();
-	}
-
-	private void updateDisplay() {
-		getSupportActionBar().setTitle(mDataProvider.getCurrentDateString());
-		getSupportActionBar().setSubtitle(mKeyDescription);
+	protected void updateEventList() {
 		SummaryItem item = null;
 		if (mDataProvider.mEventCache.isEmpty()) {
 			mDataProvider.prepareCalculation();
@@ -202,5 +125,11 @@ public class EventListActivity extends SherlockActivity {
 			break;
 		}
 		return mContext.getResources().getString(id);
+	}
+
+	@Override
+	protected void updateTitle() {
+		getSupportActionBar().setTitle(mDataProvider.getCurrentDateString());
+		getSupportActionBar().setSubtitle(mKeyDescription);
 	}
 }

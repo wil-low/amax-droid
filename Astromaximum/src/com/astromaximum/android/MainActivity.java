@@ -2,67 +2,29 @@ package com.astromaximum.android;
 
 import net.simonvt.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.KeyEvent;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.astromaximum.android.util.DataProvider;
-import com.astromaximum.android.util.Downloader;
-import com.astromaximum.android.util.Event;
 import com.astromaximum.android.util.InterpretationProvider;
 import com.astromaximum.android.util.MyLog;
 import com.astromaximum.android.view.SummaryAdapter;
-import com.astromaximum.android.view.ViewHolder;
 
-public class MainActivity extends SherlockActivity {
+public class MainActivity extends BaseEventListActivity {
 	static final int DATE_DIALOG_ID = 0;
 
-	private final String TAG = "MainActivity";
-	private ListView mEventList;
-	private RelativeLayout mNoPeriodLayout;
-	private Button mMissingDataButton;
-	private TextView mMissingDataMessage;
-
-	private DataProvider mDataProvider;
 	private String mTitleDate;
-	private Context mContext;
-	private boolean mUseVolumeButtons;
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+		super.onCreate(savedInstanceState, R.layout.activity_main,
+				"MainActivity", R.menu.main);
 		MyLog.setLevel(0);
-
 		MyLog.d(TAG, "OnCreate");
-		mContext = this;
-
-		Event.setContext(mContext);
-		ViewHolder.initialize(mContext);
-
-		mDataProvider = DataProvider.getInstance(this);
 		InterpretationProvider.getInstance(this);
-
-		setContentView(R.layout.activity_main);
-
-		mEventList = (ListView) findViewById(R.id.ListViewEvents);
-		mNoPeriodLayout = (RelativeLayout) findViewById(R.id.NoPeriodLayout);
-		mMissingDataMessage = (TextView) mNoPeriodLayout
-				.findViewById(R.id.txtMissingData);
-		mMissingDataButton = (Button) mNoPeriodLayout
-				.findViewById(R.id.btnMissingData);
-
-		getSupportActionBar().setDisplayShowHomeEnabled(false);
 		updateDisplay();
 	}
 
@@ -74,13 +36,6 @@ public class MainActivity extends SherlockActivity {
 			updateDisplay();
 		}
 	};
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
-		getSupportMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -140,113 +95,6 @@ public class MainActivity extends SherlockActivity {
 	}
 
 	@Override
-	protected void onPause() {
-		super.onPause();
-		MyLog.d(TAG, "OnPause");
-		mDataProvider.saveState();
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		mUseVolumeButtons = PreferenceUtils.getUseVolumeButtons(mContext);
-		MyLog.d(TAG, "OnResume");
-	}
-
-	@Override
-	protected void onRestart() {
-		super.onRestart();
-		mDataProvider.restoreState();
-		updateDisplay();
-		MyLog.d(TAG, "OnRestart");
-	}
-
-	private void updateDisplay() {
-		if (mDataProvider.hasPeriod()) {
-			if (mDataProvider.hasLocation()) {
-				mEventList.setVisibility(View.VISIBLE);
-				mNoPeriodLayout.setVisibility(View.INVISIBLE);
-				mDataProvider.prepareCalculation();
-				mDataProvider.calculateAll();
-				SummaryAdapter adapter = new SummaryAdapter(this,
-						mDataProvider.mEventCache,
-						mDataProvider.getCustomTime(),
-						mDataProvider.getCurrentTime());
-				mEventList.setAdapter(adapter);
-			} else {
-				// No location
-				mEventList.setVisibility(View.INVISIBLE);
-				mNoPeriodLayout.setVisibility(View.VISIBLE);
-				mMissingDataMessage.setText(R.string.no_location);
-
-				mMissingDataButton.setTag(String.format("%04d%02d%02d",
-						mDataProvider.getYear(), mDataProvider.getMonth(), 1));
-				mMissingDataButton.setText(String.format(mContext
-						.getResources().getString(R.string.download_location),
-						mDataProvider.getCityName()));
-
-				mMissingDataButton
-						.setOnClickListener(new View.OnClickListener() {
-							public void onClick(View v) {
-								String cityKey = PreferenceUtils
-										.getCityKey(mContext);
-								Downloader.getInstance(mContext)
-										.downloadLocation(mDataProvider,
-												cityKey,
-												mDataProvider.getCityName(),
-												new Downloader.Callback() {
-													public void callback(
-															boolean isSuccess) {
-														if (isSuccess) {
-															onPause();
-															onRestart();
-														}
-													}
-												});
-							}
-						});
-			}
-		} else {
-			// No period
-			mEventList.setVisibility(View.INVISIBLE);
-			mNoPeriodLayout.setVisibility(View.VISIBLE);
-			mMissingDataMessage.setText(R.string.no_period);
-
-			final String periodStr = String.format("%04d%02d%02d",
-					mDataProvider.getYear(), mDataProvider.getMonth(), 1);
-			mMissingDataButton.setText(String.format(mContext.getResources()
-					.getString(R.string.buy_period), mDataProvider.getYear(),
-					mDataProvider.getMonth() + 1));
-
-			mMissingDataButton.setOnClickListener(new View.OnClickListener() {
-				public void onClick(View v) {
-					// buyPeriod(periodKey);
-					downloadPeriod(periodStr);
-				}
-			});
-		}
-		updateTitle();
-	}
-
-	protected void downloadPeriod(String periodStr) {
-		Downloader.getInstance(mContext).downloadPeriod(periodStr,
-				"vlr41lhxbh0f0mbr", new Downloader.Callback() {
-					public void callback(boolean isSuccess) {
-						if (isSuccess) {
-							onPause();
-							onRestart();
-						}
-					}
-				});
-	}
-
-	protected void buyPeriod(String periodStr) {
-		Intent intent = new Intent(mContext, PeriodBuyActivity.class);
-		intent.putExtra(PreferenceUtils.PERIOD_STRING_KEY, periodStr);
-		startActivity(intent);
-	}
-
-	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		switch (requestCode) {
@@ -256,7 +104,8 @@ public class MainActivity extends SherlockActivity {
 		}
 	}
 
-	private void updateTitle() {
+	@Override
+	protected void updateTitle() {
 		mTitleDate = mDataProvider.getCurrentDateString();
 		getSupportActionBar().setTitle(mTitleDate);
 		getSupportActionBar().setSubtitle(
@@ -264,34 +113,13 @@ public class MainActivity extends SherlockActivity {
 						+ mDataProvider.getCityName());
 	}
 
-	private void previousDate() {
-		MyLog.d(TAG, "previousDate");
-		mDataProvider.changeDate(-1);
-		updateDisplay();
-	}
-
-	private void nextDate() {
-		MyLog.d(TAG, "nextDate");
-		mDataProvider.changeDate(1);
-		updateDisplay();
-	}
-
 	@Override
-	public boolean dispatchKeyEvent(KeyEvent event) {
-		switch (event.getKeyCode()) {
-		case KeyEvent.KEYCODE_VOLUME_DOWN:
-			if (!mUseVolumeButtons)
-				break;
-			if (event.getAction() == KeyEvent.ACTION_DOWN)
-				previousDate();
-			return true;
-		case KeyEvent.KEYCODE_VOLUME_UP:
-			if (!mUseVolumeButtons)
-				break;
-			if (event.getAction() == KeyEvent.ACTION_DOWN)
-				nextDate();
-			return true;
-		}
-		return super.dispatchKeyEvent(event);
+	protected void updateEventList() {
+		mDataProvider.prepareCalculation();
+		mDataProvider.calculateAll();
+		SummaryAdapter adapter = new SummaryAdapter(this,
+				mDataProvider.mEventCache, mDataProvider.getCustomTime(),
+				mDataProvider.getCurrentTime());
+		mEventList.setAdapter(adapter);
 	}
 }
