@@ -7,7 +7,7 @@ use File::Path;
 use Cwd;
 
 if (!defined($ARGV[2])) {
-	die "Usage: calculate_period.pl <year> <month> <month_count>";
+	die "Usage: calculate_period.pl <year> <month 0-11> <month_count>";
 }
 my $LOCLIST_CSV = '/tmp/tmp.csv';
 my $SCRIPT_DIR = getcwd();
