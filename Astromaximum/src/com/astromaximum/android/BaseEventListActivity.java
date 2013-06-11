@@ -19,6 +19,8 @@ import com.astromaximum.android.util.MyLog;
 import com.astromaximum.android.view.ViewHolder;
 
 public class BaseEventListActivity extends SherlockActivity {
+	private static final String PREMIUM_KEY = "999ec9eafd3eb789e70c2a2584d21391";
+
 	protected String TAG = null;
 
 	protected DataProvider mDataProvider;
@@ -113,7 +115,7 @@ public class BaseEventListActivity extends SherlockActivity {
 
 	protected void downloadPeriod(String periodStr) {
 		Downloader.getInstance(mContext).downloadPeriod(periodStr,
-				"vlr41lhxbh0f0mbr", new Downloader.Callback() {
+				PREMIUM_KEY, new Downloader.Callback() {
 					public void callback(boolean isSuccess) {
 						if (isSuccess) {
 							onPause();

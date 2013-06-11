@@ -94,12 +94,13 @@ public class Downloader {
 				});
 	}
 
-	public void downloadPeriod(final String periodStr, final String periodKey,
+	public void downloadPeriod(final String periodStr, final String premiumKey,
 			final Callback cb) {
 		ProgressDialog dialog = makeProgressDialog(periodStr);
 
-		String url = "http://astromaximum.com/data/?buy=" + periodKey;
+		String url = "http://astromaximum.com/data/?buy=" + periodStr;
 		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("p", premiumKey);
 		params.put("k", "44b62ab3e3165298849ac71428eca191");
 
 		mAQuery.progress(dialog).ajax(url, params, InputStream.class,
