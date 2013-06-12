@@ -74,10 +74,17 @@ public class DataProvider extends SubDataProcessor {
 	private AmaxDatabase mDatabase;
 
 	// Keep in sync with string-array name="startpage_items"
-	static final int[] START_PAGE_ITEM_SEQ = new int[] { Event.EV_MOON_SIGN,
-			Event.EV_MOON_MOVE, Event.EV_PLANET_HOUR, Event.EV_TITHI,
-			Event.EV_SUN_DEGREE, Event.EV_ASP_EXACT, Event.EV_RETROGRADE,
-			Event.EV_VOC, Event.EV_VIA_COMBUSTA, };
+	static final int[] START_PAGE_ITEM_SEQ = new int[] {
+		Event.EV_VOC,
+		Event.EV_MOON_MOVE,
+		Event.EV_PLANET_HOUR,
+		Event.EV_MOON_SIGN,
+		Event.EV_RETROGRADE,
+		Event.EV_ASP_EXACT,
+		Event.EV_VIA_COMBUSTA,
+		Event.EV_SUN_DEGREE,
+		Event.EV_TITHI,
+	};
 
 	private DataProvider(Context context) {
 		mContext = context;
