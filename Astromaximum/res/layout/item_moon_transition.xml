@@ -12,7 +12,7 @@
         android:id="@+id/EventListItemPlanet0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/EventListItemText1"
+        android:layout_alignBaseline="@+id/EventListItemText0"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:layout_gravity="center_vertical|center"
@@ -26,7 +26,7 @@
         android:id="@+id/EventListTransitionSign"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/EventListItemText1"
+        android:layout_alignBaseline="@+id/EventListItemText0"
         android:layout_centerVertical="true"
         android:layout_gravity="center"
         android:layout_toRightOf="@id/EventListItemPlanet0"
@@ -36,28 +36,15 @@
         android:text="@string/norm_range_arrow"
         android:textSize="@dimen/list_item_text_size" />
 
-    <TextView
-        android:id="@+id/EventListItemText1"
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:layout_centerVertical="true"
-        android:layout_gravity="center"
-        android:layout_toRightOf="@id/EventListTransitionSign"
-        android:gravity="center"
-        android:paddingLeft="@dimen/list_item_side_padding"
-        android:paddingRight="@dimen/list_item_side_padding"
-        android:text="VOC"
-        android:textSize="@dimen/list_item_text_size" />
-
     <com.astromaximum.android.view.AstroTextView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/EventListItemPlanet1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/EventListItemText1"
+        android:layout_alignBaseline="@+id/EventListItemText0"
         android:layout_centerVertical="true"
         android:layout_gravity="center"
-        android:layout_toRightOf="@id/EventListItemText1"
+        android:layout_toRightOf="@id/EventListTransitionSign"
         android:gravity="center"
         android:paddingLeft="@dimen/list_item_side_padding"
         android:paddingRight="@dimen/list_item_side_padding"

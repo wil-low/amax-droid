@@ -10,10 +10,11 @@ import com.astromaximum.android.util.Event;
 
 public class MoonTransitionHolder extends ViewHolder {
 	private TextView mTransitionSignView;
+	private String mSunSign;
 
 	public MoonTransitionHolder(SummaryItem si) {
 		super(si, R.layout.item_moon_transition, LAYOUT_FLAG_PLANET0
-				| LAYOUT_FLAG_PLANET1 | LAYOUT_FLAG_TEXT0 | LAYOUT_FLAG_TEXT1);
+				| LAYOUT_FLAG_PLANET1 | LAYOUT_FLAG_TEXT0);
 	}
 
 	@Override
@@ -21,6 +22,8 @@ public class MoonTransitionHolder extends ViewHolder {
 		super.initLayout(v);
 		mTransitionSignView = (TextView) v
 				.findViewById(R.id.EventListTransitionSign);
+		mSunSign = AstroFont.getSymbol(AstroFont.TYPE_PLANET,
+				Event.SE_SUN);
 	}
 
 	@Override
@@ -31,20 +34,12 @@ public class MoonTransitionHolder extends ViewHolder {
 			mText0.setTextColor(mDefaultTextColor);
 			switch (e.mEvtype) {
 			case Event.EV_MOON_MOVE:
-				mPlanet0.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET,
-						e.mPlanet0 == -1 ? Event.SE_MOON : e.mPlanet0));
-				if (e.mPlanet1 == -1) { // VOC
-					mPlanet1.setVisibility(View.GONE);
-					mText1.setVisibility(View.VISIBLE);
-				} else {
-					mPlanet1.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET,
-							e.mPlanet1));
-					mPlanet1.setVisibility(View.VISIBLE);
-					mText1.setVisibility(View.GONE);
-				}
 				mText0.setText(e.normalizedRangeString());
 				setColorByEventMode(mText0, e);
-				mPlanet0.setVisibility(View.VISIBLE);
+				mPlanet0.setText(mSunSign);
+				mPlanet0.setVisibility(View.INVISIBLE);
+				mPlanet1.setText(mSunSign);
+				mPlanet1.setVisibility(View.INVISIBLE);
 				mTransitionSignView.setVisibility(View.VISIBLE);
 				break;
 			case Event.EV_ASP_EXACT_MOON:
@@ -57,7 +52,6 @@ public class MoonTransitionHolder extends ViewHolder {
 						+ AstroFont
 								.getSymbol(AstroFont.TYPE_PLANET, e.mPlanet1));
 				mPlanet1.setVisibility(View.GONE);
-				mText1.setVisibility(View.GONE);
 				mText0.setText(Event.long2String(e.mDate[0], DataProvider
 						.getInstance().isInCurrentDay(e.mDate[0]) ? null
 						: Event.mMonthAbbrDayDateFormat, true));
@@ -65,11 +59,11 @@ public class MoonTransitionHolder extends ViewHolder {
 				mTransitionSignView.setVisibility(View.GONE);
 				break;
 			case Event.EV_SIGN_ENTER:
+				mPlanet0.setText(mSunSign);
+				mPlanet0.setVisibility(View.INVISIBLE);
 				mPlanet1.setText(AstroFont.getSymbol(AstroFont.TYPE_ZODIAC,
 						e.getDegree()));
-				mPlanet0.setVisibility(View.GONE);
 				mPlanet1.setVisibility(View.VISIBLE);
-				mText1.setVisibility(View.GONE);
 				mText0.setText(Event.long2String(e.mDate[0], DataProvider
 						.getInstance().isInCurrentDay(e.mDate[0]) ? null
 						: Event.mMonthAbbrDayDateFormat, true));
@@ -80,9 +74,7 @@ public class MoonTransitionHolder extends ViewHolder {
 			mPlanet0.setText("");
 			mPlanet1.setText("");
 			mText0.setText("");
-			mText1.setText("");
 			mPlanet1.setVisibility(View.GONE);
-			mText1.setVisibility(View.GONE);
 			mTransitionSignView.setVisibility(View.GONE);
 		}
 	}
