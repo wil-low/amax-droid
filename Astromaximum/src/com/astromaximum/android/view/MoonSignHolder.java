@@ -8,7 +8,7 @@ public class MoonSignHolder extends ViewHolder {
 
 	public MoonSignHolder(SummaryItem si) {
 		super(si, R.layout.item_moon_sign, LAYOUT_FLAG_TEXT0
-				| LAYOUT_FLAG_PLANET0 | LAYOUT_FLAG_ZODIAC | LAYOUT_FLAG_INFO);
+				| LAYOUT_FLAG_PLANET0 | LAYOUT_FLAG_ZODIAC);
 	}
 
 	@Override
@@ -26,6 +26,5 @@ public class MoonSignHolder extends ViewHolder {
 			mZodiac.setText("");
 			mPlanet0.setText("");
 		}
-		updateInfoButton(mSummaryItem);
 	}
 }

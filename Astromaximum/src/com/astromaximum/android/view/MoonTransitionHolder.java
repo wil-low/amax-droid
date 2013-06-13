@@ -13,8 +13,7 @@ public class MoonTransitionHolder extends ViewHolder {
 
 	public MoonTransitionHolder(SummaryItem si) {
 		super(si, R.layout.item_moon_transition, LAYOUT_FLAG_PLANET0
-				| LAYOUT_FLAG_PLANET1 | LAYOUT_FLAG_TEXT0 | LAYOUT_FLAG_TEXT1
-				| LAYOUT_FLAG_INFO);
+				| LAYOUT_FLAG_PLANET1 | LAYOUT_FLAG_TEXT0 | LAYOUT_FLAG_TEXT1);
 	}
 
 	@Override
@@ -86,6 +85,5 @@ public class MoonTransitionHolder extends ViewHolder {
 			mText1.setVisibility(View.GONE);
 			mTransitionSignView.setVisibility(View.GONE);
 		}
-		updateInfoButton(mSummaryItem);
 	}
 }

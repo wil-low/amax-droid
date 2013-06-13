@@ -6,8 +6,7 @@ import com.astromaximum.android.util.Event;
 public class TithiHolder extends ViewHolder {
 
 	public TithiHolder(SummaryItem si) {
-		super(si, R.layout.item_tithi, LAYOUT_FLAG_TEXT0 | LAYOUT_FLAG_DEGREE
-				| LAYOUT_FLAG_INFO);
+		super(si, R.layout.item_tithi, LAYOUT_FLAG_TEXT0 | LAYOUT_FLAG_DEGREE);
 	}
 
 	@Override
@@ -21,6 +20,5 @@ public class TithiHolder extends ViewHolder {
 			mDegree.setText("");
 			mText0.setText("");
 		}
-		updateInfoButton(mSummaryItem);
 	}
 }

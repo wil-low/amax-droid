@@ -8,8 +8,7 @@ public class SunDegreeHolder extends ViewHolder {
 
 	public SunDegreeHolder(SummaryItem si) {
 		super(si, R.layout.item_sun_degree, LAYOUT_FLAG_TEXT0
-				| LAYOUT_FLAG_ZODIAC | LAYOUT_FLAG_TEXT1 | LAYOUT_FLAG_PLANET0
-				| LAYOUT_FLAG_INFO);
+				| LAYOUT_FLAG_ZODIAC | LAYOUT_FLAG_TEXT1 | LAYOUT_FLAG_PLANET0);
 	}
 
 	@Override
@@ -29,6 +28,5 @@ public class SunDegreeHolder extends ViewHolder {
 			mZodiac.setText("");
 			mPlanet0.setText("");
 		}
-		updateInfoButton(mSummaryItem);
 	}
 }

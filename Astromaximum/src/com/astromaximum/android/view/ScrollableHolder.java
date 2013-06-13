@@ -22,9 +22,6 @@ public abstract class ScrollableHolder extends ViewHolder {
 		mScroll = (HorizontalScrollView) v
 				.findViewById(R.id.HorizontalScrollView);
 		mLayout = (LinearLayout) v.findViewById(R.id.LinearLayout);
-		mInfo = (ImageView) v.findViewById(R.id.ShowEventList);
-		if (mInfo != null)
-			mInfo.setOnClickListener(this);
 	}
 
 	@Override
@@ -38,13 +35,6 @@ public abstract class ScrollableHolder extends ViewHolder {
 				mLayout.addView(v, params);
 				v.setOnClickListener(this);
 			}
-		}
-		if (mSummaryItem.mEvents.size() > 1) {
-			mInfo.setVisibility(View.VISIBLE);
-			mInfo.setTag(mSummaryItem);
-		} else {
-			mInfo.setVisibility(View.INVISIBLE);
-			mInfo.setTag(null);
 		}
 	}
 

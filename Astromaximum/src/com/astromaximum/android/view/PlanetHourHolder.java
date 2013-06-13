@@ -8,7 +8,7 @@ public class PlanetHourHolder extends ViewHolder {
 
 	public PlanetHourHolder(SummaryItem si) {
 		super(si, R.layout.item_planet_hour, LAYOUT_FLAG_TEXT0
-				| LAYOUT_FLAG_PLANET0 | LAYOUT_FLAG_INFO);
+				| LAYOUT_FLAG_PLANET0);
 	}
 
 	@Override
@@ -23,6 +23,5 @@ public class PlanetHourHolder extends ViewHolder {
 			mPlanet0.setText("");
 			mText0.setText("");
 		}
-		updateInfoButton(mSummaryItem);
 	}
 }

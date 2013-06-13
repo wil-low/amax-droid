@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,7 +19,7 @@ import com.astromaximum.android.R;
 import com.astromaximum.android.util.Event;
 import com.astromaximum.android.util.InterpretationProvider;
 
-public abstract class ViewHolder implements OnClickListener {
+public abstract class ViewHolder implements OnClickListener, OnLongClickListener {
 	private static final String TAG = "ViewHolder";
 	protected TextView mType;
 	protected TextView mText0;
@@ -26,7 +27,6 @@ public abstract class ViewHolder implements OnClickListener {
 	protected AstroTextView mPlanet0;
 	protected AstroTextView mPlanet1;
 	protected AstroTextView mAspect;
-	protected ImageView mInfo;
 	protected AstroTextView mZodiac;
 	protected TextView mDegree;
 
@@ -126,14 +126,10 @@ public abstract class ViewHolder implements OnClickListener {
 			mDegree = (TextView) v.findViewById(R.id.EventListItemDegree);
 		if ((mFlags & LAYOUT_FLAG_ASPECT) != 0)
 			mAspect = (AstroTextView) v.findViewById(R.id.EventListItemAspect);
-		if ((mFlags & LAYOUT_FLAG_INFO) != 0) {
-			mInfo = (ImageView) v.findViewById(R.id.ShowEventList);
-			if (mInfo != null)
-				mInfo.setOnClickListener(this);
-		}
 		if ((mFlags & LAYOUT_FLAG_ZODIAC) != 0)
 			mZodiac = (AstroTextView) v.findViewById(R.id.EventListItemZodiac);
 		v.setOnClickListener(this);
+		v.setOnLongClickListener(this);
 	}
 
 	public static void initialize(Context context) {
@@ -150,29 +146,36 @@ public abstract class ViewHolder implements OnClickListener {
 
 	abstract public void fillLayout();
 
-	public void onClick(View v) {
-		if (v.getId() == R.id.ShowEventList) {
-			SummaryItem si = (SummaryItem) v.getTag();
-			if (si != null) {
-				Intent intent = new Intent(mContext, EventListActivity.class);
-				intent.putExtra(PreferenceUtils.LISTKEY_EVENT_KEY, si.mKey);
+	public boolean onLongClick(View v) {
+		Object obj = v.getTag();
+		if (obj != null) {
+			ViewHolder holder = (ViewHolder) obj;
+			Event e = holder.getActiveEvent();
+			String text = InterpretationProvider.getInstance().getText(e);
+			if (text != null) {
+				Intent intent = new Intent(mContext,
+						InterpreterActivity.class);
+				intent.putExtra(PreferenceUtils.LISTKEY_INTERPRETER_TEXT,
+						text);
+				intent.putExtra(PreferenceUtils.LISTKEY_INTERPRETER_EVENT,
+						e);
 				mContext.startActivity(intent);
 			}
-		} else {
-			Object obj = v.getTag();
-			if (obj != null) {
-				ViewHolder holder = (ViewHolder) obj;
-				Event e = holder.getActiveEvent();
-				String text = InterpretationProvider.getInstance().getText(e);
-				if (text != null) {
-					Intent intent = new Intent(mContext,
-							InterpreterActivity.class);
-					intent.putExtra(PreferenceUtils.LISTKEY_INTERPRETER_TEXT,
-							text);
-					intent.putExtra(PreferenceUtils.LISTKEY_INTERPRETER_EVENT,
-							e);
-					mContext.startActivity(intent);
-				}
+		}
+		return true;
+	}
+
+	public void onClick(View v) {
+		Object obj = v.getTag();
+		if (obj != null) {
+			ViewHolder holder = (ViewHolder) obj;
+			if (!holder.mIsSummaryMode) {
+				onLongClick(v);
+			}
+			else if (holder.mSummaryItem != null) {
+				Intent intent = new Intent(mContext, EventListActivity.class);
+				intent.putExtra(PreferenceUtils.LISTKEY_EVENT_KEY, holder.mSummaryItem.mKey);
+				mContext.startActivity(intent);
 			}
 		}
 	}
@@ -184,25 +187,6 @@ public abstract class ViewHolder implements OnClickListener {
 
 	void clearImage(ImageView v) {
 		v.setImageDrawable(null);
-	}
-
-	void updateInfoButton(SummaryItem si) {
-		if (mInfo != null) {
-			if (mIsSummaryMode) {
-				int remainingEventCount = si.mEvents.size();
-				if (mActiveEvent != null)
-					--remainingEventCount;
-				if (remainingEventCount > 0) {
-					mInfo.setVisibility(View.VISIBLE);
-					mInfo.setTag(si);
-					return;
-				}
-			} else {
-				mInfo.setPadding(0, 0, 0, 0);
-			}
-			mInfo.setVisibility(View.INVISIBLE);
-			mInfo.setTag(null);
-		}
 	}
 
 	public final void calculateActiveEvent(long customTime, long currentTime) {

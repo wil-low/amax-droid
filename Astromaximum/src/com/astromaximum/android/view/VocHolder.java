@@ -6,7 +6,7 @@ import com.astromaximum.android.util.Event;
 public class VocHolder extends ViewHolder {
 
 	public VocHolder(SummaryItem si) {
-		super(si, R.layout.item_voc, LAYOUT_FLAG_TEXT0 | LAYOUT_FLAG_INFO);
+		super(si, R.layout.item_voc, LAYOUT_FLAG_TEXT0);
 	}
 
 	@Override
@@ -18,6 +18,5 @@ public class VocHolder extends ViewHolder {
 		} else {
 			mText0.setText("");
 		}
-		updateInfoButton(mSummaryItem);
 	}
 }
