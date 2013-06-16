@@ -20,7 +20,6 @@
         android:textSize="@dimen/list_item_text_size" />
 
     <com.astromaximum.android.view.AstroTextView
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/EventListItemPlanet0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
