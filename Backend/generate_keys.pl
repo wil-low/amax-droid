@@ -14,6 +14,7 @@ for (my $year = $START_YEAR; $year <= $FINAL_YEAR; ++$year) {
 	make_year ($year, 2);
 	make_year ($year, 3);
 	make_year ($year, 6);
+	make_year ($year, 12);
 }
 
 sub make_year {  # year, month_count
