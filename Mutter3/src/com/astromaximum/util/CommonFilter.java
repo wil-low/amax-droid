@@ -22,6 +22,7 @@ class CommonFilter extends SubDataProcessor {
 			BaseEvent.EV_VOC, BaseEvent.EV_VIA_COMBUSTA, };
 
 	CommonFilter(int year, String inputFile) {
+		BaseEvent.setTimeZone("UTC");
 		mYear = year;
 		try {
 			FileInputStream fis = new FileInputStream(inputFile);
@@ -45,17 +46,18 @@ class CommonFilter extends SubDataProcessor {
 		mEvents[idx] = new BaseEvent(event);
 	}
 
-	public void dumpToFile(int startMonth, int monthCount, long delta, String outFile) {
+	public void dumpToFile(int startMonth, int monthCount, long delta,
+			String outFile) {
 		mStartMonth = startMonth;
 		mMonthCount = monthCount;
-		
+
 		mCalendar.set(mYear, mStartMonth, 1, 0, 0, 0);
 		mCalendar.set(Calendar.MILLISECOND, 0);
 		mStartTime = mCalendar.getTimeInMillis();
 
 		mCalendar.add(Calendar.MONTH, mMonthCount);
 		mEndTime = mCalendar.getTimeInMillis();
-		
+
 		SubDataInfo info = new SubDataInfo();
 
 		String tempPath = "/tmp/common_" + mYear;
@@ -66,30 +68,38 @@ class CommonFilter extends SubDataProcessor {
 			tempFile.delete();
 		File out = new File(outFile);
 		out.delete();
-		
+
 		for (int evtype : EVENT_TYPES) {
 			for (int planet = -1; planet <= BaseEvent.SE_PLUTO; ++planet) {
-				int eventCount = read(mCommonDataFile.mData, evtype,
-						planet, true, mStartTime - delta, mEndTime + delta, mFinalJD, info);
-				if (eventCount > 0) {
+				int eventCount = read(mCommonDataFile.mData, evtype, planet,
+						true, mStartTime - delta, mEndTime + delta, mFinalJD,
+						info);
+				if (eventCount > 0 /*&& evtype == BaseEvent.EV_TITHI*/) {
+					/*for (int i = 0; i < eventCount; ++i) {
+						BaseEvent ev = mEvents[i];
+						System.out.println(i + ": " + ev);
+					}*/
 					System.out.println("dumpToFile: "
-							+ BaseEvent.EVENT_TYPE_STR[evtype] + ", "
-							+ planet + " = " + eventCount + "; "
-							+ "total events=" + info.mTotalCount
-							+ " flags=" + info.mFlags);
+							+ BaseEvent.EVENT_TYPE_STR[evtype] + ", " + planet
+							+ " = " + eventCount + "; " + "total events="
+							+ info.mTotalCount + " flags=" + info.mFlags);
 					info.mFlags &= ~(EF_CUMUL_DATE_B | EF_CUMUL_DATE_W);
-					
+
 					info.mFlags |= EF_CUMUL_DATE_B;
-					
-					if (!Mutter.writeToTempFile(tempPath, info, mEvents, eventCount)) {
+
+					if (!Mutter.writeToTempFile(tempPath, info, mEvents,
+							eventCount)) {
 						info.mFlags &= ~EF_CUMUL_DATE_B;
 						info.mFlags |= EF_CUMUL_DATE_W;
-						if (!Mutter.writeToTempFile(tempPath, info, mEvents, eventCount)) {
+						if (!Mutter.writeToTempFile(tempPath, info, mEvents,
+								eventCount)) {
 							info.mFlags &= ~EF_CUMUL_DATE_W;
-							Mutter.writeToTempFile(tempPath, info, mEvents, eventCount);
+							Mutter.writeToTempFile(tempPath, info, mEvents,
+									eventCount);
 						}
 					}
-					System.out.println("Written with flags " + info.mFlags + "\n");
+					System.out.println("Written with flags " + info.mFlags
+							+ "\n");
 				}
 			}
 		}
@@ -104,11 +114,11 @@ class CommonFilter extends SubDataProcessor {
 			raf.setLength(0);
 			raf.writeShort(mYear);
 			raf.writeByte(mStartMonth + 1);
-			raf.writeByte(1);  // day of month
+			raf.writeByte(1); // day of month
 			raf.writeShort(0); // custom data length
 			raf.writeByte(mMonthCount);
 			File[] tempFiles = new File(tempPath).listFiles();
-			
+
 			for (File tempFile : tempFiles) {
 				raf.writeByte(0xFE);
 				FileInputStream fis = new FileInputStream(tempFile);
@@ -124,6 +134,35 @@ class CommonFilter extends SubDataProcessor {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+
+	public void printEvents(int startMonth, int monthCount, long delta,
+			int evtype) {
+		mStartMonth = startMonth;
+		mMonthCount = monthCount;
+
+		mCalendar.set(mYear, mStartMonth, 1, 0, 0, 0);
+		mCalendar.set(Calendar.MILLISECOND, 0);
+		mStartTime = mCalendar.getTimeInMillis();
+
+		mCalendar.add(Calendar.MONTH, mMonthCount);
+		mEndTime = mCalendar.getTimeInMillis();
+
+		SubDataInfo info = new SubDataInfo();
+
+		for (int planet = -1; planet <= BaseEvent.SE_PLUTO; ++planet) {
+			int eventCount = read(mCommonDataFile.mData, evtype, planet, true,
+					mStartTime - delta, mEndTime + delta, mFinalJD, info);
+			if (eventCount > 0) {
+				System.out
+						.println("date0\tdate1\tevtype\tplanet0\tplanet1\tdegree");
+				for (int i = 0; i < eventCount; ++i) {
+					BaseEvent ev = mEvents[i];
+					System.out.println(ev);
+				}
+				return;
+			}
 		}
 	}
 }

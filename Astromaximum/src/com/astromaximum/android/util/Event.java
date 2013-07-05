@@ -1,9 +1,6 @@
 package com.astromaximum.android.util;
 
-import java.util.Calendar;
 import java.util.Comparator;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
 
 import android.content.Context;
 import android.os.Parcel;
@@ -15,9 +12,6 @@ import com.astromaximum.android.R;
 import com.astromaximum.util.BaseEvent;
 
 final public class Event extends com.astromaximum.util.BaseEvent implements Parcelable {
-
-	private static final String[] PLANET_STR = { "??", "SO", "MO", "ME", "VE",
-		"MA", "JU", "SA", "UR", "NE", "PL", "TN", "AP", "WM" };
 
 	public static final String[] CONSTELL_STR = { "Ari", "Tau", "Gem", "Cnc",
 		"Leo", "Vir", "Lib", "Sco", "Sgr", "Cap", "Aqu", "Psc" };
@@ -48,11 +42,9 @@ final public class Event extends com.astromaximum.util.BaseEvent implements Parc
 
 	// TODO Move USE_EXACT_RANGE to settings
 	private static final boolean USE_EXACT_RANGE = false;
-	public static final String DEFAULT_DATE_FORMAT = "yyyy-MMM-dd";
 
 	private static long mPeriod0;
 	private static long mPeriod1;
-	private static Calendar mCalendar;
 	private static Context mContext;
 	public static String mMonthAbbrDayDateFormat;
 
@@ -71,43 +63,6 @@ final public class Event extends com.astromaximum.util.BaseEvent implements Parc
 			str = "0" + str;
 		}
 		return str;
-	}
-
-	public String toString() {
-		return "Event: (" + mEvtype + " " + getEvTypeStr() + " "
-				+ long2String(mDate[0], DEFAULT_DATE_FORMAT, false) + " - "
-				+ long2String(mDate[1], DEFAULT_DATE_FORMAT, false) + " "
-				+ getPlanetName(mPlanet0) + "-" + getPlanetName(mPlanet1)
-				+ " d " + mDegree + ")";
-	}
-
-	public static String getPlanetName(byte planet) {
-		return PLANET_STR[planet + 1];
-	}
-
-	public static String long2String(long date0, String dateFormat, boolean h24) {
-		mCalendar.setTimeInMillis(date0);
-		final StringBuffer s = new StringBuffer();
-		if (dateFormat != null) {
-			s.append(DateFormat.format(dateFormat, mCalendar));
-			s.append(" ");
-		}
-		int hh = 0, mm = 0;
-		hh = mCalendar.get(Calendar.HOUR_OF_DAY);
-		mm = mCalendar.get(Calendar.MINUTE);
-
-		if (h24 && hh + mm == 0) {
-			hh = 24;
-		}
-		s.append(to2String(hh)).append(":").append(to2String(mm));
-		//int ss = mCalendar.get(Calendar.SECOND);
-		//s.append(":").append(to2String(ss));
-
-		// if(!hoursOnly)
-		// s.append("/");
-
-		// s+=to2String(date0[index])+":"+to2String(date0[index]);
-		return s.toString();
 	}
 
 	public short getFullDegree() {
@@ -182,10 +137,6 @@ final public class Event extends com.astromaximum.util.BaseEvent implements Parc
 		}
 	};
 
-	public static void setTimeZone(String timezone) {
-		mCalendar = new GregorianCalendar(TimeZone.getTimeZone(timezone));
-	}
-
 	public static class EventDate0Comparator implements Comparator<Event> {
 		public int compare(Event o1, Event o2) {
 			return (int) (o1.mDate[0] - o2.mDate[0]);
@@ -205,8 +156,8 @@ final public class Event extends com.astromaximum.util.BaseEvent implements Parc
 			if (date1 > mPeriod1)
 				date1 = mPeriod1;
 
-			return Event.long2String(date0, null, false) + " - "
-					+ Event.long2String(date1, null, true);
+			return long2String(date0, null, false) + " - "
+					+ long2String(date1, null, true);
 		}
 
 		boolean isTillRequired = date0 < mPeriod0;
@@ -217,14 +168,14 @@ final public class Event extends com.astromaximum.util.BaseEvent implements Parc
 
 		if (isTillRequired)
 			return mContext.getString(R.string.norm_range_arrow) + " "
-					+ Event.long2String(date1, null, true);
+					+ long2String(date1, null, true);
 
 		if (isSinceRequired)
-			return Event.long2String(date0, null, false) + " "
+			return long2String(date0, null, false) + " "
 					+ mContext.getString(R.string.norm_range_arrow);
 
-		return Event.long2String(date0, null, false) + " - "
-				+ Event.long2String(date1, null, true);
+		return long2String(date0, null, false) + " - "
+				+ long2String(date1, null, true);
 	}
 
 	public static void setContext(Context context) {
@@ -233,4 +184,8 @@ final public class Event extends com.astromaximum.util.BaseEvent implements Parc
 				.getString(R.string.month_abbr_day_date_format);
 	}
 
+	@Override
+	public String formatDate(String dateFormat, long date) {
+		return (String) DateFormat.format(dateFormat, mCalendar);
+	}
 }

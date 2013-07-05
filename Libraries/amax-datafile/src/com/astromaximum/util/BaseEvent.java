@@ -1,5 +1,11 @@
 package com.astromaximum.util;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
+
 public class BaseEvent {
 	public static final byte SE_SUN = 0;
 	public static final byte SE_MOON = 1;
@@ -69,6 +75,13 @@ public class BaseEvent {
 	public static final int EV_SUN_RISESET = 55;
 	public static final int EV_MOON_RISESET = 56;
 	public static final int EV_LAST = 57; // last - do not use
+
+	public static final String DEFAULT_DATE_FORMAT = "yyyy-MMM-dd";
+	
+	private static final String[] PLANET_STR = { "??", "SO", "MO", "ME", "VE",
+		"MA", "JU", "SA", "UR", "NE", "PL", "TN", "AP", "WM" };
+
+	protected static Calendar mCalendar;
 
 	public static final String[] EVENT_TYPE_STR = { "EV_VOC", // 0; // void of
 																// course
@@ -244,5 +257,51 @@ public class BaseEvent {
 	public boolean isDateBetween(int index, long start, long end) {
 		long dat = mDate[index];
 		return start <= dat && dat < end;
+	}
+
+	public String toString() {
+		return "Event: (" + mEvtype + " " + getEvTypeStr() + " "
+				+ long2String(mDate[0], DEFAULT_DATE_FORMAT, false) + " - "
+				+ long2String(mDate[1], DEFAULT_DATE_FORMAT, false) + " "
+				+ getPlanetName(mPlanet0) + "-" + getPlanetName(mPlanet1)
+				+ " d " + mDegree + ")";
+	}
+
+	public static String getPlanetName(byte planet) {
+		return PLANET_STR[planet + 1];
+	}
+
+	public String long2String(long date0, String dateFormat, boolean h24) {
+		mCalendar.setTimeInMillis(date0);
+		final StringBuffer s = new StringBuffer();
+		if (dateFormat != null) {
+			s.append(formatDate(dateFormat, date0));
+			s.append(" ");
+		}
+		int hh = 0, mm = 0;
+		hh = mCalendar.get(Calendar.HOUR_OF_DAY);
+		mm = mCalendar.get(Calendar.MINUTE);
+
+		if (h24 && hh + mm == 0) {
+			hh = 24;
+		}
+		s.append(to2String(hh)).append(":").append(to2String(mm));
+		//int ss = mCalendar.get(Calendar.SECOND);
+		//s.append(":").append(to2String(ss));
+
+		// if(!hoursOnly)
+		// s.append("/");
+
+		// s+=to2String(date0[index])+":"+to2String(date0[index]);
+		return s.toString();
+	}
+
+	public static void setTimeZone(String timezone) {
+		mCalendar = new GregorianCalendar(TimeZone.getTimeZone(timezone));
+	}
+	
+	public String formatDate(String dateFormat, long date) {
+		SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+		return sdf.format(new Date(date));
 	}
 }

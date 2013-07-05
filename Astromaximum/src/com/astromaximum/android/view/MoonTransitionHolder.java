@@ -52,7 +52,7 @@ public class MoonTransitionHolder extends ViewHolder {
 						+ AstroFont
 								.getSymbol(AstroFont.TYPE_PLANET, e.mPlanet1));
 				mPlanet1.setVisibility(View.GONE);
-				mText0.setText(Event.long2String(e.mDate[0], DataProvider
+				mText0.setText(e.long2String(e.mDate[0], DataProvider
 						.getInstance().isInCurrentDay(e.mDate[0]) ? null
 						: Event.mMonthAbbrDayDateFormat, true));
 				mPlanet0.setVisibility(View.VISIBLE);
@@ -64,7 +64,7 @@ public class MoonTransitionHolder extends ViewHolder {
 				mPlanet1.setText(AstroFont.getSymbol(AstroFont.TYPE_ZODIAC,
 						e.getDegree()));
 				mPlanet1.setVisibility(View.VISIBLE);
-				mText0.setText(Event.long2String(e.mDate[0], DataProvider
+				mText0.setText(e.long2String(e.mDate[0], DataProvider
 						.getInstance().isInCurrentDay(e.mDate[0]) ? null
 						: Event.mMonthAbbrDayDateFormat, true));
 				mTransitionSignView.setVisibility(View.GONE);

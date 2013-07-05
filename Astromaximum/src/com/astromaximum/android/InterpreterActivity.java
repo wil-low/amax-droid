@@ -146,15 +146,15 @@ public class InterpreterActivity extends SherlockActivity {
 		switch (e.mEvtype) {
 		case Event.EV_ASP_EXACT_MOON:
 		case Event.EV_ASP_EXACT:
-			result.append(Event.long2String(e.mDate[0],
+			result.append(e.long2String(e.mDate[0],
 					Event.mMonthAbbrDayDateFormat, false));
 			break;
 		default:
 			result.append(
-					Event.long2String(e.mDate[0],
+					e.long2String(e.mDate[0],
 							Event.mMonthAbbrDayDateFormat, false))
 					.append(" - ")
-					.append(Event.long2String(e.mDate[1],
+					.append(e.long2String(e.mDate[1],
 							Event.mMonthAbbrDayDateFormat, true));
 		}
 		return result.toString();

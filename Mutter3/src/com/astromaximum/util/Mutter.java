@@ -29,6 +29,17 @@ public class Mutter {
 			filter.dumpToFile(startMonth, monthCount, delta, outFile);
 			return;
 		}
+		if ((argsLen == 6) && args[0].equals("common-print")) {
+			int year = Integer.parseInt(args[1]);
+			int startMonth = Integer.parseInt(args[2]);
+			int monthCount = Integer.parseInt(args[3]);
+			String inputFile = args[4];
+			int evtype = Integer.parseInt(args[5]);
+			System.out.println("common-print " + inputFile + " : " + evtype);
+			CommonFilter filter = new CommonFilter(year, inputFile);
+			filter.printEvents(startMonth, monthCount, delta, evtype);
+			return;
+		}
 		Vector<String> filenames = new Vector<String>();
 		if ((argsLen == 7) && args[0].equals("location")) {
 			int year = Integer.parseInt(args[1]);
@@ -69,6 +80,7 @@ public class Mutter {
 			return;
 		}
 		System.out.println("Usage:\n\tcommon <year> <start month> <month count> <output> - generate common file");
+		System.out.println("\tcommon-print <year> <start month> <month count> <input> <event type> - print common events");
 		System.out.println("\tlocation <year> <start month> <end month> <country/city id> <output> <csv output> - generate location file");
 		System.out.println("\tlocations <year> <start month> <end month> <location list file> <output> <csv output> - generate multi-location file");
 	}
@@ -93,33 +105,33 @@ public class Mutter {
 			// if(evtype==EV_ASTRORISE) PERIOD=6*60*60;
 			for (int i = 0; i < eventCount; i++) {
 				BaseEvent ev = events[i];
-				ev.mDate[0] /= 1000;
-				ev.mDate[1] /= 1000;
+				long date0 = ev.mDate[0] / 1000;
+				long date1 = ev.mDate[1] / 1000;
 				if (((info.mFlags & SubDataProcessor.EF_CUMUL_DATE_W) != 0) && (i > 0)) {
-					int delta = (int) ((ev.mDate[0] - cumul - PERIOD) / 60);
+					int delta = (int) ((date0 - cumul - PERIOD) / 60);
 					if (Math.abs(delta) > 32767) {
-						//System.out.println("Error overflow EF_CUMUL_DATE_W " + delta);
+						//System.out.println(i + ": Error overflow EF_CUMUL_DATE_W " + delta);
 						raf.setLength(start);
 						raf.close();
 						return false;
 					}
-					cumul = ev.mDate[0];
+					cumul = date0;
 					raf.writeShort(delta);
 				} else if (((info.mFlags & SubDataProcessor.EF_CUMUL_DATE_B) != 0) && (i > 0)) {
-					int delta = (int) ((ev.mDate[0] - cumul - PERIOD) / 60);
+					int delta = (int) ((date0 - cumul - PERIOD) / 60);
 					if (Math.abs(delta) > 127) {
-						//System.out.println("Error overflow EF_CUMUL_DATE_B " + delta);
+						//System.out.println(i + ": Error overflow EF_CUMUL_DATE_B " + delta);
 						raf.setLength(start);
 						raf.close();
 						return false;
 					}
-					cumul = ev.mDate[0];
+					cumul = date0;
 					raf.writeByte(delta);
 				} else {
-					raf.writeInt((int) ev.mDate[0]);
+					raf.writeInt((int) date0);
 				}
 				if ((info.mFlags & SubDataProcessor.EF_DATE) != 0) {
-					raf.writeInt((int) ev.mDate[1]);
+					raf.writeInt((int) date1);
 				}
 				if ((info.mFlags & SubDataProcessor.EF_PLANET1) != 0)
 					raf.writeByte(ev.mPlanet0);
