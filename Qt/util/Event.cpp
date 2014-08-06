@@ -1,191 +1,215 @@
-package com.astromaximum.android.util;
+#include "Event.h"
+#include <stdio.h>
 
-import java.util.Comparator;
+QHash<int, int> Event::ASPECT_GOODNESS;
+QHash<int, int> Event::ASPECT_MAP;
 
-import android.content.Context;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.text.format.DateFormat;
-import android.util.SparseIntArray;
+long Event::mPeriod0;
+long Event::mPeriod1;
 
-import com.astromaximum.android.R;
-import com.astromaximum.util.BaseEvent;
+QString Event::mMonthAbbrDayDateFormat;
 
-final public class Event extends com.astromaximum.util.BaseEvent implements Parcelable {
+QDateTime Event::mCalendar;
 
-	public static final String[] CONSTELL_STR = { "Ari", "Tau", "Gem", "Cnc",
-		"Leo", "Vir", "Lib", "Sco", "Sgr", "Cap", "Aqu", "Psc" };
+Event::Event()
+: mEvtype(0)
+, mPlanet1(-1)
+, mDegree(127)
+{
+}
 
-	// angle: (ordinal number, aspect goodness(0 - conjunction, 1 - bad, 2 -
-	// good))
-	// ASPECT = {0: (0, 0), 180: (1, 1), 120: (2, 2), 90: (3, 1), 60: (4, 2),
-	// 45: (5, 2)}
-	public static final SparseIntArray ASPECT_GOODNESS = new SparseIntArray();
-	static {
-		ASPECT_GOODNESS.put(0, 0);
-		ASPECT_GOODNESS.put(180, 1);
-		ASPECT_GOODNESS.put(120, 2);
-		ASPECT_GOODNESS.put(90, 1);
-		ASPECT_GOODNESS.put(60, 2);
-		ASPECT_GOODNESS.put(45, 2);
+Event::Event(long date, int planet)
+: mPlanet0(planet)
+, mPlanet1(-1)
+, mDegree(127)
+{
+	mDate[0] = mDate[1] = date;
+}
+
+Event::Event(int evType, long date0, long date1, int planet0, int planet1, int degree)
+: mEvtype(evType)
+, mPlanet0(planet0)
+, mPlanet1(planet1)
+, mDegree(degree)
+{
+	mDate[0] = date0;
+	mDate[1] = date1;
+}
+
+int Event::getDegree() const
+{
+	return mDegree & 0x3ff;
+}
+
+int Event::getDegType() const
+{
+	return (mDegree >> 14) & 0x3;
+}
+
+short Event::getFullDegree() const
+{
+	return mDegree;
+}
+
+void Event::setFullDegree(short degree)
+{
+	mDegree = degree;
+}
+
+QString Event::getEvTypeStr() const
+{
+	return EVENT_TYPE_STR[mEvtype];	
+}
+
+int Event::dateBetween(long date0, long start, long end)
+{
+	if (date0 < start)
+		return -1;
+	if (date0 > end)
+		return 1;
+	return 0;
+}
+
+bool Event::isDateBetween(int index, long start, long end) const
+{
+	long dat = mDate[index];
+	return start <= dat && dat < end;
+}
+
+QString Event::toString() const
+{
+	QString s;
+	QTextStream ts(&s);
+	ts << "Event " << this << ": (" << mEvtype << " " << getEvTypeStr() << " "
+			<< long2String(mDate[0], DEFAULT_DATE_FORMAT, false) << " - "
+			<< long2String(mDate[1], DEFAULT_DATE_FORMAT, false) << " "
+			<< getPlanetName(mPlanet0) << "-" << getPlanetName(mPlanet1)
+			<< " d " << mDegree << ")";
+	return s;
+}
+
+QString Event::getPlanetName(char planet)
+{
+	return PLANET_STR[planet + 1];
+}
+
+QString Event::long2String(long date0, const QString& dateFormat, bool h24) const
+{
+	mCalendar.setTime_t(date0);
+	QString s;
+	if (!s.isEmpty()) {
+		s += formatDate(dateFormat, date0);
+		s += " ";
+	}
+	int hh = 0, mm = 0;
+	hh = mCalendar.time().hour();
+	mm = mCalendar.time().minute();
+
+	if (h24 && hh + mm == 0) {
+		hh = 24;
+	}
+	char buf[10];
+	sprintf (buf, "%02d:%02d", hh, mm);
+	s += buf;
+	return s;
+}
+
+void Event::setTimeZone(const QTimeZone& timezone)
+{
+	mCalendar.setTimeZone(timezone);
+}
+
+QString Event::formatDate(const QString& dateFormat, long date)
+{
+//	SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+//	return sdf.format(new Date(date));
+}
+
+//	class EventDate0Comparator implements Comparator<Event> {
+//		int compare(Event o1, Event o2) {
+//			return (int) (o1.mDate[0] - o2.mDate[0]);
+//		}
+//	}
+
+void Event::setTimeRange(long date0, long date1)
+{
+	mPeriod0 = date0;
+	mPeriod1 = date1;
+}
+
+QString Event::normalizedRangeString() const
+{
+	long date0 = mDate[0], date1 = mDate[1];
+	if (USE_EXACT_RANGE) {
+		if (date0 < mPeriod0)
+			date0 = mPeriod0;
+		if (date1 > mPeriod1)
+			date1 = mPeriod1;
+
+		return long2String(date0, "", false) + " - "
+				+ long2String(date1, "", true);
 	}
 
-	public static final SparseIntArray ASPECT_MAP = new SparseIntArray();
-	static {
-		ASPECT_MAP.put(0, 0);
-		ASPECT_MAP.put(180, 1);
-		ASPECT_MAP.put(120, 2);
-		ASPECT_MAP.put(90, 3);
-		ASPECT_MAP.put(60, 4);
-		ASPECT_MAP.put(45, 5);
+	bool isTillRequired = date0 < mPeriod0;
+	bool isSinceRequired = date1 > mPeriod1;
+
+//	if (isTillRequired && isSinceRequired)
+//		return mContext.getString(R.string.norm_range_whole_day);
+
+//	if (isTillRequired)
+//		return mContext.getString(R.string.norm_range_arrow) + " "
+//				+ long2String(date1, "", true);
+
+//	if (isSinceRequired)
+//		return long2String(date0, "", false) + " "
+//				+ mContext.getString(R.string.norm_range_arrow);
+
+	return long2String(date0, "", false) + " - "
+			+ long2String(date1, "", true);
+}
+
+void Event::initialize()
+{
+	ASPECT_GOODNESS[0] = 0;
+	ASPECT_GOODNESS[180] = 1;
+	ASPECT_GOODNESS[120] = 2;
+	ASPECT_GOODNESS[90] = 1;
+	ASPECT_GOODNESS[60] = 2;
+	ASPECT_GOODNESS[45] = 2;
+
+	ASPECT_MAP[0] = 0;
+	ASPECT_MAP[180] = 1;
+	ASPECT_MAP[120] = 2;
+	ASPECT_MAP[90] = 3;
+	ASPECT_MAP[60] = 4;
+	ASPECT_MAP[45] = 5;
+}
+
+bool Event::isInPeriod(long start, long end, bool special) const
+{
+	if (mDate[0] == 0) {
+		return false;
 	}
-
-	// TODO Move USE_EXACT_RANGE to settings
-	private static final boolean USE_EXACT_RANGE = false;
-
-	private static long mPeriod0;
-	private static long mPeriod1;
-	private static Context mContext;
-	public static String mMonthAbbrDayDateFormat;
-
-
-	Event(long date, int planet) {
-		super(date, planet);
+	int f = dateBetween(mDate[0], start, end) + dateBetween(mDate[1], start, end);
+	if ((f == 2) || (f == -2)) {
+		return false;
 	}
-	
-	public Event(BaseEvent event) {
-		super(event);
-	}
-	
-	static String to2String(int value) {
-		String str = Integer.toString(value);
-		if (str.length() == 1) {
-			str = "0" + str;
-		}
-		return str;
-	}
-
-	public short getFullDegree() {
-		return mDegree;
-	}
-
-	public void setFullDegree(short degree) {
-		mDegree = degree;
-	}
-
-	public String getEvTypeStr() {
-		return EVENT_TYPE_STR[mEvtype];
-	}
-
-	boolean isInPeriod(long start, long end, boolean special) {
-		if (mDate[0] == 0) {
+	if (special) {
+		if (f == -1) {
 			return false;
 		}
-		final int f = dateBetween(mDate[0], start, end)
-				+ dateBetween(mDate[1], start, end);
-		if ((f == 2) || (f == -2)) {
-			return false;
-		}
-		if (special) {
-			if (f == -1) {
-				return false;
-			}
-		}
-		return true;
 	}
+	return true;
+}
 
-	public static int dateBetween(long date0, long start, long end) {
-		if (date0 < start) {
-			return -1;
-		}
-		if (date0 > end) {
-			return 1;
-		}
-		return 0;
-	}
+//public static void setContext(Context context) {
+//	mContext = context;
+//	mMonthAbbrDayDateFormat = mContext
+//			.getString(R.string.month_abbr_day_date_format);
+//}
 
-	public int describeContents() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public void writeToParcel(Parcel out, int flags) {
-		out.writeInt(mEvtype);
-		out.writeByte(mPlanet0);
-		out.writeByte(mPlanet1);
-		out.writeLong(mDate[0]);
-		out.writeLong(mDate[1]);
-		out.writeInt(mDegree);
-	}
-
-	private Event(Parcel in) {
-		mEvtype = in.readInt();
-		mPlanet0 = in.readByte();
-		mPlanet1 = in.readByte();
-		mDate[0] = in.readLong();
-		mDate[1] = in.readLong();
-		mDegree = (short) in.readInt();
-	}
-
-	public static final Parcelable.Creator<Event> CREATOR = new Parcelable.Creator<Event>() {
-		public Event createFromParcel(Parcel in) {
-			return new Event(in);
-		}
-
-		public Event[] newArray(int size) {
-			return new Event[size];
-		}
-	};
-
-	public static class EventDate0Comparator implements Comparator<Event> {
-		public int compare(Event o1, Event o2) {
-			return (int) (o1.mDate[0] - o2.mDate[0]);
-		}
-	}
-
-	public static void setTimeRange(long date0, long date1) {
-		mPeriod0 = date0;
-		mPeriod1 = date1;
-	}
-
-	public String normalizedRangeString() {
-		long date0 = mDate[0], date1 = mDate[1];
-		if (USE_EXACT_RANGE) {
-			if (date0 < mPeriod0)
-				date0 = mPeriod0;
-			if (date1 > mPeriod1)
-				date1 = mPeriod1;
-
-			return long2String(date0, null, false) + " - "
-					+ long2String(date1, null, true);
-		}
-
-		boolean isTillRequired = date0 < mPeriod0;
-		boolean isSinceRequired = date1 > mPeriod1;
-
-		if (isTillRequired && isSinceRequired)
-			return mContext.getString(R.string.norm_range_whole_day);
-
-		if (isTillRequired)
-			return mContext.getString(R.string.norm_range_arrow) + " "
-					+ long2String(date1, null, true);
-
-		if (isSinceRequired)
-			return long2String(date0, null, false) + " "
-					+ mContext.getString(R.string.norm_range_arrow);
-
-		return long2String(date0, null, false) + " - "
-				+ long2String(date1, null, true);
-	}
-
-	public static void setContext(Context context) {
-		mContext = context;
-		mMonthAbbrDayDateFormat = mContext
-				.getString(R.string.month_abbr_day_date_format);
-	}
-
-	@Override
-	public String formatDate(String dateFormat, long date) {
-		return (String) DateFormat.format(dateFormat, mCalendar);
-	}
+QDebug operator<<(QDebug dbg, const Event& event)
+{
+	dbg << event.toString();
+	return dbg;
 }

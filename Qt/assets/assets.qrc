@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/">
         <file alias="font.ttf">Astronom.ttf</file>
+        <file>common.dat</file>
+        <file>locations.dat</file>
+        <file>amax.db</file>
     </qresource>
 </RCC>

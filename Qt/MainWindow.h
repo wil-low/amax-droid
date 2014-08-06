@@ -1,25 +1,28 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
-
-#include <QMainWindow>
+#pragma once
+#include "BaseEventListWindow.h"
 
 namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow
+class MainWindow : public BaseEventListWindow
 {
 	Q_OBJECT
 	
 public:
 	explicit MainWindow(QWidget *parent = 0);
 	~MainWindow();
+
+protected:
+	virtual void updateEventList();
+	virtual void updateTitle();
 	
 private slots:
-	void on_tbnBack_clicked();
+	void on_tbnPrev_clicked();
+	
+	void on_tbnNext_clicked();
 	
 private:
 	Ui::MainWindow *ui;
+	QString mTitleDate;
 };
-
-#endif // MAINWINDOW_H

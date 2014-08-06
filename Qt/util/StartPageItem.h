@@ -1,13 +1,20 @@
-package com.astromaximum.android.util;
+#pragma once
 
-public class StartPageItem {
-	public String mCaption;
-	public boolean mIsEnabled;
-	public int mIndex;
+#include <QString>
+#include <QMetaType>
 
-	public StartPageItem(String caption, int index, boolean isEnabled) {
-		mCaption = caption;
-		mIndex = index;
-		mIsEnabled = isEnabled;
-	}
-}
+class StartPageItem
+{
+public:
+	QString mCaption;
+	int mIndex;
+	bool mIsEnabled;
+
+	StartPageItem();
+	StartPageItem(const QString& caption, int index, bool isEnabled);
+};
+
+QDataStream& operator<<(QDataStream& out, const StartPageItem& myObj);
+QDataStream& operator>>(QDataStream& in, StartPageItem& myObj);
+
+Q_DECLARE_METATYPE(StartPageItem)

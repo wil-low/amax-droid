@@ -1,13 +1,27 @@
-package com.astromaximum.android.util;
+#include "StartPageItem.h"
+#include <QDataStream>
 
-public class StartPageItem {
-	public String mCaption;
-	public boolean mIsEnabled;
-	public int mIndex;
+StartPageItem::StartPageItem()
+: mIndex(-1)
+, mIsEnabled(false)
+{
+}
 
-	public StartPageItem(String caption, int index, boolean isEnabled) {
-		mCaption = caption;
-		mIndex = index;
-		mIsEnabled = isEnabled;
-	}
+StartPageItem::StartPageItem(const QString& caption, int index, bool isEnabled)
+: mCaption(caption)
+, mIndex(index)
+, mIsEnabled(isEnabled)
+{
+}
+
+QDataStream& operator<<(QDataStream& out, const StartPageItem& myObj)
+{
+	out << myObj.mCaption << myObj.mIndex << myObj.mIsEnabled;
+	return out;
+}
+
+QDataStream& operator>>(QDataStream& in, StartPageItem& myObj)
+{
+	in >> myObj.mCaption >> myObj.mIndex >> myObj.mIsEnabled;
+	return in;
 }

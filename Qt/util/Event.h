@@ -1,191 +1,205 @@
-package com.astromaximum.android.util;
+#pragma once
 
-import java.util.Comparator;
+#include <QString>
+#include <QHash>
+#include <QDateTime>
+#include <QDebug>
 
-import android.content.Context;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.text.format.DateFormat;
-import android.util.SparseIntArray;
+class QTimeZone;
 
-import com.astromaximum.android.R;
-import com.astromaximum.util.BaseEvent;
+const QString DEFAULT_DATE_FORMAT = "yyyy-MMM-dd";
 
-final public class Event extends com.astromaximum.util.BaseEvent implements Parcelable {
+const QString CONSTELL_STR[] = { "Ari", "Tau", "Gem", "Cnc",
+	"Leo", "Vir", "Lib", "Sco", "Sgr", "Cap", "Aqu", "Psc" };
 
-	public static final String[] CONSTELL_STR = { "Ari", "Tau", "Gem", "Cnc",
-		"Leo", "Vir", "Lib", "Sco", "Sgr", "Cap", "Aqu", "Psc" };
+const QString PLANET_STR[] = { "??", "SO", "MO", "ME", "VE",
+	"MA", "JU", "SA", "UR", "NE", "PL", "TN", "AP", "WM" };
 
-	// angle: (ordinal number, aspect goodness(0 - conjunction, 1 - bad, 2 -
-	// good))
-	// ASPECT = {0: (0, 0), 180: (1, 1), 120: (2, 2), 90: (3, 1), 60: (4, 2),
-	// 45: (5, 2)}
-	public static final SparseIntArray ASPECT_GOODNESS = new SparseIntArray();
-	static {
-		ASPECT_GOODNESS.put(0, 0);
-		ASPECT_GOODNESS.put(180, 1);
-		ASPECT_GOODNESS.put(120, 2);
-		ASPECT_GOODNESS.put(90, 1);
-		ASPECT_GOODNESS.put(60, 2);
-		ASPECT_GOODNESS.put(45, 2);
-	}
+const QString EVENT_TYPE_STR[] = {
+		"EV_VOC", // 0; // void of course
+		"EV_SIGN_ENTER", // 1; // enter into sign
+		"EV_ASP_EXACT", // 2; // exact aspect
+		"EV_RISE", // 3; // rising & setting
+		"EV_DEGREE_PASS", // 4; // entering degree
+		"EV_VIA_COMBUSTA", // 5; // good & bad degrees
+		"EV_RETROGRADE", // 6;
+		"EV_ECLIPSE", // 7;
+		"EV_TITHI", // 8;
+		"EV_NAKSHATRA", // 9;
+		"EV_SET", // 10; // rising & setting
+		"EV_DECL_EXACT", // 11; // declination
+		"EV_NAVROZ", // 12; // Navroz
+		"EV_TOP_DAY", // 13; // week days
+		"EV_PLANET_HOUR", // 14; // planetary hours
+		"EV_STATUS", // 15;
+		"EV_SUN_RISE", // 16;
+		"EV_MOON_RISE", // 17;
+		"EV_MOON_MOVE", // 18;
+		"EV_SEL_DEGREES", // 19;
+		"EV_DAY_HOURS", // 20;
+		"EV_NIGHT_HOURS", // 21;
+		"EV_SUN_DAY", // 22;
+		"EV_MOON_DAY", // 23;
+		"EV_TOP_MONTH", // 24;
+		"EV_MOON_PHASE", // 25;
+		"EV_ZODIAC_SIGN", // 26;
+		"EV_PANEL", // 27;
+		"EV_TOPIC_BUTTON", // 28;
+		"EV_DEG_2ND", // 29; // degrees on second page
+		"EV_WEEK_GRID", // 30;
+		"EV_MONTH_GRID", // 31;
+		"EV_DECUMBITURE", // 32;
+		"EV_DECUMB_ASPECT", // 33;
+		"EV_DECUMB_BEGIN", // 34;
+		"EV_SUN_DEGREE_LARGE", // 35;
+		"EV_MOON_SIGN_LARGE", // 36;
+		"EV_HELP", // 37;
+		"EV_ASP_EXACT_MOON", // 38;
+		"EV_DEGPASS0", // 39;
+		"EV_DEGPASS1", // 40;
+		"EV_DEGPASS2", // 41;
+		"EV_DEGPASS3", // 42;
+		"EV_HELP0", // 43;
+		"EV_HELP1", // 44;
+		"EV_ASTRORISE", // 45;
+		"EV_ASTROSET", // 46;
+		"EV_APHETICS", // 47;
+		"EV_FAST", // 48;
+		"EV_ASCAPHETICS", // 49;
+		"EV_MSG", // 50;
+		"EV_BACK", // 51;
+		"EV_TATTVAS", // 52;
+		"EV_SUN_DEGREE", // 53;
+		"EV_MOON_SIGN", // 54;
+		"EV_SUN_RISESET", // 55;
+		"EV_MOON_RISESET", // 56;
+		"EV_LAST", // 57; // last - do not use
+};
 
-	public static final SparseIntArray ASPECT_MAP = new SparseIntArray();
-	static {
-		ASPECT_MAP.put(0, 0);
-		ASPECT_MAP.put(180, 1);
-		ASPECT_MAP.put(120, 2);
-		ASPECT_MAP.put(90, 3);
-		ASPECT_MAP.put(60, 4);
-		ASPECT_MAP.put(45, 5);
-	}
-
-	// TODO Move USE_EXACT_RANGE to settings
-	private static final boolean USE_EXACT_RANGE = false;
-
-	private static long mPeriod0;
-	private static long mPeriod1;
-	private static Context mContext;
-	public static String mMonthAbbrDayDateFormat;
-
-
-	Event(long date, int planet) {
-		super(date, planet);
-	}
-	
-	public Event(BaseEvent event) {
-		super(event);
-	}
-	
-	static String to2String(int value) {
-		String str = Integer.toString(value);
-		if (str.length() == 1) {
-			str = "0" + str;
-		}
-		return str;
-	}
-
-	public short getFullDegree() {
-		return mDegree;
-	}
-
-	public void setFullDegree(short degree) {
-		mDegree = degree;
-	}
-
-	public String getEvTypeStr() {
-		return EVENT_TYPE_STR[mEvtype];
-	}
-
-	boolean isInPeriod(long start, long end, boolean special) {
-		if (mDate[0] == 0) {
-			return false;
-		}
-		final int f = dateBetween(mDate[0], start, end)
-				+ dateBetween(mDate[1], start, end);
-		if ((f == 2) || (f == -2)) {
-			return false;
-		}
-		if (special) {
-			if (f == -1) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	public static int dateBetween(long date0, long start, long end) {
-		if (date0 < start) {
-			return -1;
-		}
-		if (date0 > end) {
-			return 1;
-		}
-		return 0;
-	}
-
-	public int describeContents() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public void writeToParcel(Parcel out, int flags) {
-		out.writeInt(mEvtype);
-		out.writeByte(mPlanet0);
-		out.writeByte(mPlanet1);
-		out.writeLong(mDate[0]);
-		out.writeLong(mDate[1]);
-		out.writeInt(mDegree);
-	}
-
-	private Event(Parcel in) {
-		mEvtype = in.readInt();
-		mPlanet0 = in.readByte();
-		mPlanet1 = in.readByte();
-		mDate[0] = in.readLong();
-		mDate[1] = in.readLong();
-		mDegree = (short) in.readInt();
-	}
-
-	public static final Parcelable.Creator<Event> CREATOR = new Parcelable.Creator<Event>() {
-		public Event createFromParcel(Parcel in) {
-			return new Event(in);
-		}
-
-		public Event[] newArray(int size) {
-			return new Event[size];
-		}
+class Event
+{
+public:
+	enum Planet {
+		SE_SUN = 0,
+		SE_MOON = 1,
+		SE_MERCURY = 2,
+		SE_VENUS = 3,
+		SE_MARS = 4,
+		SE_JUPITER = 5,
+		SE_SATURN = 6,
+		SE_URANUS = 7,
+		SE_NEPTUNE = 8,
+		SE_PLUTO = 9,
+		SE_TRUE_NODE = 10,
+		SE_MEAN_APOG = 11,
+		SE_WHITE_MOON = 12,
 	};
 
-	public static class EventDate0Comparator implements Comparator<Event> {
-		public int compare(Event o1, Event o2) {
-			return (int) (o1.mDate[0] - o2.mDate[0]);
-		}
-	}
+	enum EventType {
+		EV_VOC = 0, // void of course
+		EV_SIGN_ENTER = 1, // enter into sign
+		EV_ASP_EXACT = 2, // exact aspect
+		EV_RISE = 3, // rising & setting
+		EV_DEGREE_PASS = 4, // entering degree
+		EV_VIA_COMBUSTA = 5, // good & bad degrees
+		EV_RETROGRADE = 6,
+		EV_ECLIPSE = 7,
+		EV_TITHI = 8,
+		EV_NAKSHATRA = 9,
+		EV_SET = 10, // rising & setting
+		EV_DECL_EXACT = 11, // declination
+		//EV_NAVROZ = 12, // Navroz
+		EV_TOP_DAY = 13, // week days
+		EV_PLANET_HOUR = 14, // planetary hours
+		EV_STATUS = 15,
+		EV_SUN_RISE = 16,
+		EV_MOON_RISE = 17,
+		EV_MOON_MOVE = 18,
+		EV_SEL_DEGREES = 19,
+		EV_DAY_HOURS = 20,
+		EV_NIGHT_HOURS = 21,
+		//EV_SUN_DAY = 22,
+		//EV_MOON_DAY = 23,
+		EV_TOP_MONTH = 24,
+		EV_MOON_PHASE = 25,
+		EV_ZODIAC_SIGN = 26,
+		EV_PANEL = 27,
+		EV_TOPIC_BUTTON = 28,
+		EV_DEG_2ND = 29, // degrees on second page
+		EV_WEEK_GRID = 30,
+		EV_MONTH_GRID = 31,
+		EV_DECUMBITURE = 32,
+		EV_DECUMB_ASPECT = 33,
+		EV_DECUMB_BEGIN = 34,
+		EV_SUN_DEGREE_LARGE = 35,
+		EV_MOON_SIGN_LARGE = 36,
+		EV_HELP = 37,
+		EV_ASP_EXACT_MOON = 38,
+		EV_HELP0 = 43,
+		EV_HELP1 = 44,
+		EV_ASTRORISE = 45,
+		EV_ASTROSET = 46,
+		EV_APHETICS = 47,
+		EV_FAST = 48,
+		EV_ASCAPHETICS = 49,
+		EV_MSG = 50,
+		EV_BACK = 51,
+		EV_TATTVAS = 52,
+		EV_SUN_DEGREE = 53,
+		EV_MOON_SIGN = 54,
+		EV_SUN_RISESET = 55,
+		EV_MOON_RISESET = 56,
+		EV_LAST = 57, // last - do not use
+	};
 
-	public static void setTimeRange(long date0, long date1) {
-		mPeriod0 = date0;
-		mPeriod1 = date1;
-	}
+	// Any changes above must be synched with %eventType in tools.pm
+	// and EventType in mutter2/events.h !!!
 
-	public String normalizedRangeString() {
-		long date0 = mDate[0], date1 = mDate[1];
-		if (USE_EXACT_RANGE) {
-			if (date0 < mPeriod0)
-				date0 = mPeriod0;
-			if (date1 > mPeriod1)
-				date1 = mPeriod1;
+	static const long ROUNDING_MSEC = 60;
 
-			return long2String(date0, null, false) + " - "
-					+ long2String(date1, null, true);
-		}
+	int mEvtype;
+	char mPlanet0;
+	char mPlanet1;
+	long mDate[2];
 
-		boolean isTillRequired = date0 < mPeriod0;
-		boolean isSinceRequired = date1 > mPeriod1;
+	Event();
+	Event(long date, int planet);
+	Event(int evType, long date0, long date1, int planet0, int planet1, int degree);
+	int getDegree() const;
+	int getDegType() const;
+	short getFullDegree() const;
+	void setFullDegree(short degree);
+	QString getEvTypeStr() const;
+	static int dateBetween(long date0, long start, long end);
+	bool isDateBetween(int index, long start, long end) const;
+	bool isInPeriod(long start, long end, bool special) const;
+	QString toString() const;
+	static QString getPlanetName(char planet);
+	QString long2String(long date0, const QString& dateFormat, bool h24) const;
+	static void setTimeZone(const QTimeZone& timezone);
+	static QString formatDate(const QString& dateFormat, long date);
 
-		if (isTillRequired && isSinceRequired)
-			return mContext.getString(R.string.norm_range_whole_day);
+//	static class EventDate0Comparator implements Comparator<Event> {
+//		int compare(Event o1, Event o2) {
+//			return (int) (o1.mDate[0] - o2.mDate[0]);
+//		}
+//	}
 
-		if (isTillRequired)
-			return mContext.getString(R.string.norm_range_arrow) + " "
-					+ long2String(date1, null, true);
+	static void setTimeRange(long date0, long date1);
+	QString normalizedRangeString() const;
 
-		if (isSinceRequired)
-			return long2String(date0, null, false) + " "
-					+ mContext.getString(R.string.norm_range_arrow);
+	static void initialize();
+	static QHash<int, int> ASPECT_GOODNESS;
+	static QHash<int, int> ASPECT_MAP;
+	static QString mMonthAbbrDayDateFormat;
 
-		return long2String(date0, null, false) + " - "
-				+ long2String(date1, null, true);
-	}
+private:
+	static QDateTime mCalendar;
+	// TODO Move USE_EXACT_RANGE to settings
+	static const bool USE_EXACT_RANGE = false;
+	static long mPeriod0;
+	static long mPeriod1;
+	short mDegree;
+};
 
-	public static void setContext(Context context) {
-		mContext = context;
-		mMonthAbbrDayDateFormat = mContext
-				.getString(R.string.month_abbr_day_date_format);
-	}
-
-	@Override
-	public String formatDate(String dateFormat, long date) {
-		return (String) DateFormat.format(dateFormat, mCalendar);
-	}
-}
+QDebug operator<<(QDebug dbg, const Event& event);
