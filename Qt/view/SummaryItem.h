@@ -10,7 +10,7 @@ class SummaryItem
 public:
 	int mKey;
 	int mEventMode;
-	QList<Event*> mEvents;
+	QList<Event> mEvents;
 	
 	// how is active event selected
 	enum {
@@ -19,8 +19,8 @@ public:
 		EVENT_MODE_CUSTOM_TIME = 2,
 	};
 
-	SummaryItem(int key, const QList<Event*>& events);
-	SummaryItem(int key, Event* e);
+	SummaryItem(int key, const QList<Event>& events);
+	SummaryItem(int key, const Event& e);
 	int getActiveEventPosition(long customTime, long currentTime);
 };
 

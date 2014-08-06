@@ -1,14 +1,14 @@
 #include "SummaryItem.h"
 #include "../util/Event.h"
 
-SummaryItem::SummaryItem(int key, const QList<Event*>& events)
+SummaryItem::SummaryItem(int key, const QList<Event>& events)
 : mKey(key)
 , mEventMode(EVENT_MODE_NONE)
 , mEvents(events)
 {
 }
 
-SummaryItem::SummaryItem(int key, Event* e)
+SummaryItem::SummaryItem(int key, const Event& e)
 : mKey(key)
 , mEventMode(EVENT_MODE_NONE)
 {
@@ -21,13 +21,13 @@ int SummaryItem::getActiveEventPosition(long customTime, long currentTime)
 	switch (mKey) {
 	case Event::EV_MOON_MOVE:
 		for (int i = 0; i < mEvents.size(); ++i) {
-			Event* e = mEvents[i];
-			if (e->mEvtype == Event::EV_MOON_MOVE) {
-				if (Event::dateBetween(currentTime, e->mDate[0], e->mDate[1]) == 0) {
+			const Event& e = mEvents[i];
+			if (e.mEvtype == Event::EV_MOON_MOVE) {
+				if (Event::dateBetween(currentTime, e.mDate[0], e.mDate[1]) == 0) {
 					mEventMode = EVENT_MODE_CURRENT_TIME;
 					return index;
 				} 
-				else if (Event::dateBetween(customTime, e->mDate[0], e->mDate[1]) == 0) {
+				else if (Event::dateBetween(customTime, e.mDate[0], e.mDate[1]) == 0) {
 					mEventMode = currentTime == 0 ? EVENT_MODE_CUSTOM_TIME : EVENT_MODE_NONE;
 					return index;
 				}
@@ -39,13 +39,13 @@ int SummaryItem::getActiveEventPosition(long customTime, long currentTime)
 	case Event::EV_VIA_COMBUSTA: {
 		int prev = -1;
 		for (int i = 0; i < mEvents.size(); ++i) {
-			Event* e = mEvents[i];
-			int between = Event::dateBetween(currentTime, e->mDate[0], e->mDate[1]);
+			const Event& e = mEvents[i];
+			int between = Event::dateBetween(currentTime, e.mDate[0], e.mDate[1]);
 			if (between == 0) {
 				mEventMode = EVENT_MODE_CURRENT_TIME;
 				return index;
 			} 
-			else if (Event::dateBetween(customTime, e->mDate[0], e->mDate[1]) == 0) {
+			else if (Event::dateBetween(customTime, e.mDate[0], e.mDate[1]) == 0) {
 				mEventMode = currentTime == 0 ? EVENT_MODE_CUSTOM_TIME : EVENT_MODE_NONE;
 				return index;
 			} 
@@ -59,12 +59,12 @@ int SummaryItem::getActiveEventPosition(long customTime, long currentTime)
 		return prev; }
 	default:
 		for (int i = 0; i < mEvents.size(); ++i) {
-			Event* e = mEvents[i];
-			if (Event::dateBetween(currentTime, e->mDate[0], e->mDate[1]) == 0) {
+			const Event& e = mEvents[i];
+			if (Event::dateBetween(currentTime, e.mDate[0], e.mDate[1]) == 0) {
 				mEventMode = EVENT_MODE_CURRENT_TIME;
 				return index;
 			} 
-			else if (Event::dateBetween(customTime, e->mDate[0], e->mDate[1]) == 0) {
+			else if (Event::dateBetween(customTime, e.mDate[0], e.mDate[1]) == 0) {
 				mEventMode = currentTime == 0 ? EVENT_MODE_CUSTOM_TIME : EVENT_MODE_NONE;
 				return index;
 			}
@@ -78,8 +78,8 @@ int SummaryItem::getActiveEventPosition(long customTime, long currentTime)
 QDebug operator<<(QDebug dbg, const SummaryItem& si)
 {
 	dbg << "SummaryItem " << si.mKey << ":\n";
-	foreach (const Event* event, si.mEvents) {
-		dbg << "  " << *event << "\n";
+	foreach (const Event& event, si.mEvents) {
+		dbg << "  " << event << "\n";
 	}
 	return dbg;
 }

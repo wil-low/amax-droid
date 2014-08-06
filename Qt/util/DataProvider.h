@@ -120,7 +120,7 @@ private:
 	AmaxSettings* mSettings;
 
 
-	QList<Event*> getEventsOnPeriod(int evtype, int planet, bool special, long dayStart, long dayEnd, int value);
+	QList<Event> getEventsOnPeriod(int evtype, int planet, bool special, long dayStart, long dayEnd, int value);
 	int getEvents(int evtype, int planet, long dayStart, long dayEnd);
 	void loadPeriod();
 	void unbundlePeriodAsset();
@@ -129,20 +129,20 @@ private:
 	void makeLocationDatafile(const QString& cityKey);
 	QString unbundleLocationAsset();
 
-	QList<Event*> calculateVOCs();
-	QList<Event*> calculateVC();
-	QList<Event*> calculateSunDegree();
-	QList<Event*> calculateMoonSign();
-	QList<Event*> calculateTithis();
-	QList<Event*> calculatePlanetaryHours();
-	void getPlanetaryHours(QList<Event*>& result, const Event* currentSunRise, const Event* nextSunRise);
-	QList<Event*> calculateAspects();
-	QList<Event*> calculateMoonMove();
-	static void mergeEvents(QList<Event*>& dest, const QList<Event*>& add, bool isSort);
-	QList<Event*> calculateRetrogrades();
-	QList<Event*> getRiseSet(int planet, long startTime, long endTime);
-	Event* getEventOnPeriod(int evType, int planet, bool special, long startTime, long endTime);
-	QList<Event*> getAspectsOnPeriod(int planet, long startTime, long endTime);
+	QList<Event> calculateVOCs();
+	QList<Event> calculateVC();
+	QList<Event> calculateSunDegree();
+	QList<Event> calculateMoonSign();
+	QList<Event> calculateTithis();
+	QList<Event> calculatePlanetaryHours();
+	void getPlanetaryHours(QList<Event>& result, const Event& currentSunRise, const Event& nextSunRise);
+	QList<Event> calculateAspects();
+	QList<Event> calculateMoonMove();
+	static void mergeEvents(QList<Event>& dest, const QList<Event>& add, bool isSort);
+	QList<Event> calculateRetrogrades();
+	QList<Event> getRiseSet(int planet, long startTime, long endTime);
+	Event getEventOnPeriod(int evType, int planet, bool special, long startTime, long endTime);
+	QList<Event> getAspectsOnPeriod(int planet, long startTime, long endTime);
 };
 
 typedef Singleton<DataProvider> DataProviderSingleton;

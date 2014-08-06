@@ -196,7 +196,7 @@ void DataProvider::calculateAll()
 
 SummaryItem* DataProvider::calculate(int key)
 {
-	QList<Event*> events;
+	QList<Event> events;
 	switch (key) {
 	case Event::EV_VOC:
 		events = calculateVOCs();
@@ -331,17 +331,17 @@ QString DataProvider::makePeriodCaption(int year, int startMonth, int monthCount
 //	return text;
 }
 
-QList<Event*> DataProvider::getEventsOnPeriod(int evtype, int planet, bool special, long dayStart, long dayEnd, int value)
+QList<Event> DataProvider::getEventsOnPeriod(int evtype, int planet, bool special, long dayStart, long dayEnd, int value)
 {
 	bool flag = false;
-	QList<Event*> result;
+	QList<Event> result;
 	int cnt = getEvents(evtype, planet, dayStart, dayEnd);
 	for (int i = 0; i < cnt; i++) {
-		Event* ev = &mEvents[i];
-		if (ev->isInPeriod(dayStart, dayEnd, special)) {
+		Event ev(mEvents[i]);
+		if (ev.isInPeriod(dayStart, dayEnd, special)) {
 			flag = true;
 			if (value > 0) {
-				ev->setFullDegree(value);
+				ev.setFullDegree(value);
 			}
 			result.append(ev);
 		}
@@ -477,91 +477,90 @@ QString DataProvider::unbundleLocationAsset()
 }
 
 
-QList<Event*> DataProvider::calculateVOCs()
+QList<Event> DataProvider::calculateVOCs()
 {
 	return getEventsOnPeriod(Event::EV_VOC, Event::SE_MOON, false,
 			mStartTime, mEndTime, 0);
 }
 
-QList<Event*> DataProvider::calculateVC()
+QList<Event> DataProvider::calculateVC()
 {
 	return getEventsOnPeriod(Event::EV_VIA_COMBUSTA, Event::SE_MOON, false,
 			mStartTime, mEndTime, 0);
 }
 
-QList<Event*> DataProvider::calculateSunDegree()
+QList<Event> DataProvider::calculateSunDegree()
 {
 	return getEventsOnPeriod(Event::EV_DEGREE_PASS, Event::SE_SUN, false,
 			mStartTime, mEndTime, 0);
 }
 
-QList<Event*> DataProvider::calculateMoonSign()
+QList<Event> DataProvider::calculateMoonSign()
 {
 	return getEventsOnPeriod(Event::EV_SIGN_ENTER, Event::SE_MOON, false,
 			mStartTime, mEndTime, 0);
 }
 
-QList<Event*> DataProvider::calculateTithis()
+QList<Event> DataProvider::calculateTithis()
 {
 	return getEventsOnPeriod(Event::EV_TITHI, Event::SE_MOON, false,
 			mStartTime, mEndTime, 0);
 }
 
-QList<Event*> DataProvider::calculatePlanetaryHours()
+QList<Event> DataProvider::calculatePlanetaryHours()
 {
-	QList<Event*> sunRises = getEventsOnPeriod(Event::EV_RISE,
+	QList<Event> sunRises = getEventsOnPeriod(Event::EV_RISE,
 			Event::SE_SUN, true, mStartTime - MSECINDAY, mEndTime
 					+ MSECINDAY, 0);
-	QList<Event*> sunSets = getEventsOnPeriod(Event::EV_SET,
+	QList<Event> sunSets = getEventsOnPeriod(Event::EV_SET,
 			Event::SE_SUN, true, mStartTime - MSECINDAY, mEndTime
 					+ MSECINDAY, 0);
 
-	QList<Event*> result;
+	QList<Event> result;
 	if (sunRises.size() < 3 || (sunRises.size() != sunSets.size()))
 		return result;
 
 	for (int i = 0; i < sunRises.size(); ++i)
-		sunRises[i]->mDate[1] = sunSets[i]->mDate[0];
+		sunRises[i].mDate[1] = sunSets[i].mDate[0];
 
 	getPlanetaryHours(result, sunRises[0], sunRises[1]);
 	getPlanetaryHours(result, sunRises[1], sunRises[2]);
 	return result;
 }
 
-void DataProvider::getPlanetaryHours(QList<Event*>& result, const Event* currentSunRise, const Event* nextSunRise)
+void DataProvider::getPlanetaryHours(QList<Event>& result, const Event& currentSunRise, const Event& nextSunRise)
 {
 	int startHour = WEEK_START_HOUR[mCalendar.date().dayOfWeek() - 1];
-	long dayHour = (currentSunRise->mDate[1] - currentSunRise->mDate[0]) / 12;
-	long nightHour = (nextSunRise->mDate[0] - currentSunRise->mDate[1]) / 12;
-	long st = currentSunRise->mDate[0];
+	long dayHour = (currentSunRise.mDate[1] - currentSunRise.mDate[0]) / 12;
+	long nightHour = (nextSunRise.mDate[0] - currentSunRise.mDate[1]) / 12;
+	long st = currentSunRise.mDate[0];
 	for (int i = 0; i < 24; ++i) {
-		Event* ev = new Event(st - (st % Event::ROUNDING_MSEC),
-				PLANET_HOUR_SEQUENCE[startHour % 7]);
-		ev->mEvtype = Event::EV_PLANET_HOUR;
+		Event ev(st - (st % Event::ROUNDING_MSEC), PLANET_HOUR_SEQUENCE[startHour % 7]);
+		ev.mEvtype = Event::EV_PLANET_HOUR;
 		st += i < 12 ? dayHour : nightHour;
-		ev->mDate[1] = st - Event::ROUNDING_MSEC; // exclude last minute
-		ev->mDate[1] -= (ev->mDate[1] % Event::ROUNDING_MSEC);
-		if (ev->isInPeriod(mStartTime, mEndTime, false))
+		ev.mDate[1] = st - Event::ROUNDING_MSEC; // exclude last minute
+		ev.mDate[1] -= (ev.mDate[1] % Event::ROUNDING_MSEC);
+		if (ev.isInPeriod(mStartTime, mEndTime, false))
 			result.append(ev);
 		++startHour;
 	}
 }
 
-QList<Event*> DataProvider::calculateAspects()
+QList<Event> DataProvider::calculateAspects()
 {
 	return getAspectsOnPeriod(-1, mStartTime, mEndTime);
 }
 
-QList<Event*> DataProvider::calculateMoonMove()
+QList<Event> DataProvider::calculateMoonMove()
 {
-	QList<Event*> asp = getEventsOnPeriod(Event::EV_SIGN_ENTER,
+	QList<Event> asp = getEventsOnPeriod(Event::EV_SIGN_ENTER,
 			Event::SE_MOON, true, mStartTime - MSECINDAY * 2, mEndTime
 					+ MSECINDAY * 4, 0);
-	QList<Event*> moonMoveVec = getAspectsOnPeriod(Event::SE_MOON,
+	QList<Event> moonMoveVec = getAspectsOnPeriod(Event::SE_MOON,
 			mStartTime - MSECINDAY * 2, mEndTime + MSECINDAY * 2);
 
 	if (asp.isEmpty() || moonMoveVec.isEmpty())
-		return QList<Event*>();
+		return QList<Event>();
 
 	mergeEvents(moonMoveVec, asp, true);
 	asp.clear();
@@ -570,8 +569,8 @@ QList<Event*> DataProvider::calculateMoonMove()
 	int id2 = -1;
 	int counter = 0;
 	for (int i = 0; i < asp.size(); ++i) {
-		Event* ev = asp[i];
-		long dat = ev->mDate[0];
+		Event ev(asp[i]);
+		long dat = ev.mDate[0];
 		if (dat < mStartTime) {
 			id1 = counter;
 		}
@@ -590,28 +589,28 @@ QList<Event*> DataProvider::calculateMoonMove()
 	int sz = moonMoveVec.size() - 1;
 	int idx = 1;
 	for (int i = 0; i < sz; i++) {
-		Event* evprev = moonMoveVec[idx - 1];
-		long dd = (evprev->mEvtype == Event::EV_SIGN_ENTER) ? evprev->mDate[0]
-				: evprev->mDate[1];
-		Event* ev = new Event(dd, -1);
-		ev->mEvtype = Event::EV_MOON_MOVE;
-		ev->mDate[1] = moonMoveVec[idx]->mDate[0] - Event::ROUNDING_MSEC;
-		ev->mPlanet0 = evprev->mPlanet1;
-		ev->mPlanet1 = moonMoveVec[idx]->mPlanet1;
+		Event evprev(moonMoveVec[idx - 1]);
+		long dd = (evprev.mEvtype == Event::EV_SIGN_ENTER) ? evprev.mDate[0]
+				: evprev.mDate[1];
+		Event ev(dd, -1);
+		ev.mEvtype = Event::EV_MOON_MOVE;
+		ev.mDate[1] = moonMoveVec[idx].mDate[0] - Event::ROUNDING_MSEC;
+		ev.mPlanet0 = evprev.mPlanet1;
+		ev.mPlanet1 = moonMoveVec[idx].mPlanet1;
 		moonMoveVec.insert(idx, ev);
 		idx += 2;
 	}
 	sz = moonMoveVec.size();
 	for (int i = 0; i < sz; ++i) {
-		Event* e = moonMoveVec[i];
-		if (e->mEvtype == Event::EV_MOON_MOVE) {
+		Event e(moonMoveVec[i]);
+		if (e.mEvtype == Event::EV_MOON_MOVE) {
 			int j = i - 1;
 			while (j >= 0) {
-				Event* prev = moonMoveVec[j];
-				if (prev->mEvtype != Event::EV_MOON_MOVE) {
-					char planet = prev->mPlanet1;
+				Event prev(moonMoveVec[j]);
+				if (prev.mEvtype != Event::EV_MOON_MOVE) {
+					char planet = prev.mPlanet1;
 					if (planet <= Event::SE_SATURN) {
-						e->mPlanet0 = planet;
+						e.mPlanet0 = planet;
 						break;
 					}
 				}
@@ -619,31 +618,31 @@ QList<Event*> DataProvider::calculateMoonMove()
 			}
 			j = i + 1;
 			while (j < sz) {
-				Event* next = moonMoveVec[j];
-				if (next->mEvtype != Event::EV_MOON_MOVE) {
-					char planet = next->mPlanet1;
+				Event next(moonMoveVec[j]);
+				if (next.mEvtype != Event::EV_MOON_MOVE) {
+					char planet = next.mPlanet1;
 					if (planet <= Event::SE_SATURN) {
-						e->mPlanet1 = planet;
+						e.mPlanet1 = planet;
 						break;
 					}
 				}
 				++j;
 			}
-		} else if (e->mEvtype == Event::EV_ASP_EXACT)
-			e->mEvtype = Event::EV_ASP_EXACT_MOON;
+		} else if (e.mEvtype == Event::EV_ASP_EXACT)
+			e.mEvtype = Event::EV_ASP_EXACT_MOON;
 	}
 	return moonMoveVec;
 }
 
-void DataProvider::mergeEvents(QList<Event*>& dest, const QList<Event*>& add, bool isSort)
+void DataProvider::mergeEvents(QList<Event>& dest, const QList<Event>& add, bool isSort)
 {
 	for (int i = 0; i < add.size(); ++i) {
-		Event* ev = add[i];
+		Event ev(add[i]);
 		if (isSort) {
 			int idx = 0;
-			long dat = ev->mDate[0];
+			long dat = ev.mDate[0];
 			int sz = dest.size();
-			while (idx < sz && dat > dest[idx]->mDate[0]) {
+			while (idx < sz && dat > dest[idx].mDate[0]) {
 				++idx;
 			}
 			dest.insert(idx, ev);
@@ -653,11 +652,11 @@ void DataProvider::mergeEvents(QList<Event*>& dest, const QList<Event*>& add, bo
 	}
 }
 
-QList<Event*> DataProvider::calculateRetrogrades()
+QList<Event> DataProvider::calculateRetrogrades()
 {
-	QList<Event*> result;
+	QList<Event> result;
 	for (int planet = Event::SE_MERCURY; planet <= Event::SE_PLUTO; ++planet) {
-		QList<Event*> v = getEventsOnPeriod(Event::EV_RETROGRADE, planet,
+		QList<Event> v = getEventsOnPeriod(Event::EV_RETROGRADE, planet,
 				false, mStartTime, mEndTime, 0);
 		if (!v.isEmpty())
 			result.append(v);
@@ -665,30 +664,30 @@ QList<Event*> DataProvider::calculateRetrogrades()
 	return result;
 }
 
-QList<Event*> DataProvider::getRiseSet(int planet, long startTime, long endTime)
+QList<Event> DataProvider::getRiseSet(int planet, long startTime, long endTime)
 {
-	QList<Event*> result;
-	Event* eop = getEventOnPeriod(Event::EV_RISE, planet, true, startTime,
+	QList<Event> result;
+	Event eop = getEventOnPeriod(Event::EV_RISE, planet, true, startTime,
 			endTime);
-	if (eop == NULL || eop->mDate[0] < startTime) {
-		eop = new Event(0, planet);
+	if (eop.mDate[0] < startTime) {
+		eop = Event(0, planet);
 	}
-	Event* eop1 = getEventOnPeriod(Event::EV_SET, planet, false, startTime,
+	Event eop1 = getEventOnPeriod(Event::EV_SET, planet, false, startTime,
 			mEndTime);
-	if (eop1 == NULL || eop1->mDate[0] < startTime) {
-		eop1 = new Event(0, planet);
+	if (eop1.mDate[0] < startTime) {
+		eop1 = Event(0, planet);
 	}
-	eop->mDate[1] = eop1->mDate[0];
+	eop.mDate[1] = eop1.mDate[0];
 	result.append(eop);
 	return result;
 }
 
-Event* DataProvider::getEventOnPeriod(int evType, int planet, bool special, long startTime, long endTime)
+Event DataProvider::getEventOnPeriod(int evType, int planet, bool special, long startTime, long endTime)
 {
 	int cnt = getEvents(evType, planet, startTime, endTime);
 	if (evType == Event::EV_RISE && planet == Event::SE_SUN) {
-		Event* dummy = new Event(startTime, 0);
-		dummy->mDate[1] = endTime;
+		//Event* dummy = new Event(startTime, 0);
+		//dummy->mDate[1] = endTime;
 //		MyLog.d("dummy", dummy_>toString());
 //		for (int i = 0; i < cnt; i++) {
 //			MyLog.d("getEventOnPeriod", mEvents[i]->toString());
@@ -697,23 +696,23 @@ Event* DataProvider::getEventOnPeriod(int evType, int planet, bool special, long
 	for (int i = 0; i < cnt; i++) {
 		Event* ev = &mEvents[i];
 		if (ev->isInPeriod(startTime, endTime, special)) {
-			return ev;
+			return *ev;
 		}
 	}
-	return NULL;
+	return Event();
 }
 
-QList<Event*> DataProvider::getAspectsOnPeriod(int planet, long startTime, long endTime)
+QList<Event> DataProvider::getAspectsOnPeriod(int planet, long startTime, long endTime)
 {
-	QList<Event*> result;
+	QList<Event> result;
 	bool flag = false;
 	int cnt = getEvents(Event::EV_ASP_EXACT,
 			planet == Event::SE_MOON ? Event::SE_MOON : -1, startTime,
 			endTime);
 	for (int i = 0; i < cnt; i++) {
-		Event* ev = &mEvents[i];
-		if (planet == -1 || ev->mPlanet0 == planet || ev->mPlanet1 == planet) {
-			if (ev->isDateBetween(0, startTime, endTime)) {
+		Event ev(mEvents[i]);
+		if (planet == -1 || ev.mPlanet0 == planet || ev.mPlanet1 == planet) {
+			if (ev.isDateBetween(0, startTime, endTime)) {
 				flag = true;
 				result.append(ev);
 			}
@@ -733,8 +732,8 @@ int DataProvider::read(QByteArray* data, int evtype, int planet, bool isCommon,
 	int eventsCount = 0;
 	int flags = 0;
 	int skipOff;
-	Event* last = new Event(0, 0);
-	last->mEvtype = evtype;
+	Event last(0, 0);
+	last.mEvtype = evtype;
 	int fnext_date2;
 	int PERIOD = (evtype == Event::EV_ASCAPHETICS) ? 2 * 60 : 24 * 60;
 	int totalCount = 0;
@@ -810,25 +809,25 @@ int DataProvider::read(QByteArray* data, int evtype, int planet, bool isCommon,
 					mydgr = readShort(is);
 			}
 			if (fnext_date2 != 0) {
-				last->mDate[1] = mydate0 - Event::ROUNDING_MSEC;
+				last.mDate[1] = mydate0 - Event::ROUNDING_MSEC;
 				mydate1 = mFinalJD;
 			}
-			if (last->isInPeriod(dayStart, dayEnd, false)) {
-				mEvents[eventsCount] = *last;
+			if (last.isInPeriod(dayStart, dayEnd, false)) {
+				mEvents[eventsCount] = last;
 				eventsCount++;
 			}
 			else {
 				if (eventsCount > 0)
 					break;
 			}
-			last->mPlanet0 = myplanet0;
-			last->mPlanet1 = myplanet1;
-			last->setFullDegree(mydgr);
-			last->mDate[0] = mydate0;
-			last->mDate[1] = mydate1;
+			last.mPlanet0 = myplanet0;
+			last.mPlanet1 = myplanet1;
+			last.setFullDegree(mydgr);
+			last.mDate[0] = mydate0;
+			last.mDate[1] = mydate1;
 		}
-		if (last->isInPeriod(dayStart, dayEnd, false)) {
-			mEvents[eventsCount] = *last;
+		if (last.isInPeriod(dayStart, dayEnd, false)) {
+			mEvents[eventsCount] = last;
 			eventsCount++;
 		}
 	}
