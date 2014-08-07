@@ -105,11 +105,11 @@ void DataProvider::restoreState()
 
 	QTimeZone timezone = mCalendar.timeZone();
 	mStartTime = mSettings->getStartTime(timezone);
-	//MyLog.i(TAG, "Restored mStartTime " + mStartTime);
+	qDebug() << "Restored mStartTime " << mStartTime;
 	mUseCustomTime = mSettings->getUseCustomTime();
 	mCustomHour = mSettings->getCustomHour();
 	mCustomMinute = mSettings->getCustomMinute();
-	mCalendar.setTime_t(mStartTime);
+	mCalendar = QDateTime::fromTime_t(mStartTime);
 	setDateFromCalendar();
 	mStartPageLayout = mSettings->getStartPageLayout();	
 }
@@ -179,6 +179,8 @@ void DataProvider::prepareCalculation()
 void DataProvider::calculateAll()
 {
 	mSummaryModel->beginChange();
+	foreach (SummaryItem* si, mEventCache)
+		delete si;
 	mEventCache.clear();
 	qDebug() << "Calculate all for " << mYear << "-" << mMonth << "-" << mDay;
 	for (int i = 0; i < mStartPageLayout->size(); ++i) {
@@ -371,13 +373,13 @@ int DataProvider::getEvents(int evtype, int planet, long dayStart, long dayEnd)
 void DataProvider::loadPeriod()
 {
 	fillCommonIds();
-	QFile in(SettingsSingleton::instance()->dir() + mPeriodStr);
+	QFile in(mSettings->writableLocation() + mPeriodStr);
 	if (in.exists()) {
 		mCommonDatafile = new CommonDataFile(in.fileName(), false);
 	}
 	else {
 		mDatabase->getPeriodStringAndKey(1, mPeriodStr, mPeriodKey);
-		QFile in(SettingsSingleton::instance()->dir() + mPeriodStr);
+		QFile in(mSettings->writableLocation() + mPeriodStr);
 		mCommonDatafile = new CommonDataFile(in.fileName(), false);
 	}
 	qDebug() << "Common: " << mCommonDatafile->mStartYear << "-"
@@ -391,7 +393,7 @@ void DataProvider::unbundlePeriodAsset()
 	fillCommonIds();
 	QFile in(":/common.dat");
 	qDebug() << in.exists();
-	QString target = SettingsSingleton::instance()->dir() + "/" + mPeriodStr;
+	QString target = mSettings->writableLocation() + mPeriodStr;
 	if (!in.copy(target))
 		qDebug() << "Could not copy to " << target;
 }
@@ -419,18 +421,21 @@ void DataProvider::loadLocation(const QString& cityKey)
 			<< mLocationDatafile->mStartYear	<< "-"
 			<< mLocationDatafile->mStartMonth << "-"
 			<< mLocationDatafile->mStartDay << ", "
-			<< mLocationDatafile->mMonthCount << " > " << cityKey;
+			<< mLocationDatafile->mMonthCount << ", "
+			<< tz.systemTimeZoneId() << " > " << cityKey;
 		
-		mCalendar.setDate(QDate(mLocationDatafile->mStartYear, mLocationDatafile->mStartMonth, mLocationDatafile->mStartDay));
-		mCalendar.setTime(QTime());
+		QDate date(mLocationDatafile->mStartYear, mLocationDatafile->mStartMonth, mLocationDatafile->mStartDay);
+		QTime time(0, 0);
+		mCalendar = QDateTime(date, time);
 
 		locationStart = mCalendar.toTime_t();
 		mCalendar = mCalendar.addMonths(mLocationDatafile->mMonthCount);
 		locationFinal = mCalendar.toTime_t();
 	}
 
-	mCalendar.setDate(QDate(mCommonDatafile->mStartYear, mCommonDatafile->mStartMonth, mCommonDatafile->mStartDay));
-	mCalendar.setTime(QTime());
+	QDate date(mCommonDatafile->mStartYear, mCommonDatafile->mStartMonth, mCommonDatafile->mStartDay);
+	QTime time(0, 0);
+	mCalendar = QDateTime(date, time);
 
 	long commonStart = mCalendar.toTime_t();
 	mCalendar = mCalendar.addMonths(mCommonDatafile->mMonthCount);
@@ -447,7 +452,7 @@ void DataProvider::makeLocationDatafile(const QString& cityKey)
 {
 	mLocationDatafile = NULL;
 	QString filename = makeLocationFilename(cityKey);
-	QFile in(mSettings->dir() + filename);
+	QFile in(mSettings->writableLocation() + filename);
 	in.open(QIODevice::ReadOnly);
 	QByteArray ba = in.readAll();
 	mLocationDatafile = new LocationsDataFile(ba);
@@ -467,7 +472,7 @@ QString DataProvider::unbundleLocationAsset()
 		lastCityKey = buf;
 		qDebug() << "Unbundle: " << index << ", " << lastCityKey << " " << datafile.mCity;
 		QString filename = makeLocationFilename(lastCityKey);
-		QFile out(SettingsSingleton::instance()->dir() + filename);
+		QFile out(mSettings->writableLocation() + filename);
 		out.open(QIODevice::WriteOnly);
 		out.write(buffer);
 		out.close();

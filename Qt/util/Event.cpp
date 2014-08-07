@@ -80,7 +80,7 @@ QString Event::toString() const
 {
 	QString s;
 	QTextStream ts(&s);
-	ts << "Event " << this << ": (" << mEvtype << " " << getEvTypeStr() << " "
+	ts << "Event " << ": (" << mEvtype << " " << getEvTypeStr() << " "
 			<< long2String(mDate[0], DEFAULT_DATE_FORMAT, false) << " - "
 			<< long2String(mDate[1], DEFAULT_DATE_FORMAT, false) << " "
 			<< getPlanetName(mPlanet0) << "-" << getPlanetName(mPlanet1)

@@ -33,8 +33,7 @@ QVariant SummaryModel::data (const QModelIndex& index, int role) const
 	int row = index.row();
 	SummaryItem* si = mProvider->mEventCache[row];
 	if (!si->mEvents.empty()) {
-		s = si->mEvents.first()->toString();
-		qDebug() << si << *si->mEvents.first();
+		s = si->mEvents.first().toString();
 	}
 	return s;
 }

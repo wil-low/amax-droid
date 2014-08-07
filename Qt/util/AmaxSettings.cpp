@@ -4,6 +4,8 @@
 #include <QFileInfo>
 #include <QTimeZone>
 #include <QDebug>
+#include <QStandardPaths>
+#include <QDir>
 
 const char KEY_PERIOD_ID[] = "period_id";
 const char KEY_CITY_KEY[] = "city_key";
@@ -35,9 +37,10 @@ AmaxSettings::AmaxSettings()
 : QSettings("S&W Axis", "Astromaximum")
 {
 	setDefaultFormat(QSettings::IniFormat);
-	QFileInfo finfo(fileName());
-	mDir = finfo.absolutePath() + "/";
-	qDebug() << mDir;
+
+	mWritableLocation = QStandardPaths::writableLocation (QStandardPaths::DataLocation) + "/";
+	QDir dir;
+	dir.mkpath(mWritableLocation);
 	
 	qRegisterMetaType<StartPageItemList>("StartPageItemList");
 	qRegisterMetaTypeStreamOperators<StartPageItemList>("StartPageItemList");
@@ -45,13 +48,24 @@ AmaxSettings::AmaxSettings()
 	QVariant items = value(STARTPAGE_ITEM_INDEX);
 	mItems = items.value<StartPageItemList>();
 	if (mItems.empty()) {
-		mItems.append(StartPageItem("Sun", 7, true));
-		mItems.append(StartPageItem("Moon", 3, true));
-		mItems.append(StartPageItem("Hour", 2, true));
+		mItems.append(StartPageItem("EV_VOC", 0, true));
+		mItems.append(StartPageItem("EV_MOON_MOVE", 1, true));
+		mItems.append(StartPageItem("EV_PLANET_HOUR", 2, true));
+		mItems.append(StartPageItem("EV_MOON_SIGN", 3, true));
+		mItems.append(StartPageItem("EV_RETROGRADE", 4, true));
+		mItems.append(StartPageItem("EV_ASP_EXACT", 5, true));
+		mItems.append(StartPageItem("EV_VIA_COMBUSTA", 6, true));
+		mItems.append(StartPageItem("EV_SUN_DEGREE", 7, true));
+		mItems.append(StartPageItem("EV_TITHI", 8, true));
 		QVariant var;
 		var.setValue(mItems);
 		setValue(STARTPAGE_ITEM_INDEX, var);
 	}
+}
+
+const QString& AmaxSettings::writableLocation() const
+{
+	return mWritableLocation;	
 }
 
 int AmaxSettings::getPeriodId()
@@ -110,10 +124,10 @@ int AmaxSettings::getStartTime(QTimeZone& timezone)
 {
 	int result = value(KEY_START_TIME, 0).toInt();
 	if (result <= 0) {
-		QDateTime date = QDateTime::currentDateTimeUtc();
-		QTimeZone tz = date.timeZone();
-		date.setTimeZone(timezone);
-		tz = date.timeZone();
+		QDateTime date = QDateTime::currentDateTime();
+		qDebug() << date << date.toTime_t();
+//		QTimeZone tz = date.timeZone();
+//		date.setTimeZone(timezone);
 		result = date.toTime_t();
 	}
 	return result;
@@ -142,9 +156,4 @@ void AmaxSettings::setCustomHour(int customHour)
 void AmaxSettings::setCustomMinute(int customMinute)
 {
 	setValue(KEY_CUSTOM_MINUTE, customMinute);
-}
-
-const QString& AmaxSettings::dir() const
-{
-	return mDir;
 }

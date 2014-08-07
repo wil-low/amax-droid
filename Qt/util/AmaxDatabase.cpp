@@ -13,9 +13,10 @@
 AmaxDatabase::AmaxDatabase()
 {
 	mDB = QSqlDatabase::addDatabase("QSQLITE");
-	QString dbName = SettingsSingleton::instance()->dir() + "/amax.db";
+	QString dbName = SettingsSingleton::instance()->writableLocation() + "amax.db";
 	QFile in(":/amax.db");
-	in.copy (dbName);
+	if (!in.copy (dbName))
+		qDebug() << "Copy error: " << in.errorString();
     mDB.setDatabaseName(dbName);
     bool ok = mDB.open();
 	mQuery = new QSqlQuery(mDB);

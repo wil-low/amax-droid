@@ -25,11 +25,11 @@ public:
 	void setStartTime(int startTime);
 	void setCustomHour(int customHour);
 	void setCustomMinute(int customMinute);
-	const QString& dir() const;
+	const QString& writableLocation() const;
 private:
 	typedef QList<StartPageItem> StartPageItemList;
 	StartPageItemList mItems;
-	QString mDir;
+	QString mWritableLocation;
 signals:
 	
 public slots:
