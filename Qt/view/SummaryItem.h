@@ -2,6 +2,7 @@
 
 #include <QList>
 #include <QDebug>
+#include <QMetaType>
 
 class Event;
 
@@ -19,9 +20,12 @@ public:
 		EVENT_MODE_CUSTOM_TIME = 2,
 	};
 
+	SummaryItem() {}
 	SummaryItem(int key, const QList<Event>& events);
 	SummaryItem(int key, const Event& e);
-	int getActiveEventPosition(long customTime, long currentTime);
+	int activeEventPosition(long customTime, long currentTime);
 };
 
 QDebug operator<<(QDebug dbg, const SummaryItem& si);
+
+Q_DECLARE_METATYPE(SummaryItem)

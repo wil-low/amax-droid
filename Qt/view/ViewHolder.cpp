@@ -1,151 +1,113 @@
-package com.astromaximum.android.view;
+#include "ViewHolder.h"
+#include "SummaryItem.h"
+#include "EmptyHolder.h"
+#include "VocHolder.h"
+#include "VcHolder.h"
+#include "SunDegreeHolder.h"
+#include "MoonSignHolder.h"
+#include "AspectScrollHolder.h"
+#include "AspectHolder.h"
+#include "RetrogradeScrollHolder.h"
+#include "RetrogradeHolder.h"
+#include "PlanetHourHolder.h"
+#include "MoonTransitionHolder.h"
+#include "TithiHolder.h"
+#include "../util/Event.h"
+#include <QLabel>
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
-import android.widget.ImageView;
-import android.widget.TextView;
+const int EMPTY_KEY = 1000;
 
-import com.astromaximum.android.EventListActivity;
-import com.astromaximum.android.InterpreterActivity;
-import com.astromaximum.android.PreferenceUtils;
-import com.astromaximum.android.R;
-import com.astromaximum.android.util.Event;
-import com.astromaximum.android.util.InterpretationProvider;
+QString ViewHolder::mDefaultTextColor("200,200,200");
+QString ViewHolder::mBlueMarkColor("0,0,255");
+QString ViewHolder::mRedMarkColor("255,0,0");
+QMap<int, ViewHolder*> ViewHolder::mHolders;
 
-public abstract class ViewHolder implements OnClickListener, OnLongClickListener {
-	private static final String TAG = "ViewHolder";
-	protected TextView mType;
-	protected TextView mText0;
-	protected TextView mText1;
-	protected AstroTextView mPlanet0;
-	protected AstroTextView mPlanet1;
-	protected AstroTextView mAspect;
-	protected AstroTextView mZodiac;
-	protected TextView mDegree;
+void ViewHolder::initialize()
+{
+	mHolders.insert(EMPTY_KEY, new EmptyHolder);
+	mHolders.insert(Event::EV_VOC, new VocHolder);
+	mHolders.insert(Event::EV_VIA_COMBUSTA, new VcHolder);
+	mHolders.insert(Event::EV_SUN_DEGREE, new SunDegreeHolder);
+	mHolders.insert(Event::EV_MOON_SIGN, new MoonSignHolder);
+	mHolders.insert(Event::EV_ASP_EXACT + EMPTY_KEY, new AspectScrollHolder);
+	mHolders.insert(Event::EV_ASP_EXACT, new AspectHolder);
+	mHolders.insert(Event::EV_RETROGRADE + EMPTY_KEY, new RetrogradeScrollHolder);
+	mHolders.insert(Event::EV_RETROGRADE, new RetrogradeHolder);
+	mHolders.insert(Event::EV_PLANET_HOUR, new PlanetHourHolder);
+	mHolders.insert(Event::EV_MOON_MOVE, new MoonTransitionHolder);
+	mHolders.insert(Event::EV_TITHI, new TithiHolder);
+}
 
-	protected int mLayoutId;
-	protected int mFlags;
-
-	protected static LayoutInflater mInflater;
-	private static Resources mResources;
-
-	protected static int LAYOUT_FLAG_CAPTION = 1 << 0;
-	protected static int LAYOUT_FLAG_TEXT0 = 1 << 1;
-	protected static int LAYOUT_FLAG_TEXT1 = 1 << 2;
-	protected static int LAYOUT_FLAG_PLANET0 = 1 << 3;
-	protected static int LAYOUT_FLAG_PLANET1 = 1 << 4;
-	protected static int LAYOUT_FLAG_DEGREE = 1 << 5;
-	protected static int LAYOUT_FLAG_ASPECT = 1 << 6;
-	protected static int LAYOUT_FLAG_INFO = 1 << 7;
-	protected static int LAYOUT_FLAG_ZODIAC = 1 << 8;
-
-	protected static Context mContext;
-
-	protected static int mDefaultTextColor;
-	protected static int mBlueMarkColor;
-	protected static int mRedMarkColor;
-
-	protected SummaryItem mSummaryItem;
-	public Event mActiveEvent;
-	protected boolean mIsSummaryMode = true;
-
-	public ViewHolder(SummaryItem si, int layoutId, int flags) {
-		mSummaryItem = si;
-		mLayoutId = layoutId;
-		mFlags = flags;
-	}
-
-	public static ViewHolder makeHolder(SummaryItem si, boolean isSummaryMode) {
-		ViewHolder holder = null;
-
-		if (si.mEvents.isEmpty())
-			return new EmptyHolder(si);
-
-		switch (si.mKey) {
-		case Event.EV_VOC:
-			holder = new VocHolder(si);
-			break;
-		case Event.EV_VIA_COMBUSTA:
-			holder = new VcHolder(si);
-			break;
-		case Event.EV_SUN_DEGREE:
-			holder = new SunDegreeHolder(si);
-			break;
-		case Event.EV_MOON_SIGN:
-			holder = new MoonSignHolder(si);
-			break;
-		case Event.EV_ASP_EXACT:
-			if (isSummaryMode)
-				holder = new AspectScrollHolder(si);
-			else
-				holder = new AspectHolder(si);
-			break;
-		case Event.EV_RETROGRADE:
-			if (isSummaryMode)
-				holder = new RetrogradeScrollHolder(si);
-			else
-				holder = new RetrogradeHolder(si);
-			break;
-		case Event.EV_PLANET_HOUR:
-			holder = new PlanetHourHolder(si);
-			break;
-		case Event.EV_MOON_MOVE:
-			holder = new MoonTransitionHolder(si);
-			break;
-		case Event.EV_TITHI:
-			holder = new TithiHolder(si);
-			break;
-		default:
-			return null;
+QString ViewHolder::astroSymbol(ViewHolder::AstroType type, int id)
+{
+	char result = '?';
+	switch (type) {
+	case TYPE_PLANET:
+		result = 0x50 + id;
+		break;
+	case TYPE_ASPECT:
+		switch (id) {
+		case 0: result = 0x60; break;
+		case 180: result = 0x64; break;
+		case 120: result = 0x63; break;
+		case 90: result = 0x62; break;
+		case 60: result = 0x61; break;
+		case 45: result = 0x65; break;
 		}
-		holder.mIsSummaryMode = isSummaryMode;
-		return holder;
+		break;
+	case TYPE_ZODIAC:
+		result = 0x40 + id;
+		break;
+	case TYPE_RETROGRADE:
+		result = 0x24;
+		break;
 	}
+	return QString(result);
+}
 
-	protected void initLayout(View v) {
-		if ((mFlags & LAYOUT_FLAG_CAPTION) != 0)
-			mType = (TextView) v.findViewById(R.id.EventListItemType);
-		if ((mFlags & LAYOUT_FLAG_TEXT0) != 0)
-			mText0 = (TextView) v.findViewById(R.id.EventListItemText0);
-		if ((mFlags & LAYOUT_FLAG_TEXT1) != 0)
-			mText1 = (TextView) v.findViewById(R.id.EventListItemText1);
-		if ((mFlags & LAYOUT_FLAG_PLANET0) != 0)
-			mPlanet0 = (AstroTextView) v
-					.findViewById(R.id.EventListItemPlanet0);
-		if ((mFlags & LAYOUT_FLAG_PLANET1) != 0)
-			mPlanet1 = (AstroTextView) v
-					.findViewById(R.id.EventListItemPlanet1);
-		if ((mFlags & LAYOUT_FLAG_DEGREE) != 0)
-			mDegree = (TextView) v.findViewById(R.id.EventListItemDegree);
-		if ((mFlags & LAYOUT_FLAG_ASPECT) != 0)
-			mAspect = (AstroTextView) v.findViewById(R.id.EventListItemAspect);
-		if ((mFlags & LAYOUT_FLAG_ZODIAC) != 0)
-			mZodiac = (AstroTextView) v.findViewById(R.id.EventListItemZodiac);
-		v.setOnClickListener(this);
-		v.setOnLongClickListener(this);
+ViewHolder* ViewHolder::holder(SummaryItem* si, bool isSummaryMode)
+{
+	ViewHolder* h = NULL;
+	if (si->mEvents.empty())
+		h = mHolders[EMPTY_KEY];
+	else if (isSummaryMode && (si->mKey == Event::EV_ASP_EXACT || si->mKey == Event::EV_RETROGRADE))
+		h = mHolders[si->mKey + EMPTY_KEY];
+	else
+		h = mHolders[si->mKey];
+
+	h->mIsSummaryMode = isSummaryMode;
+	h->mSummaryItem = si;
+	return h;
+}
+
+void ViewHolder::calculateActiveEvent(long customTime, long currentTime)
+{
+	int pos = mSummaryItem->activeEventPosition(customTime, currentTime);
+	mActiveEvent = (pos == -1) ? NULL : &mSummaryItem->mEvents[pos];
+}
+
+Event* ViewHolder::activeEvent() const
+{
+	return mIsSummaryMode ? mActiveEvent : &mSummaryItem->mEvents[0];
+}
+
+void ViewHolder::setColorByEventMode(QLabel* label, Event* e)
+{
+	QString& color = mDefaultTextColor;
+	if (e == mActiveEvent) {
+		switch (mSummaryItem->mEventMode) {
+		case SummaryItem::EVENT_MODE_CURRENT_TIME:
+			color = mRedMarkColor;
+			break;
+		case SummaryItem::EVENT_MODE_CUSTOM_TIME:
+			color = mBlueMarkColor;
+			break;
+		}
 	}
+	label->setStyleSheet("QLabel {color: rgb(" + color + ");}");
+}
 
-	public static void initialize(Context context) {
-		mContext = context;
-		mInflater = (LayoutInflater) mContext
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		mResources = mContext.getResources();
-		mDefaultTextColor = mResources.getColor(R.color.main_text);
-		mBlueMarkColor = mResources.getColor(R.color.blue_mark);
-		mRedMarkColor = mResources.getColor(R.color.red_mark);
-		AstroTextView.assignTypeface(Typeface.createFromAsset(
-				mContext.getAssets(), "Astronom.ttf"));
-	}
-
-	abstract public void fillLayout();
-
+/*
 	public boolean onLongClick(View v) {
 		Object obj = v.getTag();
 		if (obj != null) {
@@ -179,37 +141,4 @@ public abstract class ViewHolder implements OnClickListener, OnLongClickListener
 			}
 		}
 	}
-
-	void setImage(ImageView v, int id) {
-		Drawable drawable = mResources.getDrawable(id);
-		v.setImageDrawable(drawable);
-	}
-
-	void clearImage(ImageView v) {
-		v.setImageDrawable(null);
-	}
-
-	public final void calculateActiveEvent(long customTime, long currentTime) {
-		int pos = mSummaryItem.getActiveEventPosition(customTime, currentTime);
-		mActiveEvent = (pos == -1) ? null : mSummaryItem.mEvents.get(pos);
-	}
-
-	public Event getActiveEvent() {
-		return mIsSummaryMode ? mActiveEvent : mSummaryItem.mEvents.get(0);
-	}
-
-	protected void setColorByEventMode(TextView tv, Event e) {
-		int color = mDefaultTextColor;
-		if (e == mActiveEvent) {
-			switch (mSummaryItem.mEventMode) {
-			case SummaryItem.EVENT_MODE_CURRENT_TIME:
-				color = mRedMarkColor;
-				break;
-			case SummaryItem.EVENT_MODE_CUSTOM_TIME:
-				color = mBlueMarkColor;
-				break;
-			}
-		}
-		tv.setTextColor(color);
-	}
-}
+*/

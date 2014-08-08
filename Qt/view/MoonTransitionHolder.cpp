@@ -1,81 +1,66 @@
-package com.astromaximum.android.view;
+#include "MoonTransitionHolder.h"
+#include "ui_MoonTransitionHolder.h"
+#include "../util/Event.h"
 
-import android.view.View;
-import android.widget.TextView;
+MoonTransitionHolder::MoonTransitionHolder()
+: ui(new Ui::MoonTransitionHolder)
+{
+	ui->setupUi(this);
+	mSunSign = astroSymbol(TYPE_PLANET, Event::SE_SUN);
+}
 
-import com.astromaximum.android.R;
-import com.astromaximum.android.util.AstroFont;
-import com.astromaximum.android.util.DataProvider;
-import com.astromaximum.android.util.Event;
+MoonTransitionHolder::~MoonTransitionHolder()
+{
+	delete ui;
+}
 
-public class MoonTransitionHolder extends ViewHolder {
-	private TextView mTransitionSignView;
-	private String mSunSign;
-
-	public MoonTransitionHolder(SummaryItem si) {
-		super(si, R.layout.item_moon_transition, LAYOUT_FLAG_PLANET0
-				| LAYOUT_FLAG_PLANET1 | LAYOUT_FLAG_TEXT0);
-	}
-
-	@Override
-	protected void initLayout(View v) {
-		super.initLayout(v);
-		mTransitionSignView = (TextView) v
-				.findViewById(R.id.EventListTransitionSign);
-		mSunSign = AstroFont.getSymbol(AstroFont.TYPE_PLANET,
-				Event.SE_SUN);
-	}
-
-	@Override
-	public void fillLayout() {
-		Event e = getActiveEvent();
-		if (e != null) {
-			// MyLog.d("MoonTransitionHolder", e.toString());
-			mText0.setTextColor(mDefaultTextColor);
-			switch (e.mEvtype) {
-			case Event.EV_MOON_MOVE:
-				mText0.setText(e.normalizedRangeString());
-				setColorByEventMode(mText0, e);
-				mPlanet0.setText(mSunSign);
-				mPlanet0.setVisibility(View.INVISIBLE);
-				mPlanet1.setText(mSunSign);
-				mPlanet1.setVisibility(View.INVISIBLE);
-				mTransitionSignView.setVisibility(View.VISIBLE);
-				break;
-			case Event.EV_ASP_EXACT_MOON:
-				mPlanet0.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET,
-						e.mPlanet0)
-						+ " "
-						+ AstroFont.getSymbol(AstroFont.TYPE_ASPECT,
-								e.getDegree())
-						+ " "
-						+ AstroFont
-								.getSymbol(AstroFont.TYPE_PLANET, e.mPlanet1));
-				mPlanet1.setVisibility(View.GONE);
-				mText0.setText(e.long2String(e.mDate[0], DataProvider
-						.getInstance().isInCurrentDay(e.mDate[0]) ? null
-						: Event.mMonthAbbrDayDateFormat, true));
-				mPlanet0.setVisibility(View.VISIBLE);
-				mTransitionSignView.setVisibility(View.GONE);
-				break;
-			case Event.EV_SIGN_ENTER:
-				mPlanet0.setText(mSunSign);
-				mPlanet0.setVisibility(View.INVISIBLE);
-				mPlanet1.setText(AstroFont.getSymbol(AstroFont.TYPE_ZODIAC,
-						e.getDegree()));
-				mPlanet1.setVisibility(View.VISIBLE);
-				mText0.setText(e.long2String(e.mDate[0], DataProvider
-						.getInstance().isInCurrentDay(e.mDate[0]) ? null
-						: Event.mMonthAbbrDayDateFormat, true));
-				mTransitionSignView.setVisibility(View.GONE);
-				break;
-			}
-		} else {
-			mPlanet0.setText("");
-			mPlanet1.setText("");
-			mText0.setText("");
-			mPlanet1.setVisibility(View.GONE);
-			mTransitionSignView.setVisibility(View.GONE);
+void MoonTransitionHolder::fillLayout()
+{
+	Event* e = activeEvent();
+	if (e) {
+		ui->mText0->setStyleSheet("QLabel {color: rgb(" + mDefaultTextColor + ");}");
+		switch (e->mEvtype) {
+		case Event::EV_MOON_MOVE:
+			ui->mText0->setText(e->normalizedRangeString());
+			setColorByEventMode(ui->mText0, e);
+			ui->mPlanet0->setText(mSunSign);
+			ui->mPlanet0->setVisible(false);
+			ui->mPlanet1->setText(mSunSign);
+			ui->mPlanet1->setVisible(false);
+			ui->mTransitionSignView->setVisible(true);
+			break;
+		case Event::EV_ASP_EXACT_MOON:
+			ui->mPlanet0->setText(
+					astroSymbol(TYPE_PLANET, e->mPlanet0)
+					+ " "
+					+ astroSymbol(TYPE_ASPECT, e->getDegree())
+					+ " "
+					+ astroSymbol(TYPE_PLANET, e->mPlanet1));
+			ui->mPlanet1->setVisible(false);
+/*			ui->mText0->setText(e->long2String(e->mDate[0], DataProvider
+					->getInstance()->isInCurrentDay(e->mDate[0]) ? null
+					: Event::mMonthAbbrDayDateFormat, true));*/
+			ui->mPlanet0->setVisible(true);
+			ui->mTransitionSignView->setVisible(false);
+			break;
+		case Event::EV_SIGN_ENTER:
+			ui->mPlanet0->setText(mSunSign);
+			ui->mPlanet0->setVisible(false);
+			ui->mPlanet1->setText(astroSymbol(TYPE_ZODIAC,
+					e->getDegree()));
+			ui->mPlanet1->setVisible(true);
+/*			ui->mText0->setText(e->long2String(e->mDate[0], DataProvider
+					->getInstance()->isInCurrentDay(e->mDate[0]) ? null
+					: Event::mMonthAbbrDayDateFormat, true));*/
+			ui->mTransitionSignView->setVisible(false);
+			break;
 		}
+	}
+	else {
+		ui->mPlanet0->setText("");
+		ui->mPlanet1->setText("");
+		ui->mText0->setText("");
+		ui->mPlanet1->setVisible(false);
+		ui->mTransitionSignView->setVisible(false);
 	}
 }

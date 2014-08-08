@@ -1,23 +1,18 @@
-package com.astromaximum.android.view;
+#include "AspectScrollHolder.h"
+#include "ui_AspectScrollHolder.h"
 
-import android.view.View;
+AspectScrollHolder::AspectScrollHolder()
+: ui(new Ui::AspectScrollHolder)
+{
+	ui->setupUi(this);
+}
 
-import com.astromaximum.android.util.Event;
+AspectScrollHolder::~AspectScrollHolder()
+{
+	delete ui;
+}
 
-public class AspectScrollHolder extends ScrollableHolder {
-
-	public AspectScrollHolder(SummaryItem si) {
-		super(si);
-	}
-
-	@Override
-	protected View makeChildHolder(Event e) {
-		ViewHolder holder = new AspectHolder(new SummaryItem(mSummaryItem.mKey, e));
-		View v = mInflater.inflate(holder.mLayoutId, null);
-		holder.mActiveEvent = e;
-		holder.initLayout(v);
-		holder.fillLayout();
-		v.setTag(holder);
-		return v;
-	}
+void AspectScrollHolder::fillLayout()
+{
+    	
 }

@@ -2,6 +2,8 @@
 #include "DataProvider.h"
 #include "../view/SummaryItem.h"
 #include <QDebug>
+#include <QSize>
+#include <QVariant>
 
 SummaryModel::SummaryModel(DataProvider* provider, QObject* parent)
 : QAbstractListModel(parent) 
@@ -27,13 +29,7 @@ int SummaryModel::rowCount (const QModelIndex& parent) const
 
 QVariant SummaryModel::data (const QModelIndex& index, int role) const
 {
-	if (role != Qt::DisplayRole)
-		return QVariant();
-	QString s("No events");
-	int row = index.row();
-	SummaryItem* si = mProvider->mEventCache[row];
-	if (!si->mEvents.empty()) {
-		s = si->mEvents.first().toString();
-	}
-	return s;
+	if (role == Qt::SizeHintRole)
+		return QSize(100, 20);
+	return QVariant::fromValue((void*)mProvider->mEventCache[index.row()]);
 }

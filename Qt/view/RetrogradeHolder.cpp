@@ -1,32 +1,19 @@
-package com.astromaximum.android.view;
+#include "RetrogradeHolder.h"
+#include "ui_RetrogradeHolder.h"
+#include "../util/Event.h"
 
-import android.view.View;
+RetrogradeHolder::RetrogradeHolder()
+: ui(new Ui::RetrogradeHolder)
+{
+	ui->setupUi(this);
+}
 
-import com.astromaximum.android.R;
-import com.astromaximum.android.util.AstroFont;
-import com.astromaximum.android.util.Event;
+RetrogradeHolder::~RetrogradeHolder()
+{
+	delete ui;
+}
 
-public class RetrogradeHolder extends ViewHolder {
-	public RetrogradeHolder(SummaryItem si) {
-		super(si, R.layout.item_retrograde, LAYOUT_FLAG_PLANET0
-				| LAYOUT_FLAG_TEXT0);
-	}
-
-	@Override
-	public void fillLayout() {
-		Event e = getActiveEvent();
-		if (e != null) {
-			mPlanet0.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET,
-					e.mPlanet0) + AstroFont.getSymbol(AstroFont.TYPE_RETROGRADE, 0));
-			if (mIsSummaryMode) {
-				mText0.setVisibility(View.GONE);
-			} else {
-				mText0.setText(e.long2String(e.mDate[0],
-						Event.mMonthAbbrDayDateFormat, false) + "\n" + 
-						e.long2String(e.mDate[1],
-								Event.mMonthAbbrDayDateFormat, false));
-				setColorByEventMode(mText0, e);
-			}
-		}
-	}
+void RetrogradeHolder::fillLayout()
+{
+    	
 }

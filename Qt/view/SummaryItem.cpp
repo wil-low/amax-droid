@@ -15,7 +15,7 @@ SummaryItem::SummaryItem(int key, const Event& e)
 	mEvents.append(e);
 }
 
-int SummaryItem::getActiveEventPosition(long customTime, long currentTime)
+int SummaryItem::activeEventPosition(long customTime, long currentTime)
 {
 	int index = 0;
 	switch (mKey) {

@@ -13,7 +13,7 @@ public:
 
 	static short swapShort(short var);
 	static int swapInt(int var);
-	static void skip(QIODevice& fn, int offset);
+	static bool skip(QIODevice& fn, int offset);
 	static int readInt(QIODevice& fn);
 	static int readShort(QIODevice& fn);
 	static int readUnsignedByte(QIODevice& fn);

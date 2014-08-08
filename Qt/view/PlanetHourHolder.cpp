@@ -1,27 +1,28 @@
-package com.astromaximum.android.view;
+#include "PlanetHourHolder.h"
+#include "ui_PlanetHourHolder.h"
+#include "../util/Event.h"
 
-import com.astromaximum.android.R;
-import com.astromaximum.android.util.AstroFont;
-import com.astromaximum.android.util.Event;
+PlanetHourHolder::PlanetHourHolder()
+: ui(new Ui::PlanetHourHolder)
+{
+	ui->setupUi(this);
+}
 
-public class PlanetHourHolder extends ViewHolder {
+PlanetHourHolder::~PlanetHourHolder()
+{
+	delete ui;
+}
 
-	public PlanetHourHolder(SummaryItem si) {
-		super(si, R.layout.item_planet_hour, LAYOUT_FLAG_TEXT0
-				| LAYOUT_FLAG_PLANET0);
+void PlanetHourHolder::fillLayout()
+{
+	Event* e = activeEvent();
+	if (e) {
+		ui->mPlanet0->setText(astroSymbol(TYPE_PLANET, e->mPlanet0));
+		ui->mText0->setText(e->normalizedRangeString());
+		setColorByEventMode(ui->mText0, e);
 	}
-
-	@Override
-	public void fillLayout() {
-		Event e = getActiveEvent();
-		if (e != null) {
-			mPlanet0.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET,
-					e.mPlanet0));
-			mText0.setText(e.normalizedRangeString());
-			setColorByEventMode(mText0, e);
-		} else {
-			mPlanet0.setText("");
-			mText0.setText("");
-		}
+	else {
+		ui->mPlanet0->setText("");
+		ui->mText0->setText("");
 	}
 }

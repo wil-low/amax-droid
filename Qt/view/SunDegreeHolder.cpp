@@ -1,32 +1,33 @@
-package com.astromaximum.android.view;
+#include "SunDegreeHolder.h"
+#include "ui_SunDegreeHolder.h"
+#include "../util/Event.h"
+#include <QString>
 
-import com.astromaximum.android.R;
-import com.astromaximum.android.util.AstroFont;
-import com.astromaximum.android.util.Event;
+SunDegreeHolder::SunDegreeHolder()
+: ui(new Ui::SunDegreeHolder)
+{
+	ui->setupUi(this);
+}
 
-public class SunDegreeHolder extends ViewHolder {
+SunDegreeHolder::~SunDegreeHolder()
+{
+	delete ui;
+}
 
-	public SunDegreeHolder(SummaryItem si) {
-		super(si, R.layout.item_sun_degree, LAYOUT_FLAG_TEXT0
-				| LAYOUT_FLAG_ZODIAC | LAYOUT_FLAG_TEXT1 | LAYOUT_FLAG_PLANET0);
+void SunDegreeHolder::fillLayout()
+{
+	Event* e = activeEvent();
+	if (e) {
+		ui->mText0->setText(e->normalizedRangeString());
+		ui->mText1->setText(QString::number(e->getDegree() % 30 + 1) + "\u00b0");
+		ui->mZodiac->setText(astroSymbol(TYPE_ZODIAC, e->getDegree() / 30));
+		ui->mPlanet0->setText(astroSymbol(TYPE_PLANET, e->mPlanet0));
+		setColorByEventMode(ui->mText0, e);
 	}
-
-	@Override
-	public void fillLayout() {
-		Event e = getActiveEvent();
-		if (e != null) {
-			mText0.setText(e.normalizedRangeString());
-			mText1.setText((e.getDegree() % 30 + 1) + "\u00b0");
-			mZodiac.setText(AstroFont.getSymbol(AstroFont.TYPE_ZODIAC,
-					e.getDegree() / 30));
-			mPlanet0.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET,
-					e.mPlanet0));
-			setColorByEventMode(mText0, e);
-		} else {
-			mText0.setText("");
-			mText1.setText("");
-			mZodiac.setText("");
-			mPlanet0.setText("");
-		}
+	else {
+		ui->mText0->setText("");
+		ui->mText1->setText("");
+		ui->mZodiac->setText("");
+		ui->mPlanet0->setText("");
 	}
 }

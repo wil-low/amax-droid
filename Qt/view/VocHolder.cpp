@@ -1,22 +1,26 @@
-package com.astromaximum.android.view;
+#include "VocHolder.h"
+#include "ui_VocHolder.h"
+#include "../util/Event.h"
 
-import com.astromaximum.android.R;
-import com.astromaximum.android.util.Event;
+VocHolder::VocHolder()
+: ui(new Ui::VocHolder)
+{
+	ui->setupUi(this);
+}
 
-public class VocHolder extends ViewHolder {
+VocHolder::~VocHolder()
+{
+	delete ui;
+}
 
-	public VocHolder(SummaryItem si) {
-		super(si, R.layout.item_voc, LAYOUT_FLAG_TEXT0);
+void VocHolder::fillLayout()
+{
+	Event* e = activeEvent();
+	if (e) {
+		ui->mText0->setText(e->normalizedRangeString());
+		setColorByEventMode(ui->mText0, e);
 	}
-
-	@Override
-	public void fillLayout() {
-		Event e = getActiveEvent();
-		if (e != null) {
-			mText0.setText(e.normalizedRangeString());
-			setColorByEventMode(mText0, e);
-		} else {
-			mText0.setText("");
-		}
+	else {
+		ui->mText0->setText("");
 	}
 }

@@ -1,30 +1,30 @@
-package com.astromaximum.android.view;
+#include "MoonSignHolder.h"
+#include "ui_MoonSignHolder.h"
+#include "../util/Event.h"
 
-import com.astromaximum.android.R;
-import com.astromaximum.android.util.AstroFont;
-import com.astromaximum.android.util.Event;
+MoonSignHolder::MoonSignHolder()
+: ui(new Ui::MoonSignHolder)
+{
+	ui->setupUi(this);
+}
 
-public class MoonSignHolder extends ViewHolder {
+MoonSignHolder::~MoonSignHolder()
+{
+	delete ui;
+}
 
-	public MoonSignHolder(SummaryItem si) {
-		super(si, R.layout.item_moon_sign, LAYOUT_FLAG_TEXT0
-				| LAYOUT_FLAG_PLANET0 | LAYOUT_FLAG_ZODIAC);
+void MoonSignHolder::fillLayout()
+{
+	Event* e = activeEvent();
+	if (e) {
+		ui->mText0->setText(e->normalizedRangeString());
+		ui->mZodiac->setText(astroSymbol(TYPE_ZODIAC, e->getDegree()));
+		ui->mPlanet0->setText(astroSymbol(TYPE_PLANET, e->mPlanet0));
+		setColorByEventMode(ui->mText0, e);
 	}
-
-	@Override
-	public void fillLayout() {
-		Event e = getActiveEvent();
-		if (e != null) {
-			mText0.setText(e.normalizedRangeString());
-			mZodiac.setText(AstroFont.getSymbol(AstroFont.TYPE_ZODIAC,
-					e.getDegree()));
-			mPlanet0.setText(AstroFont.getSymbol(AstroFont.TYPE_PLANET,
-					e.mPlanet0));
-			setColorByEventMode(mText0, e);
-		} else {
-			mText0.setText("");
-			mZodiac.setText("");
-			mPlanet0.setText("");
-		}
+	else {
+		ui->mText0->setText("");
+		ui->mZodiac->setText("");
+		ui->mPlanet0->setText("");
 	}
 }

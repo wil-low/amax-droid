@@ -22,9 +22,9 @@ int DataReader::swapInt(int var)
     return res;
 }
 
-void DataReader::skip(QIODevice& fn, int offset)
+bool DataReader::skip(QIODevice& fn, int offset)
 {
-	fn.seek (fn.pos() + offset);
+	return fn.seek (fn.pos() + offset);
 }
 
 int DataReader::readInt(QIODevice& fn)

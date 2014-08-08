@@ -123,6 +123,7 @@ QString Event::formatDate(const QString& dateFormat, long date)
 {
 //	SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
 //	return sdf.format(new Date(date));
+	return "formatDate";
 }
 
 //	class EventDate0Comparator implements Comparator<Event> {

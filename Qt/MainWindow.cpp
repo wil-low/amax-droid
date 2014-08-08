@@ -2,18 +2,20 @@
 #include "ui_MainWindow.h"
 #include "util/DataProvider.h"
 #include "util/SummaryModel.h"
-
+#include "util/SummaryDelegate.h"
 #include "util/AmaxSettings.h"
+#include "view/ViewHolder.h"
 
 MainWindow::MainWindow(QWidget *parent)
 : BaseEventListWindow(parent)
 , ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
-	//ui->lblDate->setFont(QFont("Astronom"));
-	AmaxSettings* settings = SettingsSingleton::instance();
 //	InterpretationProvider.getInstance(this);
+	ViewHolder::initialize();
+	SummaryDelegate* delegate = new SummaryDelegate();
 	ui->lstEvents->setModel(mDataProvider->mSummaryModel);
+	ui->lstEvents->setItemDelegate(delegate);
 }
 
 MainWindow::~MainWindow()
@@ -38,11 +40,6 @@ void MainWindow::updateEventList()
 {
 	mDataProvider->prepareCalculation();
 	mDataProvider->calculateAll();
-
-//	SummaryAdapter adapter = new SummaryAdapter(this,
-//			mDataProvider->mEventCache, mDataProvider->getCustomTime(),
-//			mDataProvider->getCurrentTime());
-//	mEventList.setAdapter(adapter);
 }
 
 void MainWindow::on_tbnNext_clicked()

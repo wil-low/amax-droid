@@ -198,6 +198,7 @@ void DataProvider::calculateAll()
 
 SummaryItem* DataProvider::calculate(int key)
 {
+	qDebug() << "Calculate key " << key;
 	QList<Event> events;
 	switch (key) {
 	case Event::EV_VOC:
@@ -331,6 +332,7 @@ QString DataProvider::makePeriodCaption(int year, int startMonth, int monthCount
 //		text += DateFormat.format("- MMM", calendar);
 //	}
 //	return text;
+	return "makePeriodCaption";
 }
 
 QList<Event> DataProvider::getEventsOnPeriod(int evtype, int planet, bool special, long dayStart, long dayEnd, int value)
@@ -742,101 +744,107 @@ int DataProvider::read(QByteArray* data, int evtype, int planet, bool isCommon,
 	int fnext_date2;
 	int PERIOD = (evtype == Event::EV_ASCAPHETICS) ? 2 * 60 : 24 * 60;
 	int totalCount = 0;
-	try {
-		while (true) {
-			readUnsignedByte(is);
-			int rub = readUnsignedByte(is);
-			while (evtype != rub) {
-				skipOff = readShort(is) - 3;
-				skip(is, skipOff);
-				readUnsignedByte(is);
-				rub = readUnsignedByte(is);
+	while (true) {
+		readUnsignedByte(is);
+		int rub = readUnsignedByte(is);
+		while (evtype != rub) {
+			skipOff = readShort(is) - 3;
+			if (!skip(is, skipOff)) {
+				qDebug() << "skip failed";
+				is.close();
+				return 0;
 			}
-			skipOff = readShort(is);
-			flags = readShort(is);
-			if (planet == readByte(is)) {
-				break;
-			} else {
-				skip(is, skipOff - 6);
+			readUnsignedByte(is);
+			rub = readUnsignedByte(is);
+		}
+		skipOff = readShort(is);
+		flags = readShort(is);
+		if (planet == readByte(is)) {
+			break;
+		} 
+		else {
+			if (!skip(is, skipOff - 6)) {
+				is.close();
+				return 0;
 			}
 		}
-		totalCount = readShort(is);
-		int fcumul_date_b = (flags & EF_CUMUL_DATE_B);
-		int fcumul_date_w = (flags & EF_CUMUL_DATE_W);
-		int fdate = (flags & EF_DATE);
-		int fplanet1 = (flags & EF_PLANET1);
-		int fplanet2 = (flags & EF_PLANET2);
-		int fdegree = (flags & EF_DEGREE);
-		int fshort_degree = (flags & EF_SHORT_DEGREE);
-		fnext_date2 = (flags & EF_NEXT_DATE2);
+	}
+	totalCount = readShort(is);
+	int fcumul_date_b = (flags & EF_CUMUL_DATE_B);
+	int fcumul_date_w = (flags & EF_CUMUL_DATE_W);
+	int fdate = (flags & EF_DATE);
+	int fplanet1 = (flags & EF_PLANET1);
+	int fplanet2 = (flags & EF_PLANET2);
+	int fdegree = (flags & EF_DEGREE);
+	int fshort_degree = (flags & EF_SHORT_DEGREE);
+	fnext_date2 = (flags & EF_NEXT_DATE2);
 
-		char myplanet0 = planet, myplanet1 = -1;
-		int mydgr = 127;
-		long mydate0, mydate1;
-		int cumul;
-		long date = 0;
-		for (int i = 0; i < totalCount; i++) {
-			if (fcumul_date_b != 0) {
-				if (i != 0) {
-					cumul = readByte(is);
-					date += (cumul + PERIOD) * 60;
-				}
-				else {
-					date = readInt(is);
-				}
-			}
-			else if (fcumul_date_w != 0) {
-				if (i != 0) {
-					cumul = readShort(is);
-					date += (cumul + PERIOD) * 60;
-				}
-				else {
-					date = readInt(is);
-				}
+	char myplanet0 = planet, myplanet1 = -1;
+	int mydgr = 127;
+	long mydate0, mydate1;
+	int cumul;
+	long date = 0;
+	for (int i = 0; i < totalCount; i++) {
+		if (fcumul_date_b != 0) {
+			if (i != 0) {
+				cumul = readByte(is);
+				date += (cumul + PERIOD) * 60;
 			}
 			else {
 				date = readInt(is);
 			}
-
-			mydate0 = date;
-			if (fdate != 0)
-				mydate1 = (long) readInt(is) - 1;
-			else
-				mydate1 = mydate0;
-			if (fplanet1 != 0)
-				myplanet0 = readByte(is);
-			if (fplanet2 != 0)
-				myplanet1 = readByte(is);
-			if (fdegree != 0) {
-				if (fshort_degree != 0)
-					mydgr = readUnsignedByte(is);
-				else
-					mydgr = readShort(is);
-			}
-			if (fnext_date2 != 0) {
-				last.mDate[1] = mydate0 - Event::ROUNDING_MSEC;
-				mydate1 = mFinalJD;
-			}
-			if (last.isInPeriod(dayStart, dayEnd, false)) {
-				mEvents[eventsCount] = last;
-				eventsCount++;
+		}
+		else if (fcumul_date_w != 0) {
+			if (i != 0) {
+				cumul = readShort(is);
+				date += (cumul + PERIOD) * 60;
 			}
 			else {
-				if (eventsCount > 0)
-					break;
+				date = readInt(is);
 			}
-			last.mPlanet0 = myplanet0;
-			last.mPlanet1 = myplanet1;
-			last.setFullDegree(mydgr);
-			last.mDate[0] = mydate0;
-			last.mDate[1] = mydate1;
+		}
+		else {
+			date = readInt(is);
+		}
+
+		mydate0 = date;
+		if (fdate != 0)
+			mydate1 = (long) readInt(is) - 1;
+		else
+			mydate1 = mydate0;
+		if (fplanet1 != 0)
+			myplanet0 = readByte(is);
+		if (fplanet2 != 0)
+			myplanet1 = readByte(is);
+		if (fdegree != 0) {
+			if (fshort_degree != 0)
+				mydgr = readUnsignedByte(is);
+			else
+				mydgr = readShort(is);
+		}
+		if (fnext_date2 != 0) {
+			last.mDate[1] = mydate0 - Event::ROUNDING_MSEC;
+			mydate1 = mFinalJD;
 		}
 		if (last.isInPeriod(dayStart, dayEnd, false)) {
 			mEvents[eventsCount] = last;
 			eventsCount++;
 		}
+		else {
+			if (eventsCount > 0)
+				break;
+		}
+		last.mPlanet0 = myplanet0;
+		last.mPlanet1 = myplanet1;
+		last.setFullDegree(mydgr);
+		last.mDate[0] = mydate0;
+		last.mDate[1] = mydate1;
 	}
-	catch (std::exception&){}
+	if (last.isInPeriod(dayStart, dayEnd, false)) {
+		mEvents[eventsCount] = last;
+		eventsCount++;
+	}
+	
 	
 	is.close();
 	
