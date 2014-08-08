@@ -5,6 +5,7 @@
 #include <QApplication>
 #include <QDebug>
 #include <QFontDatabase>
+#include <QDesktopWidget>
 
 int main(int argc, char *argv[])
 {
@@ -19,6 +20,7 @@ int main(int argc, char *argv[])
 	dataProvider->saveState();
 	MainWindow w;
 	w.updateDisplay();
+	w.move(QApplication::desktop()->screen()->rect().center() - w.rect().center());
 	w.show();
 	
 	return a.exec();

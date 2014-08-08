@@ -1,10 +1,12 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
+#include "OptionsDialog.h"
 #include "util/DataProvider.h"
 #include "util/SummaryModel.h"
 #include "util/SummaryDelegate.h"
 #include "util/AmaxSettings.h"
 #include "view/ViewHolder.h"
+#include <QMenuBar>
 
 MainWindow::MainWindow(QWidget *parent)
 : BaseEventListWindow(parent)
@@ -45,4 +47,16 @@ void MainWindow::updateEventList()
 void MainWindow::on_tbnNext_clicked()
 {	
 	nextDate();
+}
+
+void MainWindow::on_actionToday_triggered()
+{
+    mDataProvider->setTodayDate();
+	updateDisplay();
+}
+
+void MainWindow::on_actionOptions_triggered()
+{
+    OptionsDialog d;
+	d.exec();
 }

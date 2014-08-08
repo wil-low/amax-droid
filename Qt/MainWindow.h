@@ -22,6 +22,10 @@ private slots:
 	
 	void on_tbnNext_clicked();
 	
+	void on_actionToday_triggered();
+	
+	void on_actionOptions_triggered();
+	
 private:
 	Ui::MainWindow *ui;
 	QString mTitleDate;

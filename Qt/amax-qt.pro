@@ -41,7 +41,8 @@ SOURCES += main.cpp\
     view/RetrogradeScrollHolder.cpp \
     view/TithiHolder.cpp \
     view/VcHolder.cpp \
-    view/VocHolder.cpp
+    view/VocHolder.cpp \
+    OptionsDialog.cpp
 
 HEADERS  += \
     MainWindow.h \
@@ -73,7 +74,8 @@ HEADERS  += \
     view/RetrogradeScrollHolder.h \
     view/TithiHolder.h \
     view/VcHolder.h \
-    view/VocHolder.h
+    view/VocHolder.h \
+    OptionsDialog.h
 
 FORMS    += \
     MainWindow.ui \
@@ -89,7 +91,8 @@ FORMS    += \
     view/RetrogradeScrollHolder.ui \
     view/TithiHolder.ui \
     view/VcHolder.ui \
-    view/VocHolder.ui
+    view/VocHolder.ui \
+    OptionsDialog.ui
 
 TRANSLATIONS = \
 	Astromaximum_ru.ts
@@ -99,4 +102,9 @@ MOBILITY =
 
 RESOURCES += \
     assets/assets.qrc
+
+ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
+
+OTHER_FILES += \
+    android/AndroidManifest.xml
 

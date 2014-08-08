@@ -23,6 +23,7 @@ void SummaryDelegate::paint(QPainter* painter, const QStyleOptionViewItem& optio
 	ViewHolder* h = ViewHolder::holder(si, true);
 	h->calculateActiveEvent(mDataProvider->getCustomTime(), mDataProvider->getCurrentTime());
 	h->fillLayout();
+	h->setGeometry(options.rect);
 	h->render(painter);
 
 	painter->restore();
