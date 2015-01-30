@@ -8,7 +8,7 @@ if (!defined($ARGV[2])) {
 
 $ENV{CALCULATIONS_DIR} = '/home/willow/prj/amax/amax-calculations';
 
-my $DEST_DIR = '/home/willow/prj/amax-droid-hg/Astromaximum/assets';
+my $DEST_DIR = '/home/willow/prj/amax-droid-hg/Astromaximum/app/assets';
 my $LOCLIST = 'data/demo_loclist.txt';
 my $LOCLIST_CSV = '/tmp/demo_loclist.csv';
 my $TMP_SQL = '/tmp/amax.sql';
