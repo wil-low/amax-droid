@@ -51,12 +51,12 @@ void MainWindow::on_tbnNext_clicked()
 
 void MainWindow::on_actionToday_triggered()
 {
-    mDataProvider->setTodayDate();
+	mDataProvider->setTodayDate();
 	updateDisplay();
 }
 
 void MainWindow::on_actionOptions_triggered()
 {
-    OptionsDialog d;
+	OptionsDialog d;
 	d.exec();
 }
