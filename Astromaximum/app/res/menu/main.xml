@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menu_prev"
+        android:icon="@+drawable/ab_prev"
+        android:showAsAction="ifRoom"
+        android:title="@string/previous_day">
+    </item>
+    <item
+        android:id="@+id/menu_next"
+        android:icon="@+drawable/ab_next"
+        android:showAsAction="ifRoom"
+        android:title="@string/next_day">
+    </item>
+    <item
+        android:id="@+id/menu_today"
+        android:icon="@+drawable/ic_menu_today"
+        android:title="@string/today_title">
+    </item>
+    <item
+        android:id="@+id/menu_pick_date"
+        android:icon="@+drawable/ic_menu_my_calendar"
+        android:title="@string/pick_date">
+    </item>
+    <item
+        android:id="@+id/menu_data"
+        android:icon="@+drawable/ic_menu_mapmode"
+        android:title="@string/data">
+    </item>
+    <item
+        android:id="@+id/menu_options"
+        android:icon="@+drawable/ic_menu_preferences"
+        android:title="@string/prefs_title">
+    </item>
+    <item
+        android:id="@+id/menu_help"
+        android:icon="@+drawable/ic_menu_help"
+        android:title="@string/help_title">
+    </item>
+
+</menu>

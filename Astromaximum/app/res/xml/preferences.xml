@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:amaxdroid="http://schemas.android.com/apk/res/com.astromaximum" >
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="use_volume_buttons"
+        android:persistent="true"
+        android:summary="@string/pref_volume_button_navigation_summary"
+        android:title="@string/pref_volume_button_navigation" >
+    </CheckBoxPreference>
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="use_custom_time"
+        android:persistent="true"
+        android:title="@string/pref_custom_time" >
+    </CheckBoxPreference>
+
+    <com.astromaximum.android.TimePreference
+        android:dialogLayout="@layout/time_preference"
+        android:key="custom_time" />
+
+    <Preference
+        android:key="start_page_layout"
+        android:title="@string/start_page_layout" />
+
+</PreferenceScreen>

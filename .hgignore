@@ -2,8 +2,12 @@ syntax: glob
 *.pyc
 *.class
 .metadata
-Astromaximum/bin
-Astromaximum/gen
+Astromaximum/.gradle
+Astromaximum/local.properties
+Astromaximum/.idea/workspace.xml
+Astromaximum/.idea/libraries
+Astromaximum/.DS_Store
+build
 extra
 Backend/data/20*
 Backend/deploy

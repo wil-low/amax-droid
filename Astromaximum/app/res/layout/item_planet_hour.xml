@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@android:drawable/list_selector_background"
+    android:minHeight="@dimen/list_item_height"
+    android:orientation="horizontal" >
+
+    <TextView
+        android:id="@+id/EventListItemType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center"
+        android:paddingLeft="@dimen/list_item_side_padding"
+        android:paddingRight="@dimen/list_item_side_padding"
+        android:text="@+string/hour_of"
+        android:textSize="@dimen/list_item_text_size" />
+
+    <com.astromaximum.android.view.AstroTextView
+        android:id="@+id/EventListItemPlanet0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center"
+        android:layout_toRightOf="@id/EventListItemType"
+        android:paddingLeft="@dimen/list_item_side_padding"
+        android:paddingRight="@dimen/list_item_side_padding"
+        android:paddingTop="@dimen/astro_item_top_padding"
+        android:textSize="@dimen/astro_item_text_size" />
+
+    <TextView
+        android:id="@+id/EventListItemText0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center"
+        android:gravity="right"
+        android:paddingRight="@dimen/date_padding_right"
+        android:text="Text0"
+        android:textSize="@dimen/list_item_text_size" />
+
+</RelativeLayout>

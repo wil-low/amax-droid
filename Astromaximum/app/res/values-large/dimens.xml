@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="list_item_height">80dp</dimen>
+    <dimen name="date_padding_right">10dp</dimen>
+    <dimen name="show_list_padding">8dp</dimen>
+    <dimen name="list_item_text_size">36sp</dimen>
+    <dimen name="astro_item_text_size">44sp</dimen>
+    <dimen name="astro_item_top_padding">6dp</dimen>
+    <dimen name="list_item_side_padding">8dp</dimen>
+    <dimen name="event_list_item_right_padding">64dp</dimen>
+        
+    <dimen name="interp_text_size">24sp</dimen>
+    <dimen name="interp_margin">12dp</dimen>
+    
+</resources>

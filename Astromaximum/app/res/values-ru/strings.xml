@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="pref_current_city">Текущий город</string>
+    <string name="pref_download_more">Скачать города</string>
+    <string name="data">Данные</string>
+    <string name="prefs_title">Настройки</string>
+    <string name="today_title">Сегодня</string>
+    <string name="help_title">Помощь</string>
+    <string name="pref_show_all_texts">Показывать все тексты</string>
+    <string name="app_name">Astromaximum</string>
+    <string name="pick_date">Выбрать дату</string>
+    <string name="title_date_format">EEE d MMM yyyy</string>
+    <string name="month_abbr_day_date_format">d MMM</string>
+    <string name="interpretation_dir">ru</string>
+    <string name="hour_of">Час</string>
+    <string name="day">день</string>
+    <string name="tithi">Титхи</string>
+    <string name="time_uses_24h">Y</string>
+    <string name="norm_range_whole_day">весь день</string>
+    <string name="norm_range_arrow">⇨</string>
+    <string name="interp_share">Поделиться</string>
+    <string name="avail_periods">Доступные периоды:</string>
+    <string name="data_add">Добавить</string>
+    <string name="no_period">Нет данных на этот период</string>
+    <string name="no_location">Нет данных города на этот период</string>
+    <string name="buy_period">Купить \""%1$04d-%2$02d\"</string>
+    <string name="download_location">Загрузить \"%1$s\"</string>
+    <string name="downloading">Загружается %1$s&#8230;</string>
+    <string name="downloaded">Загружено: %1$s</string>
+    
+    <string name="lda_countries_title">Страны - %1$s</string>
+    <string name="lda_states_title">Регионы - %1$s</string>
+    <string name="lda_cities_title">Города - %1$s</string>
+
+    <string name="all_states">&lt;Все регионы&gt;</string>
+    <string name="make_current">Сделать город текущим и вернуться на стартовый экран?</string>
+    
+    <string name="si_key_voc">Луна \"без курса\"</string>
+    <string name="si_key_vc">\"Сожженный путь\"</string>
+    <string name="si_key_sun_degree">Градус Солнца</string>
+    <string name="si_key_moon_sign">Знак Луны</string>
+    <string name="si_key_planet_hour">Планетарный час</string>
+    <string name="si_key_moon_move">Движение Луны</string>
+    <string name="si_key_tithi">Титхи</string>
+    <string name="si_aspect">Аспект</string>
+    <string name="si_retrograde">Ретроградное движение</string>
+    
+    <string name="interp_key_degree_pass">Планета в градусе</string>
+    <string name="interp_key_sign_enter">Планета в знаке</string>
+    <string name="interp_key_moon_aspect">Аспект Луны</string>
+    <string name="inter_key_aspect">Аспект</string>
+    <string name="pref_custom_time">Произвольное время</string>
+    <string name="use_custom_time">Выделить события на</string>
+    <string name="use_current_time">Выделить события на текущее время</string>
+    <string name="pref_volume_button_navigation">Клавиши громкости</string>
+    <string name="pref_volume_button_navigation_summary">Листать клавишами громкости</string>
+    
+    <string name="no_aspects">Нет аспектов</string>
+    <string name="no_retrograde">Нет ретроградных планет</string>
+    <string name="no_vc">Нет VC</string>
+    <string name="no_voc">Нет VOC</string>
+    <string name="no_moon_sign">Нет знака Луны</string>
+    <string name="no_moon_move">Нет движения Луны</string>
+    <string name="no_planet_hours">Нет планетарных часов</string>
+    <string name="no_tithi">Нет титхи</string>
+    <string name="no_sun_degree">Нет градуса Солнца</string>
+    
+    <string name="previous_day">Предыдущий день</string>
+    <string name="next_day">Следующий день</string>
+    
+    <string-array name="planets">
+        <item>Солнце</item>
+        <item>Луна</item>
+        <item>Меркурий</item>
+        <item>Венера</item>
+        <item>Марс</item>
+        <item>Юпитер</item>
+        <item>Сатурн</item>
+        <item>Уран</item>
+        <item>Нептун</item>
+        <item>Плутон</item>
+    </string-array>
+
+    <string-array name="planets_retrograde">
+        <item>NA</item>
+        <item>NA</item>
+        <item>Ретроградный Меркурий</item>
+        <item>Ретроградная Венера</item>
+        <item>Ретроградный Марс</item>
+        <item>Ретроградный Юпитер</item>
+        <item>Ретроградный Сатурн</item>
+        <item>Ретроградный Уран</item>
+        <item>Ретроградный Нептун</item>
+        <item>Ретроградный Плутон</item>
+    </string-array>
+    
+    <string name="fmt_planet_in_degree">%1$s в %2$d\u00b0 %3$s</string>
+
+    <string-array name="constell_genitive">
+        <item>Овна</item>
+        <item>Тельца</item>
+        <item>Близнецов</item>
+        <item>Рака</item>
+        <item>Льва</item>
+        <item>Девы</item>
+        <item>Весов</item>
+        <item>Скорпиона</item>
+        <item>Стрельца</item>
+        <item>Козерога</item>
+        <item>Водолея</item>
+        <item>Рыб</item>
+    </string-array>
+
+    <string name="fmt_planet_in_sign">%1$s в %2$s</string>
+
+    <string-array name="constell_locative">
+        <item>Овне</item>
+        <item>Тельце</item>
+        <item>Близнецах</item>
+        <item>Раке</item>
+        <item>Льве</item>
+        <item>Деве</item>
+        <item>Весах</item>
+        <item>Скорпионе</item>
+        <item>Стрельце</item>
+        <item>Козероге</item>
+        <item>Водолее</item>
+        <item>Рыбах</item>
+    </string-array>
+    <string-array name="planets_genitive">
+        <item>Солнца</item>
+        <item>Луны</item>
+        <item>Меркурия</item>
+        <item>Венеры</item>
+        <item>Марса</item>
+        <item>Юпитера</item>
+        <item>Сатурна</item>
+        <item>Урана</item>
+        <item>Нептуна</item>
+        <item>Плутона</item>
+    </string-array>
+
+    <string name="fmt_hour_of_planet">Час %1$s</string>
+
+    <string-array name="aspect">
+        <item>Соединение</item>
+        <item>Оппозиция</item>
+        <item>Тригон</item>
+        <item>Квадратура</item>
+        <item>Секстиль</item>
+        <item>Полуквадрат</item>
+    </string-array>
+
+    <string name="start_page_layout">Вид стартового экрана</string>
+
+    <!-- Keep in synch with DataProvider.START_PAGE_ITEM_SEQ -->
+    <string-array name="startpage_items">
+        <item>Луна без курса (VOC)</item>
+        <item>Движение Луны</item>
+        <item>Планетарный час</item>
+        <item>Знак Луны</item>
+        <item>Ретроградные планеты</item>
+        <item>Аспекты</item>
+        <item>Луна на сожженном пути (VC)</item>
+        <item>Градус Солнца</item>
+        <item>Титхи</item>
+    </string-array>
+	<string name="retry">Повторить</string> <!-- Retry download button -->
+	
+    <string name="city_delete">Удалить город</string>
+    <string name="city_info">Информация</string>
+	
+</resources>

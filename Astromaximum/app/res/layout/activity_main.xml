@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/FrameLayout1"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <ListView
+        android:id="@+id/event_list_view"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:minHeight="@dimen/list_item_height" />
+
+    <RelativeLayout
+        android:id="@+id/NoPeriodLayout"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:visibility="invisible" >
+
+        <Button
+            android:id="@+id/btnMissingData"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="@+string/buy_period" />
+
+        <TextView
+            android:id="@+id/txtMissingData"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/btnMissingData"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp" />
+
+    </RelativeLayout>
+
+</FrameLayout>
