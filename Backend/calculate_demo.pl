@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 if (!defined($ARGV[2])) {
-	die "Usage: calculate_demo.pl <year> <month 0-11> <month_count>";
+	die "Usage: calculate_demo.pl <year> <month 0-11> <month_count> [loclist file]";
 }
 
 $ENV{CALCULATIONS_DIR} = '/home/willow/prj/amax/amax-calculations';
@@ -17,7 +17,10 @@ my $TMP_DATABASE = '/tmp/amax.db';
 my $DB_PATH = "$DEST_DIR/databases";
 my $ZIPPED_DB = "$DB_PATH/amax.zip";
 
-my ($YEAR, $MONTH, $MONTH_COUNT) = @ARGV;
+my ($YEAR, $MONTH, $MONTH_COUNT, $loclist) = @ARGV;
+if (defined ($loclist)) {
+    $LOCLIST = $loclist;
+}
 my $key = find_key($YEAR, $MONTH, $MONTH_COUNT);
 
 make_common ();

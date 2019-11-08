@@ -33,7 +33,7 @@
     <string name="lda_states_title">States - %1$s</string>
     <string name="lda_cities_title">Cities - %1$s</string>
     
-    <string name="all_states">[All states]</string>
+    <string name="all_states">&lt;All states&gt;</string>
     <string name="make_current">Make the city current and go back to start screen?</string>
     
     <string name="si_key_voc">Moon \"Void of Course\"</string>
@@ -95,7 +95,7 @@
         <item>Retrograde Pluto</item>
     </string-array>
     
-    <string name="fmt_planet_in_degree">%1$s in %2$d\u00b0 of %3$s</string>
+    <string name="fmt_planet_in_degree">%1$s in %2$d\\u00b0 of %3$s</string>
 
     <string-array name="constell_genitive">
         <item>Aries</item>

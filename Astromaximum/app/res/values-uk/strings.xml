@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="pref_current_city">Поточне місто</string>
+    <string name="pref_download_more">Завантажити міста</string>
+    <string name="data">Дані</string>
+    <string name="prefs_title">Налаштування</string>
+    <string name="today_title">Сьогодні</string>
+    <string name="help_title">Допомога</string>
+    <string name="pref_show_all_texts">Показувати всі тексти</string>
+    <string name="app_name">Astromaximum</string>
+    <string name="pick_date">Вибрати дату</string>
+    <string name="title_date_format">EEE d MMM yyyy</string>
+    <string name="month_abbr_day_date_format">d MMM</string>
+    <string name="interpretation_dir">ru</string>
+    <string name="hour_of">Година</string>
+    <string name="day">день</string>
+    <string name="tithi">Тітхи</string>
+    <string name="time_uses_24h">Y</string>
+    <string name="norm_range_whole_day">увесь день</string>
+    <string name="norm_range_arrow">⇨</string>
+    <string name="interp_share">Поділитися</string>
+    <string name="avail_periods">Доступні періоди:</string>
+    <string name="data_add">Додати</string>
+    <string name="no_period">Немає даних для цього періоду</string>
+    <string name="no_location">Немає даних міста для цього періоду</string>
+    <string name="buy_period">Купити %1$04d-%2$02d</string>
+    <string name="download_location">Завантажити %1$s</string>
+    <string name="downloading">Завантажується %1$s&#8230;</string>
+    <string name="downloaded">Завантажено: %1$s</string>
+    
+    <string name="lda_countries_title">Країни - %1$s</string>
+    <string name="lda_states_title">Регіони - %1$s</string>
+    <string name="lda_cities_title">Міста - %1$s</string>
+
+    <string name="all_states">&lt;Усі регіони&gt;</string>
+    <string name="make_current">Зробити місто поточним та повернутися на стартовий екран?</string>
+    
+    <string name="si_key_voc">Місяць \"без курсу\"</string>
+    <string name="si_key_vc">\"Спалений шлях\"</string>
+    <string name="si_key_sun_degree">Градус Сонця</string>
+    <string name="si_key_moon_sign">Знак Місяця</string>
+    <string name="si_key_planet_hour">Планетарна година</string>
+    <string name="si_key_moon_move">Рух Місяця</string>
+    <string name="si_key_tithi">Тітхи</string>
+    <string name="si_aspect">Аспект</string>
+    <string name="si_retrograde">Ретроградний рух</string>
+    
+    <string name="interp_key_degree_pass">Планета в градусі</string>
+    <string name="interp_key_sign_enter">Планета в знаку</string>
+    <string name="interp_key_moon_aspect">Аспект Місяця</string>
+    <string name="inter_key_aspect">Аспект</string>
+    <string name="pref_custom_time">Довільний час</string>
+    <string name="use_custom_time">Виокремити події на</string>
+    <string name="use_current_time">Виокремити події на поточний час</string>
+    <string name="pref_volume_button_navigation">Кнопки гучності</string>
+    <string name="pref_volume_button_navigation_summary">Гортати кнопками гучності</string>
+    
+    <string name="no_aspects">Немає аспектів</string>
+    <string name="no_retrograde">Немає ретроградних планет</string>
+    <string name="no_vc">Немає VC</string>
+    <string name="no_voc">Немає VOC</string>
+    <string name="no_moon_sign">Немає знаку Місяця</string>
+    <string name="no_moon_move">Немає руху Місяця</string>
+    <string name="no_planet_hours">Немає планетарних годин</string>
+    <string name="no_tithi">Немає тітхи</string>
+    <string name="no_sun_degree">Немає градусу Сонця</string>
+    
+    <string name="previous_day">Попередній день</string>
+    <string name="next_day">Наступний день</string>
+    
+    <string-array name="planets">
+        <item>Сонце</item>
+        <item>Місяць</item>
+        <item>Меркурій</item>
+        <item>Венера</item>
+        <item>Марс</item>
+        <item>Юпітер</item>
+        <item>Сатурн</item>
+        <item>Уран</item>
+        <item>Нептун</item>
+        <item>Плутон</item>
+    </string-array>
+
+    <string-array name="planets_retrograde">
+        <item>NA</item>
+        <item>NA</item>
+        <item>Ретроградний Меркурій</item>
+        <item>Ретроградна Венера</item>
+        <item>Ретроградний Марс</item>
+        <item>Ретроградний Юпітер</item>
+        <item>Ретроградний Сатурн</item>
+        <item>Ретроградний Уран</item>
+        <item>Ретроградний Нептун</item>
+        <item>Ретроградний Плутон</item>
+    </string-array>
+    
+    <string name="fmt_planet_in_degree">%1$s у %2$d\u00b0 %3$s</string>
+
+    <string-array name="constell_genitive">
+        <item>Овна</item>
+        <item>Тельця</item>
+        <item>Близнят</item>
+        <item>Рака</item>
+        <item>Лева</item>
+        <item>Діви</item>
+        <item>Терезів</item>
+        <item>Скорпіона</item>
+        <item>Стрільця</item>
+        <item>Козоріга</item>
+        <item>Водолія</item>
+        <item>Риб</item>
+    </string-array>
+
+    <string name="fmt_planet_in_sign">%1$s у %2$s</string>
+
+    <string-array name="constell_locative">
+        <item>Овні</item>
+        <item>Тельці</item>
+        <item>Близнятах</item>
+        <item>Раці</item>
+        <item>Леві</item>
+        <item>Діві</item>
+        <item>Терезах</item>
+        <item>Скорпіоні</item>
+        <item>Стрільці</item>
+        <item>Козорозі</item>
+        <item>Водолії</item>
+        <item>Рибах</item>
+    </string-array>
+    <string-array name="planets_genitive">
+        <item>Солнця</item>
+        <item>Місяця</item>
+        <item>Меркурія</item>
+        <item>Венери</item>
+        <item>Марса</item>
+        <item>Юпітера</item>
+        <item>Сатурна</item>
+        <item>Урана</item>
+        <item>Нептуна</item>
+        <item>Плутона</item>
+    </string-array>
+
+    <string name="fmt_hour_of_planet">Година %1$s</string>
+
+    <string-array name="aspect">
+        <item>Сполучення</item>
+        <item>Опозиція</item>
+        <item>Тригон</item>
+        <item>Квадратура</item>
+        <item>Секстиль</item>
+        <item>Напівквадрат</item>
+    </string-array>
+
+    <string name="start_page_layout">Вигляд стартового екрану</string>
+
+    <!-- Keep in synch with DataProvider.START_PAGE_ITEM_SEQ -->
+    <string-array name="startpage_items">
+        <item>Місяць без курсу (VOC)</item>
+        <item>Рух Місяця</item>
+        <item>Планетарна година</item>
+        <item>Знак Місяця</item>
+        <item>Ретроградні планети</item>
+        <item>Аспекти</item>
+        <item>Місяць на спаленому шляху (VC)</item>
+        <item>Градус Сонця</item>
+        <item>Тітхи</item>
+    </string-array>
+	<string name="retry">Спробувати ще</string> <!-- Retry download button -->
+	
+    <string name="city_delete">Видалити місто</string>
+    <string name="city_info">Інформація</string>
+    <string name="fmt_aspect">%1$s %2$s-%3$s</string>
+
+</resources>
