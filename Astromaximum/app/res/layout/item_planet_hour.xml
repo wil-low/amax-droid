@@ -16,7 +16,7 @@
         android:layout_gravity="center"
         android:paddingLeft="@dimen/list_item_side_padding"
         android:paddingRight="@dimen/list_item_side_padding"
-        android:text="@+string/hour_of"
+        android:text="@string/hour_of"
         android:textSize="@dimen/list_item_text_size" />
 
     <com.astromaximum.android.view.AstroTextView

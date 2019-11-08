@@ -2,70 +2,25 @@
 <project version="4">
   <component name="AndroidLayouts">
     <shared>
-      <config />
+      <config>
+        <target>android-14</target>
+      </config>
     </shared>
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d8d0c70b-5528-4973-abee-e493cbad65ea" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars____home_willow_prj_amax_droid_migration_Astromaximum_actionbarsherlock_libs_android_support_v4_jar_unspecified_jar.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars____home_willow_prj_amax_droid_migration_Astromaximum_app_libs_android_query_0_24_3_jar_unspecified_jar.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars____home_willow_prj_amax_droid_migration_Astromaximum_app_libs_android_sqlite_asset_helper_jar_unspecified_jar.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars____home_willow_prj_amax_droid_migration_Astromaximum_calendarview_libs_android_support_v4_jar_unspecified_jar.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars____home_willow_prj_amax_droid_migration_Astromaximum_datepicker_libs_android_support_v4_jar_unspecified_jar.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars____home_willow_prj_amax_droid_migration_Astromaximum_dragsortlistview_libs_android_support_v4_jar_unspecified_jar.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars____home_willow_prj_amax_droid_migration_Astromaximum_indexablelistview_libs_android_support_v4_jar_unspecified_jar.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars____home_willow_prj_amax_droid_migration_Astromaximum_numberpicker_libs_android_support_v4_jar_unspecified_jar.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars____home_willow_prj_amax_droid_migration_Astromaximum_numberpicker_libs_nineoldandroids_2_3_0_jar_unspecified_jar.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars____home_willow_prj_amax_droid_migration_Astromaximum_timepicker_libs_android_support_v4_jar_unspecified_jar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/scopes/scope_settings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AmaxDatafile/AmaxDatafile.iml" beforeDir="false" afterPath="$PROJECT_DIR$/AmaxDatafile/AmaxDatafile.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AmaxDatafile/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/AmaxDatafile/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AmaxDatafile/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/AmaxDatafile/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Astromaximum.iml" beforeDir="false" afterPath="$PROJECT_DIR$/Astromaximum.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/actionbarsherlock/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/actionbarsherlock/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/actionbarsherlock/actionbarsherlock.iml" beforeDir="false" afterPath="$PROJECT_DIR$/actionbarsherlock/actionbarsherlock.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/actionbarsherlock/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/actionbarsherlock/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/actionbarsherlock/res/values/abs__attrs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/actionbarsherlock/res/values/abs__attrs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/AndroidManifest.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/app/app.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/assets/common.dat" beforeDir="false" afterPath="$PROJECT_DIR$/app/assets/common.dat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/assets/locations.dat" beforeDir="false" afterPath="$PROJECT_DIR$/app/assets/locations.dat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/res/menu/data.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/res/menu/data.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/res/menu/event_list.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/res/menu/event_list.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/res/menu/interpreter.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/res/menu/interpreter.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/res/layout/activity_event_list.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/res/layout/activity_event_list.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/res/layout/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/res/layout/activity_main.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/res/layout/item_planet_hour.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/res/layout/item_planet_hour.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/res/layout/item_tithi.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/res/layout/item_tithi.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/res/menu/main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/res/menu/main.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/res/values/items.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/res/values/items.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/res/xml/preferences.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/res/xml/preferences.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/calendarview/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/calendarview/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/calendarview/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/calendarview/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/calendarview/calendarview.iml" beforeDir="false" afterPath="$PROJECT_DIR$/calendarview/calendarview.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/datepicker/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/datepicker/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/datepicker/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/datepicker/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/res/values-ru/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/res/values-ru/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/res/values/strings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/datepicker/datepicker.iml" beforeDir="false" afterPath="$PROJECT_DIR$/datepicker/datepicker.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dragsortlistview/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/dragsortlistview/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dragsortlistview/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/dragsortlistview/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dragsortlistview/dragsortlistview.iml" beforeDir="false" afterPath="$PROJECT_DIR$/dragsortlistview/dragsortlistview.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/indexablelistview/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/indexablelistview/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/indexablelistview/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/indexablelistview/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/indexablelistview/indexablelistview.iml" beforeDir="false" afterPath="$PROJECT_DIR$/indexablelistview/indexablelistview.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/numberpicker/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/numberpicker/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/numberpicker/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/numberpicker/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/numberpicker/numberpicker.iml" beforeDir="false" afterPath="$PROJECT_DIR$/numberpicker/numberpicker.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/timepicker/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/timepicker/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/timepicker/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/timepicker/build.gradle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/timepicker/timepicker.iml" beforeDir="false" afterPath="$PROJECT_DIR$/timepicker/timepicker.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/calculate_demo.pl" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/calculate_demo.pl" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -76,7 +31,7 @@
   <component name="DefaultGradleProjectSettings">
     <option name="isMigrated" value="true" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="4_WVGA_Nexus_S_API_15" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="a5cc1fb6" />
   <component name="ExternalProjectsManager">
     <system id="GRADLE">
       <state>
@@ -97,48 +52,57 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/build.gradle">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="495">
-              <caret line="33" selection-start-line="33" selection-end-line="33" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/com/astromaximum/android/MainActivity.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="14" column="48" selection-start-line="14" selection-start-column="48" selection-end-line="14" selection-end-column="48" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/com/astromaximum/android/BaseEventListActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="20" column="59" selection-start-line="20" selection-start-column="43" selection-end-line="20" selection-end-column="59" />
+            <state relative-caret-position="255">
+              <caret line="33" lean-forward="true" selection-start-line="33" selection-end-line="33" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/actionbarsherlock/src/com/actionbarsherlock/app/SherlockActivity.java">
+        <entry file="file://$PROJECT_DIR$/app/res/layout/item_planet_hour.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1740">
-              <caret line="134" column="24" selection-start-line="134" selection-start-column="24" selection-end-line="134" selection-end-column="24" />
+            <state relative-caret-position="255">
+              <caret line="17" column="40" selection-start-line="17" selection-start-column="40" selection-end-line="17" selection-end-column="40" />
               <folding>
-                <element signature="e#4461#4462#0" expanded="true" />
-                <element signature="e#4515#4516#0" expanded="true" />
+                <element signature="e#321#346#0" expanded="true" />
+                <element signature="e#693#724#0" expanded="true" />
+                <element signature="e#807#824#0" expanded="true" />
+                <element signature="e#851#879#0" expanded="true" />
+                <element signature="e#1286#1317#0" expanded="true" />
+                <element signature="e#1347#1378#0" expanded="true" />
+                <element signature="e#1406#1437#0" expanded="true" />
+                <element signature="e#1463#1492#0" expanded="true" />
+                <element signature="e#1838#1865#0" expanded="true" />
+                <element signature="e#1920#1948#0" expanded="true" />
               </folding>
             </state>
           </provider>
+          <provider editor-type-id="android-designer2" />
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/gradle.properties">
-          <provider selected="true" editor-type-id="text-editor" />
+        <entry file="file://$PROJECT_DIR$/app/res/layout/activity_city_select.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="285">
+              <caret line="19" column="13" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
+              <folding>
+                <element signature="e#372#397#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+          <provider editor-type-id="android-designer2" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/res/menu/main.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="660">
+              <caret line="44" column="11" lean-forward="true" selection-start-line="44" selection-start-column="11" selection-end-line="44" selection-end-column="11" />
+            </state>
+          </provider>
+          <provider editor-type-id="android-designer2" />
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
@@ -191,6 +155,8 @@
       <find>@+</find>
       <find>icon=&quot;@+</find>
       <find>hour</find>
+      <find>hour_of</find>
+      <find>+string</find>
     </findStrings>
     <replaceStrings>
       <replace>icon=&quot;@</replace>
@@ -215,10 +181,14 @@
         <option value="$PROJECT_DIR$/app/res/menu/event_list.xml" />
         <option value="$PROJECT_DIR$/app/res/menu/data.xml" />
         <option value="$PROJECT_DIR$/app/res/menu/interpreter.xml" />
-        <option value="$PROJECT_DIR$/app/res/menu/main.xml" />
         <option value="$PROJECT_DIR$/app/res/xml/preferences.xml" />
         <option value="$PROJECT_DIR$/actionbarsherlock/build.gradle" />
         <option value="$PROJECT_DIR$/app/build.gradle" />
+        <option value="$PROJECT_DIR$/app/res/layout/item_planet_hour.xml" />
+        <option value="$PROJECT_DIR$/app/res/layout/activity_main.xml" />
+        <option value="$PROJECT_DIR$/app/res/layout/activity_event_list.xml" />
+        <option value="$PROJECT_DIR$/app/res/layout/item_tithi.xml" />
+        <option value="$PROJECT_DIR$/app/res/menu/main.xml" />
       </list>
     </option>
   </component>
@@ -234,9 +204,39 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane" />
       <pane id="AndroidView">
         <subPane>
           <expand>
+            <path>
+              <item name="Astromaximum" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+            </path>
+            <path>
+              <item name="Astromaximum" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="res" type="d4f16f75:AndroidResFolderNode" />
+            </path>
+            <path>
+              <item name="Astromaximum" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="res" type="d4f16f75:AndroidResFolderNode" />
+              <item name="menu" type="ddeffd01:AndroidResFolderTypeNode" />
+            </path>
+            <path>
+              <item name="Astromaximum" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="res" type="d4f16f75:AndroidResFolderNode" />
+              <item name="values" type="ddeffd01:AndroidResFolderTypeNode" />
+            </path>
+            <path>
+              <item name="Astromaximum" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="res" type="d4f16f75:AndroidResFolderNode" />
+              <item name="values" type="ddeffd01:AndroidResFolderTypeNode" />
+              <item name="strings" type="c431d0b8:AndroidResGroupNode" />
+            </path>
             <path>
               <item name="Astromaximum" type="1abcf292:AndroidViewProjectNode" />
               <item name="Gradle Scripts" type="ae0cef3a:AndroidBuildScriptsGroupNode" />
@@ -245,22 +245,22 @@
           <select />
         </subPane>
       </pane>
-      <pane id="ProjectPane" />
       <pane id="PackagesPane" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="ExportApk.ApkPath" value="$PROJECT_DIR$/app" />
+    <property name="DeviceAndSnapshotComboBoxAction.selectedDevice" value="a5cc1fb6" />
+    <property name="DeviceAndSnapshotComboBoxAction.selectionTime" value="2019-11-08T04:59:27.527Z" />
+    <property name="ExportApk.ApkPath" value="$PROJECT_DIR$/.." />
     <property name="ExportApk.BuildVariants" value="release" />
-    <property name="ExportApk.SignV2" value="true" />
+    <property name="ExportApk.SignV1" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="android.sdk.path" value="$USER_HOME$/Android/Sdk" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../swaxis.keystore" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../release/Astromaximum2019.apk" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.17" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="gradle.compiler" />
+    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.Java" />
   </component>
   <component name="PsdUISettings">
     <option name="MODULE_TAB" value="Default Config" />
@@ -354,7 +354,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-6" y="25" width="1932" height="1061" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Captures" order="0" side_tool="true" weight="0.25" />
       <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.3335112" />
@@ -368,19 +367,21 @@
       <window_info anchor="bottom" id="Version Control" order="0" />
       <window_info anchor="bottom" id="TODO" order="1" />
       <window_info anchor="bottom" id="Terminal" order="2" sideWeight="0.4994664" weight="0.32978722" />
-      <window_info anchor="bottom" id="Event Log" order="3" sideWeight="0.30789754" side_tool="true" visible="true" weight="0.32978722" />
-      <window_info anchor="bottom" id="Build" order="4" sideWeight="0.69210243" visible="true" weight="0.32978722" />
-      <window_info anchor="bottom" id="Run" order="5" sideWeight="0.49893278" weight="0.32978722" />
-      <window_info anchor="bottom" id="Logcat" order="6" />
-      <window_info anchor="bottom" id="Android Profiler" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Event Log" order="3" sideWeight="0.50053364" side_tool="true" visible="true" weight="0.32978722" />
+      <window_info anchor="bottom" id="Build" order="4" sideWeight="0.3665955" weight="0.32978722" />
+      <window_info anchor="bottom" id="Run" order="5" sideWeight="0.49839914" weight="0.32978722" />
+      <window_info active="true" anchor="bottom" id="Logcat" order="6" sideWeight="0.4994664" visible="true" weight="0.32978722" />
+      <window_info anchor="bottom" id="Android Profiler" order="7" />
       <window_info anchor="bottom" id="Debug" order="8" sideWeight="0.4994664" weight="0.32978722" />
       <window_info anchor="bottom" id="Find" order="9" weight="0.32978722" />
+      <window_info anchor="right" id="StringPreview" />
+      <window_info anchor="right" id="Assistant" weight="0.32977587" />
       <window_info anchor="right" id="Capture Analysis" order="0" />
       <window_info anchor="right" id="Gradle" order="1" weight="0.32977587" />
       <window_info anchor="right" id="Theme Preview" order="2" />
       <window_info anchor="right" id="Palette&#9;" order="3" />
       <window_info anchor="right" id="Device File Explorer" order="4" side_tool="true" />
-      <window_info anchor="right" id="Preview" order="5" weight="0.32977587" />
+      <window_info anchor="right" id="Preview" order="5" visible="true" weight="0.32977587" />
     </layout>
   </component>
   <component name="editorHistoryManager">
@@ -419,28 +420,28 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/res/menu/data.xml">
-      <provider editor-type-id="android-designer2" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
           <caret line="5" column="23" selection-start-line="5" selection-start-column="23" selection-end-line="5" selection-end-column="23" />
         </state>
       </provider>
+      <provider editor-type-id="android-designer2" />
     </entry>
     <entry file="file://$PROJECT_DIR$/app/res/menu/event_list.xml">
-      <provider editor-type-id="android-designer2" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
           <caret line="7" column="22" selection-start-line="7" selection-start-column="22" selection-end-line="7" selection-end-column="22" />
         </state>
       </provider>
+      <provider editor-type-id="android-designer2" />
     </entry>
     <entry file="file://$PROJECT_DIR$/app/res/menu/interpreter.xml">
-      <provider editor-type-id="android-designer2" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
           <caret line="5" column="23" selection-start-line="5" selection-start-column="23" selection-end-line="5" selection-end-column="23" />
         </state>
       </provider>
+      <provider editor-type-id="android-designer2" />
     </entry>
     <entry file="file://$PROJECT_DIR$/dragsortlistview/src/com/mobeta/android/dslv/DragSortCursorAdapter.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -466,21 +467,13 @@
     <entry file="file://$PROJECT_DIR$/app/release/app-release.apk">
       <provider selected="true" editor-type-id="apk-viewer" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/res/menu/main.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="1" selection-start-line="1" selection-end-line="1" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/res/xml/preferences.xml">
-      <provider editor-type-id="android-designer2" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
           <caret line="2" column="60" selection-start-line="2" selection-start-column="60" selection-end-line="2" selection-end-column="60" />
         </state>
       </provider>
+      <provider editor-type-id="android-designer2" />
     </entry>
     <entry file="file://$PROJECT_DIR$/app/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
@@ -542,12 +535,57 @@
         </state>
       </provider>
     </entry>
+    <entry file="android-dummy:///home/willow/prj/amax-droid-migration/Astromaximum/app/Translations Editor">
+      <provider selected="true" editor-type-id="string-resource-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/com/astromaximum/android/BaseEventListActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="20" column="59" selection-start-line="20" selection-start-column="43" selection-end-line="20" selection-end-column="59" />
+        <state relative-caret-position="255">
+          <caret line="33" lean-forward="true" selection-start-line="33" selection-end-line="33" />
         </state>
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/res/layout/item_planet_hour.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="17" column="40" selection-start-line="17" selection-start-column="40" selection-end-line="17" selection-end-column="40" />
+          <folding>
+            <element signature="e#321#346#0" expanded="true" />
+            <element signature="e#693#724#0" expanded="true" />
+            <element signature="e#807#824#0" expanded="true" />
+            <element signature="e#851#879#0" expanded="true" />
+            <element signature="e#1286#1317#0" expanded="true" />
+            <element signature="e#1347#1378#0" expanded="true" />
+            <element signature="e#1406#1437#0" expanded="true" />
+            <element signature="e#1463#1492#0" expanded="true" />
+            <element signature="e#1838#1865#0" expanded="true" />
+            <element signature="e#1920#1948#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/res/layout/activity_city_select.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="19" column="13" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
+          <folding>
+            <element signature="e#372#397#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../release/Astromaximum2019.apk">
+      <provider selected="true" editor-type-id="apk-viewer" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/res/menu/main.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="660">
+          <caret line="44" column="11" lean-forward="true" selection-start-line="44" selection-start-column="11" selection-end-line="44" selection-end-column="11" />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2" />
     </entry>
   </component>
 </project>

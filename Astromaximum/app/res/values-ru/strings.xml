@@ -33,7 +33,7 @@
     <string name="lda_states_title">Регионы - %1$s</string>
     <string name="lda_cities_title">Города - %1$s</string>
 
-    <string name="all_states">&lt;Все регионы&gt;</string>
+    <string name="all_states">[Все регионы]</string>
     <string name="make_current">Сделать город текущим и вернуться на стартовый экран?</string>
     
     <string name="si_key_voc">Луна \"без курса\"</string>
@@ -170,5 +170,6 @@
 	
     <string name="city_delete">Удалить город</string>
     <string name="city_info">Информация</string>
-	
+    <string name="fmt_aspect">%1$s %2$s-%3$s</string>
+
 </resources>
