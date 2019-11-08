@@ -1,19 +1,22 @@
 apply plugin: 'android-library'
 
 dependencies {
-    compile files('libs/android-support-v4.jar')
-    compile project(':numberpicker')
+    api files('libs/android-support-v4.jar')
+    implementation project(':numberpicker')
 }
 
 android {
   compileSdkVersion 14
-  buildToolsVersion '21.1.2'
 
-  sourceSets {
+    sourceSets {
     main {
       manifest.srcFile 'AndroidManifest.xml'
       java.srcDirs = ['src']
       res.srcDirs = ['res']
     }
   }
+    defaultConfig {
+        minSdkVersion 7
+        targetSdkVersion 15
+    }
 }

@@ -8,10 +8,11 @@ if (!defined($ARGV[2])) {
 
 $ENV{CALCULATIONS_DIR} = '/home/willow/prj/amax/amax-calculations';
 
-my $DEST_DIR = '/home/willow/prj/amax-droid-hg/Astromaximum/app/assets';
+my $DEST_DIR = '../Astromaximum/app/assets';
 my $LOCLIST = 'data/demo_loclist.txt';
 my $LOCLIST_CSV = '/tmp/demo_loclist.csv';
 my $TMP_SQL = '/tmp/amax.sql';
+my $SQLITE = '/home/willow/Android/Sdk/platform-tools/sqlite3';
 my $TMP_DATABASE = '/tmp/amax.db';
 my $DB_PATH = "$DEST_DIR/databases";
 my $ZIPPED_DB = "$DB_PATH/amax.zip";
@@ -84,7 +85,7 @@ END
 	close (TMP_SQL);
 	close(LOCLIST_CSV);
 	unlink ($TMP_DATABASE);
-	my $cmd = "sqlite3 $TMP_DATABASE < $TMP_SQL";
+	my $cmd = "$SQLITE $TMP_DATABASE < $TMP_SQL";
 	system ($cmd);
 	mkdir ($DB_PATH);
 	$cmd = "zip --junk-paths $ZIPPED_DB $TMP_DATABASE";

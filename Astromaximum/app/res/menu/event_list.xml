@@ -3,13 +3,13 @@
 
     <item
         android:id="@+id/menu_prev"
-        android:icon="@+drawable/ab_prev"
+        android:icon="@drawable/ab_prev"
         android:showAsAction="ifRoom"
         android:title="@string/previous_day">
     </item>
     <item
         android:id="@+id/menu_next"
-        android:icon="@+drawable/ab_next"
+        android:icon="@drawable/ab_next"
         android:showAsAction="ifRoom"
         android:title="@string/next_day">
     </item>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item type="id" name="csa_city_key">1</item>
-    <item type="id" name="csa_location_id">2</item>
+    <item type="id" name="csa_city_key"></item>
+    <item type="id" name="csa_location_id"></item>
 </resources>

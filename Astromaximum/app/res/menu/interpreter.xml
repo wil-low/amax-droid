@@ -3,7 +3,7 @@
 
     <item
         android:id="@+id/menu_share"
-        android:icon="@+drawable/ab_share"
+        android:icon="@drawable/ab_share"
         android:showAsAction="ifRoom"
         android:title="@string/interp_share">
     </item>
