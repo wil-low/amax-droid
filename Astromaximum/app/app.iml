@@ -148,5 +148,13 @@
     <orderEntry type="module" module-name="actionbarsherlock" />
     <orderEntry type="module" module-name="numberpicker" />
     <orderEntry type="module" module-name="calendarview" />
+    <orderEntry type="module" module-name="AmaxDatafile" />
+    <orderEntry type="module" module-name="datepicker" />
+    <orderEntry type="module" module-name="dragsortlistview" />
+    <orderEntry type="module" module-name="indexablelistview" />
+    <orderEntry type="module" module-name="timepicker" />
+    <orderEntry type="module" module-name="actionbarsherlock" />
+    <orderEntry type="module" module-name="numberpicker" />
+    <orderEntry type="module" module-name="calendarview" />
   </component>
 </module>

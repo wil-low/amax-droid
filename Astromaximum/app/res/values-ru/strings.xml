@@ -95,7 +95,7 @@
         <item>Ретроградный Плутон</item>
     </string-array>
     
-    <string name="fmt_planet_in_degree">%1$s в %2$d\\u00b0 %3$s</string>
+    <string name="fmt_planet_in_degree">%1$s в %2$d° %3$s</string>
 
     <string-array name="constell_genitive">
         <item>Овна</item>

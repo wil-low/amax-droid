@@ -105,5 +105,7 @@
     <orderEntry type="module" module-name="calendarview" />
     <orderEntry type="module" module-name="numberpicker" />
     <orderEntry type="module" module-name="calendarview" />
+    <orderEntry type="module" module-name="numberpicker" />
+    <orderEntry type="module" module-name="calendarview" />
   </component>
 </module>

@@ -95,7 +95,7 @@
         <item>Retrograde Pluto</item>
     </string-array>
     
-    <string name="fmt_planet_in_degree">%1$s in %2$d\\u00b0 of %3$s</string>
+    <string name="fmt_planet_in_degree">%1$s in %2$d° of %3$s</string>
 
     <string-array name="constell_genitive">
         <item>Aries</item>

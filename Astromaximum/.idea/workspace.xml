@@ -13,17 +13,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d8d0c70b-5528-4973-abee-e493cbad65ea" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../Backend/data/loclist_vasia.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/app/app.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/assets/common.dat" beforeDir="false" afterPath="$PROJECT_DIR$/app/assets/common.dat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/assets/locations.dat" beforeDir="false" afterPath="$PROJECT_DIR$/app/assets/locations.dat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/res/layout/item_moon_transition.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/res/layout/item_moon_transition.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/res/values-ru/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/res/values-ru/strings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/res/values/strings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/datepicker/datepicker.iml" beforeDir="false" afterPath="$PROJECT_DIR$/datepicker/datepicker.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/timepicker/timepicker.iml" beforeDir="false" afterPath="$PROJECT_DIR$/timepicker/timepicker.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/calculate_demo.pl" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/calculate_demo.pl" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -101,7 +96,7 @@
           <provider selected="true" editor-type-id="android-designer2" />
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="android-dummy:///home/willow/prj/amax-droid-migration/Astromaximum/app/Translations Editor">
           <provider selected="true" editor-type-id="string-resource-editor" />
         </entry>
@@ -109,17 +104,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/com/astromaximum/android/LocationDownloadActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1155">
+            <state relative-caret-position="60">
               <caret line="35" column="13" selection-start-line="35" selection-start-column="13" selection-end-line="35" selection-end-column="13" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/com/astromaximum/android/PeriodBuyActivity.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="195">
-              <caret line="97" column="52" lean-forward="true" selection-start-line="97" selection-start-column="52" selection-end-line="97" selection-end-column="52" />
+              <caret line="97" column="52" selection-start-line="97" selection-start-column="52" selection-end-line="97" selection-end-column="52" />
             </state>
           </provider>
         </entry>
@@ -200,8 +195,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
-      <pane id="Scope" />
       <pane id="ProjectPane" />
       <pane id="AndroidView">
         <subPane>
@@ -229,6 +222,8 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -354,8 +349,8 @@
       <window_info anchor="bottom" id="Version Control" order="0" />
       <window_info anchor="bottom" id="TODO" order="1" />
       <window_info anchor="bottom" id="Terminal" order="2" sideWeight="0.49893278" weight="0.32978722" />
-      <window_info anchor="bottom" id="Event Log" order="3" sideWeight="0.63553894" side_tool="true" visible="true" weight="0.32978722" />
-      <window_info anchor="bottom" id="Build" order="4" sideWeight="0.36446103" visible="true" weight="0.32978722" />
+      <window_info anchor="bottom" id="Event Log" order="3" sideWeight="0.6360726" side_tool="true" visible="true" weight="0.32978722" />
+      <window_info anchor="bottom" id="Build" order="4" sideWeight="0.36392742" visible="true" weight="0.32978722" />
       <window_info anchor="bottom" id="Run" order="5" sideWeight="0.49573106" weight="0.32978722" />
       <window_info anchor="bottom" id="Logcat" order="6" sideWeight="0.49786553" weight="0.3287234" />
       <window_info anchor="bottom" id="Android Profiler" order="7" sideWeight="0.4994664" weight="0.32978722" />
@@ -812,6 +807,21 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/res/layout/item_retrograde.xml">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="24" column="43" selection-start-line="24" selection-start-column="43" selection-end-line="24" selection-end-column="43" />
+        </state>
+      </provider>
+      <provider selected="true" editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/com/astromaximum/android/LocationDownloadActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="35" column="13" selection-start-line="35" selection-start-column="13" selection-end-line="35" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/captures/com.astromaximum.android_2019.11.08_15.59.li">
       <provider selected="true" editor-type-id="capture-editor" />
     </entry>
@@ -822,30 +832,15 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/res/layout/item_retrograde.xml">
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="24" column="43" selection-start-line="24" selection-start-column="43" selection-end-line="24" selection-end-column="43" />
-        </state>
-      </provider>
-      <provider selected="true" editor-type-id="android-designer2" />
-    </entry>
-    <entry file="android-dummy:///home/willow/prj/amax-droid-migration/Astromaximum/app/Translations Editor">
-      <provider selected="true" editor-type-id="string-resource-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/com/astromaximum/android/LocationDownloadActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1155">
-          <caret line="35" column="13" selection-start-line="35" selection-start-column="13" selection-end-line="35" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/com/astromaximum/android/PeriodBuyActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="195">
-          <caret line="97" column="52" lean-forward="true" selection-start-line="97" selection-start-column="52" selection-end-line="97" selection-end-column="52" />
+          <caret line="97" column="52" selection-start-line="97" selection-start-column="52" selection-end-line="97" selection-end-column="52" />
         </state>
       </provider>
+    </entry>
+    <entry file="android-dummy:///home/willow/prj/amax-droid-migration/Astromaximum/app/Translations Editor">
+      <provider selected="true" editor-type-id="string-resource-editor" />
     </entry>
   </component>
 </project>
