@@ -508,14 +508,20 @@ public class DataProvider extends SubDataProcessor {
 		for (int i = 0; i < sunRises.size(); ++i)
 			sunRises.get(i).mDate[1] = sunSets.get(i).mDate[0];
 
-		getPlanetaryHours(result, sunRises.get(0), sunRises.get(1));
-		getPlanetaryHours(result, sunRises.get(1), sunRises.get(2));
+		int dayOfWeek = mCalendar.get(Calendar.DAY_OF_WEEK) - 1;
+		if (dayOfWeek < 1)
+			dayOfWeek = 6;
+		else
+			--dayOfWeek;
+		getPlanetaryHours(result, sunRises.get(0), sunRises.get(1), dayOfWeek);
+		dayOfWeek = (dayOfWeek + 1) % 7;
+		getPlanetaryHours(result, sunRises.get(1), sunRises.get(2), dayOfWeek);
 		return result;
 	}
 
 	private void getPlanetaryHours(ArrayList<Event> result,
-			Event currentSunRise, Event nextSunRise) {
-		int startHour = WEEK_START_HOUR[mCalendar.get(Calendar.DAY_OF_WEEK) - 1];
+			Event currentSunRise, Event nextSunRise, int dayOfWeek) {
+		int startHour = WEEK_START_HOUR[dayOfWeek];
 		final long dayHour = (currentSunRise.mDate[1] - currentSunRise.mDate[0]) / 12;
 		final long nightHour = (nextSunRise.mDate[0] - currentSunRise.mDate[1]) / 12;
 		long st = currentSunRise.mDate[0];
