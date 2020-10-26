@@ -25,7 +25,7 @@ public class AspectHolder extends ViewHolder {
 			if (mIsSummaryMode) {
 				mText0.setVisibility(View.GONE);
 			} else {
-				mText0.setText(e.long2String(e.mDate[0], Event.mMonthAbbrDayDateFormat, false));
+				mText0.setText(e.long2String(e.mDate[0], null, false));
 				setColorByEventMode(mText0, e);
 			}
 		}
