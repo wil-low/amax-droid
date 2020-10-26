@@ -33,7 +33,7 @@ public class BaseEvent {
 	public static final int EV_NAKSHATRA = 9;
 	public static final int EV_SET = 10; // rising & setting
 	public static final int EV_DECL_EXACT = 11; // declination
-	//public static final int EV_NAVROZ = 12; // Navroz
+	public static final int EV_NAVROZ = 12; // Navroz
 	public static final int EV_TOP_DAY = 13; // week days
 	public static final int EV_PLANET_HOUR = 14; // planetary hours
 	public static final int EV_STATUS = 15;

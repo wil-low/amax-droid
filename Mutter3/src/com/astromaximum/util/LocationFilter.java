@@ -21,7 +21,7 @@ public class LocationFilter extends SubDataProcessor {
 	private int mStartMonth, mMonthCount;
 	private Vector<String> mInputFiles;
 
-	static final int[] EVENT_TYPES = { BaseEvent.EV_RISE, BaseEvent.EV_SET };
+	static final int[] EVENT_TYPES = { BaseEvent.EV_RISE, BaseEvent.EV_SET, BaseEvent.EV_NAVROZ };
 
 	LocationFilter(int year, Vector<String> inputFiles) {
 		mYear = year;
