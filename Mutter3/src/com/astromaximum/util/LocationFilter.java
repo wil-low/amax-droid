@@ -84,10 +84,18 @@ public class LocationFilter extends SubDataProcessor {
 
 				for (int evtype : EVENT_TYPES) {
 					for (int planet = -1; planet <= BaseEvent.SE_PLUTO; ++planet) {
+                                                long start = evtype == BaseEvent.EV_NAVROZ ? 0 : mStartTime - delta;
 						int eventCount = read(mLocationsDataFile.mData, evtype,
-								planet, false, mStartTime - delta, mEndTime
+								planet, false, start, mEndTime
 										+ delta, mFinalJD, info);
 						if (eventCount > 0) {
+                                                        if (evtype == BaseEvent.EV_NAVROZ) {
+                                                            System.out.println("NAVROZ count=" + eventCount);
+                                                            for (int i = 0; i < eventCount; ++i) {
+                                                                System.out.println(mEvents[i].toString());
+                                                            }
+                                                            System.out.println("NAVROZ end");
+                                                        }
 							info.mFlags &= ~(EF_CUMUL_DATE_B | EF_CUMUL_DATE_W);
 							info.mFlags |= EF_CUMUL_DATE_B;
 
