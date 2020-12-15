@@ -16,10 +16,17 @@ class CommonFilter extends SubDataProcessor {
 	private long mStartTime, mEndTime, mStartJD, mFinalJD;
 	private int mStartMonth, mMonthCount;
 
-	static final int[] EVENT_TYPES = { BaseEvent.EV_SIGN_ENTER,
-			BaseEvent.EV_ASP_EXACT, BaseEvent.EV_TITHI,
-			BaseEvent.EV_DEGREE_PASS, BaseEvent.EV_RETROGRADE,
-			BaseEvent.EV_VOC, BaseEvent.EV_VIA_COMBUSTA, };
+	static final int[] EVENT_TYPES = {
+            BaseEvent.EV_SIGN_ENTER,
+            BaseEvent.EV_ASP_EXACT,
+            BaseEvent.EV_TITHI,
+            BaseEvent.EV_DEGREE_PASS,
+            BaseEvent.EV_RETROGRADE,
+            BaseEvent.EV_VOC,
+            BaseEvent.EV_VIA_COMBUSTA,
+            BaseEvent.EV_MOON_PHASE,
+            BaseEvent.EV_ECLIPSE,
+        };
 
 	CommonFilter(int year, String inputFile) {
 		BaseEvent.setTimeZone("UTC");
@@ -70,7 +77,7 @@ class CommonFilter extends SubDataProcessor {
 		out.delete();
 
 		for (int evtype : EVENT_TYPES) {
-			for (int planet = -1; planet <= BaseEvent.SE_PLUTO; ++planet) {
+			for (int planet = -1; planet <= BaseEvent.SE_WHITE_MOON; ++planet) {
 				int eventCount = read(mCommonDataFile.mData, evtype, planet,
 						true, mStartTime - delta, mEndTime + delta, mFinalJD,
 						info);

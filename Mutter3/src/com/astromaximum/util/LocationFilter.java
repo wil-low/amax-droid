@@ -21,7 +21,13 @@ public class LocationFilter extends SubDataProcessor {
 	private int mStartMonth, mMonthCount;
 	private Vector<String> mInputFiles;
 
-	static final int[] EVENT_TYPES = { BaseEvent.EV_RISE, BaseEvent.EV_SET, BaseEvent.EV_NAVROZ };
+	static final int[] EVENT_TYPES = {
+            BaseEvent.EV_RISE,
+            BaseEvent.EV_SET,
+            BaseEvent.EV_ASTRORISE,
+            BaseEvent.EV_ASTROSET,
+            BaseEvent.EV_NAVROZ
+        };
 
 	LocationFilter(int year, Vector<String> inputFiles) {
 		mYear = year;
@@ -89,13 +95,13 @@ public class LocationFilter extends SubDataProcessor {
 								planet, false, start, mEndTime
 										+ delta, mFinalJD, info);
 						if (eventCount > 0) {
-                                                        if (evtype == BaseEvent.EV_NAVROZ) {
+                                                        /*if (evtype == BaseEvent.EV_NAVROZ) {
                                                             System.out.println("NAVROZ count=" + eventCount);
                                                             for (int i = 0; i < eventCount; ++i) {
                                                                 System.out.println(mEvents[i].toString());
                                                             }
                                                             System.out.println("NAVROZ end");
-                                                        }
+                                                        }*/
 							info.mFlags &= ~(EF_CUMUL_DATE_B | EF_CUMUL_DATE_W);
 							info.mFlags |= EF_CUMUL_DATE_B;
 
