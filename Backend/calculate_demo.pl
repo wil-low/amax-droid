@@ -30,14 +30,16 @@ make_database();
 
 sub make_common {
 	my $common_file = "$DEST_DIR/common.dat";
-	my $cmd = "java -jar Mutter3.jar common $YEAR $MONTH $MONTH_COUNT $common_file";
+	my $cmd = "java -jar ../Mutter3/dist/Mutter3.jar common $YEAR $MONTH $MONTH_COUNT $common_file";
+	print ">>>> $cmd\n";
 	system ($cmd);
 }
 
 
 sub make_location {   # $country, $city_id
 	my $location_file = "$DEST_DIR/locations.dat";
-	my $cmd = "java -jar Mutter3.jar locations $YEAR $MONTH $MONTH_COUNT $LOCLIST $location_file $LOCLIST_CSV";
+	my $cmd = "java -jar ../Mutter3/dist/Mutter3.jar locations $YEAR $MONTH $MONTH_COUNT $LOCLIST $location_file $LOCLIST_CSV";
+	print ">>>> $cmd\n";
 	system ($cmd);
 }
 
@@ -89,8 +91,10 @@ END
 	close(LOCLIST_CSV);
 	unlink ($TMP_DATABASE);
 	my $cmd = "$SQLITE $TMP_DATABASE < $TMP_SQL";
+	print ">>>> $cmd\n";
 	system ($cmd);
 	mkdir ($DB_PATH);
 	$cmd = "zip --junk-paths $ZIPPED_DB $TMP_DATABASE";
+	print ">>>> $cmd\n";
 	system ($cmd);
 }
